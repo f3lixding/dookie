@@ -1,6 +1,5 @@
 use std::error::Error;
-use tokio::sync::mpsc::Receiver;
-use tokio::task::{self, JoinHandle};
+use tokio::task;
 
 mod config;
 mod job;
@@ -22,24 +21,34 @@ pub mod move_job {
 
     use super::*;
 
-    pub enum Message {
+    pub enum IncomingMessage {
         Start,
+        StatusRequest,
+    }
+
+    pub enum OutgoingMessage {
+        TimeUntilNextScan(u64),
     }
 
     pub struct JobStruct;
 
     impl Job for JobStruct {
-        type Message = Message;
-        type ReturnType = ();
+        type IncomingMessage = IncomingMessage;
+        type OutgoingMessage = OutgoingMessage;
+        type ReturnType = Result<(), Box<dyn Error + Send + Sync + 'static>>;
 
         fn spawn(
             config: &Config,
-            mut receiver: Receiver<Self::Message>,
-        ) -> Result<JoinHandle<Self::ReturnType>, Box<dyn Error>> {
+        ) -> Result<
+            SpawnedJob<Self::ReturnType, Self::IncomingMessage, Self::OutgoingMessage>,
+            Box<(dyn Error)>,
+        > {
             let move_job_period = config.move_job_period;
             let age_threshold = config.age_threshold;
             let root_path_local = (*config.root_path_local).to_owned();
             let root_path_ext = (*config.root_path_ext).to_owned();
+
+            let (move_sender, mut move_receiver) = tokio::sync::mpsc::channel(100);
 
             let handle = task::spawn(async move {
                 let root_path_local = PathBuf::from(root_path_local);
@@ -47,7 +56,19 @@ pub mod move_job {
 
                 loop {
                     let is_full = false;
-                    let old_list: Vec<PathBuf> = vec![];
+                    let old_list: Vec<PathBuf> = {
+                        let mut full_list = tokio::fs::read_dir(&root_path_local).await?;
+                        let mut filtered_list = vec![];
+                        while let Some(file) = full_list.next_entry().await? {
+                            let age = file.metadata().await?.created()?.elapsed()?.as_secs();
+                            let age: u64 = age / (60 * 60 * 24);
+                            if age >= age_threshold {
+                                filtered_list.push(file.path());
+                            }
+                        }
+                        filtered_list
+                    };
+
                     if is_full {
                         // TODO: log here
                         match move_file(&root_path_local, &root_path_ext).await {
@@ -60,13 +81,21 @@ pub mod move_job {
                         }
                     } else if !old_list.is_empty() {
                         // TODO: log here
+                        for file in old_list {
+                            match move_file(&file, &root_path_ext).await {
+                                Ok(_) => {
+                                    // TODO: log here
+                                }
+                                Err(_) => {
+                                    // TODO: log here
+                                }
+                            }
+                        }
                     }
 
                     tokio::select! {
-                        _ = tokio::time::sleep(std::time::Duration::from_secs(move_job_period)) => {
-                            // TODO: log here
-                        }
-                        msg = receiver.recv() => {
+                        _ = tokio::time::sleep(std::time::Duration::from_secs(move_job_period)) => {}
+                        msg = move_receiver.recv() => {
                             'routine: {
                                 let Some(msg) = msg else {
                                     // TODO: log here
@@ -74,7 +103,7 @@ pub mod move_job {
                                 };
 
                                 match msg {
-                                    Message::Start => {
+                                    (IncomingMessage::Start, _) => {
                                         match move_file(&root_path_local, &root_path_ext).await {
                                             Ok(_) => {
                                                 // TODO: log here
@@ -84,6 +113,7 @@ pub mod move_job {
                                             }
                                         }
                                     }
+                                    _ => {}
                                 }
                             }
                         }
@@ -91,7 +121,7 @@ pub mod move_job {
                 }
             });
 
-            Ok(handle)
+            Ok(SpawnedJob::new(handle, move_sender))
         }
     }
 
@@ -132,7 +162,7 @@ pub mod spawn_server_job {
         PlexServer,
     }
 
-    pub enum Message {
+    pub enum IncomingMessage {
         StopAll,
         StartAll,
         Start(Subject),
@@ -142,16 +172,20 @@ pub mod spawn_server_job {
     pub struct JobStruct;
 
     impl Job for JobStruct {
-        type Message = Message;
+        type IncomingMessage = IncomingMessage;
+        type OutgoingMessage = ();
         type ReturnType = ();
 
         fn spawn(
             config: &Config,
-            receiver: Receiver<Self::Message>,
-        ) -> Result<JoinHandle<Self::ReturnType>, Box<dyn Error>> {
+        ) -> Result<
+            SpawnedJob<Self::ReturnType, Self::IncomingMessage, Self::OutgoingMessage>,
+            Box<dyn Error>,
+        > {
             let handle = task::spawn(async {});
+            let (sender, _receiver) = tokio::sync::mpsc::channel(100);
 
-            Ok(handle)
+            Ok(SpawnedJob::new(handle, sender))
         }
     }
 }
