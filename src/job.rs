@@ -7,6 +7,8 @@ use tokio::sync::mpsc::Sender;
 use tokio::task::{JoinError, JoinHandle};
 
 /// This is what gets returned from spawninig a job.
+/// This struct is made to faciliate manging a job after it is spawned.
+/// It can be polled directly since Future is implemented for it.
 pub struct SpawnedJob<R, I, O> {
     handle: JoinHandle<R>,
     sender: Option<Sender<(I, Option<Sender<O>>)>>,
@@ -32,7 +34,7 @@ impl<R, I, O> Future for SpawnedJob<R, I, O> {
 
     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
         // Safety: We never move `handle` after it is pinned.
-        let handle = unsafe { Pin::new_unchecked(&mut self.get_mut().handle) };
+        let handle = Pin::new(&mut self.get_mut().handle);
 
         handle.poll(cx)
     }
