@@ -113,6 +113,7 @@ pub mod move_job {
         Ok(move_file(source, destination).await?)
     }
 }
+
 /// This job starts the server (that interfaces with all other components). At the time of writing,
 /// these are:
 ///   - Prowlarr
@@ -169,7 +170,7 @@ mod tests {
 
     #[tokio::test]
     #[serial_test::serial]
-    async fn test_move_func() {
+    async fn test_move_func_for_move_job() {
         let src_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, "src_folder"));
         let dst_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, "dst_folder"));
 
