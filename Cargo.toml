@@ -10,6 +10,7 @@ axum = "0.7.2"
 num_cpus = "1.16.0"
 serde = { version = "1.0.193", features = ["derive"] }
 serde_yaml = "0.9.29"
+serial_test = "2.0.0"
 structopt = "0.3.26"
 tokio = { version = "1.35.0", features = ["full"] }
 

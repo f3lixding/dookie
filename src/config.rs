@@ -14,6 +14,10 @@ pub struct Config<'a> {
     pub sonarr_api_key: String,
     pub prowlarr_api_key: String,
     pub qbit_torrent_api_key: String,
+    pub move_job_period: u64,
+    pub age_threshold: u64,
+    pub root_path_local: Cow<'a, str>,
+    pub root_path_ext: Cow<'a, str>,
 }
 
 impl<'a> Config<'a> {
