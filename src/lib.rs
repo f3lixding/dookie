@@ -197,16 +197,12 @@ mod tests {
     use std::path::PathBuf;
 
     const CONFIG_PATH: &'static str = "./var";
+    const SRC_FOLDER: &'static str = "src_folder";
+    const DST_FOLDER: &'static str = "dst_folder";
 
-    fn clean_up() {
-        remove_dir_all(CONFIG_PATH).unwrap();
-    }
-
-    #[tokio::test]
-    #[serial_test::serial]
-    async fn test_move_func_for_move_job() {
-        let src_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, "src_folder"));
-        let dst_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, "dst_folder"));
+    fn create_test_files() {
+        let src_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, SRC_FOLDER));
+        let dst_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, DST_FOLDER));
 
         create_dir_all(&src_dir).unwrap();
         create_dir_all(&dst_dir).unwrap();
@@ -222,6 +218,19 @@ mod tests {
             "test_file_2.txt"
         ))
         .unwrap();
+    }
+
+    fn clean_up() {
+        remove_dir_all(CONFIG_PATH).unwrap();
+    }
+
+    #[tokio::test]
+    #[serial_test::serial]
+    async fn test_move_func_for_move_job() {
+        create_test_files();
+
+        let src_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, "src_folder"));
+        let dst_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, "dst_folder"));
 
         let files_in_src = src_dir.read_dir().unwrap();
         assert_eq!(files_in_src.count(), 2);
