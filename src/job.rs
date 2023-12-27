@@ -4,25 +4,28 @@ use std::future::Future;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 use tokio::sync::mpsc::Sender;
+use tokio::sync::oneshot::Sender as OneShotSender;
 use tokio::task::{JoinError, JoinHandle};
 
 /// This is what gets returned from spawninig a job.
 /// This struct is made to faciliate manging a job after it is spawned.
 /// It can be polled directly since Future is implemented for it.
+/// Note that the message type of (I, Option<Sender<O>>) is a tuple of incoming message and sender
+/// for a reply.
 pub struct SpawnedJob<R, I, O> {
     handle: JoinHandle<R>,
-    sender: Option<Sender<(I, Option<Sender<O>>)>>,
+    sender: Option<Sender<(I, Option<OneShotSender<O>>)>>,
 }
 
 impl<R, I, O> SpawnedJob<R, I, O> {
-    pub fn new(handle: JoinHandle<R>, sender: Sender<(I, Option<Sender<O>>)>) -> Self {
+    pub fn new(handle: JoinHandle<R>, sender: Sender<(I, Option<OneShotSender<O>>)>) -> Self {
         Self {
             handle,
             sender: Some(sender),
         }
     }
 
-    pub fn give_sender(&mut self) -> Result<Sender<(I, Option<Sender<O>>)>, Box<dyn Error>> {
+    pub fn give_sender(&mut self) -> Result<Sender<(I, Option<OneShotSender<O>>)>, Box<dyn Error>> {
         self.sender
             .take()
             .ok_or("No sender stored in this spawned job".into())

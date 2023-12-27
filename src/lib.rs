@@ -1,4 +1,5 @@
 use std::error::Error;
+use tokio::sync::oneshot::Sender as OneShotSender;
 use tokio::task;
 
 mod config;
@@ -17,7 +18,12 @@ pub use job::*;
 ///   - If the files satisfying the above 2 conditions are _not_ currently being used / read
 ///   - If the task is explicitly being told to do so right now
 pub mod move_job {
-    use std::path::PathBuf;
+    use std::{
+        path::PathBuf,
+        sync::{atomic::AtomicBool, Arc},
+    };
+
+    use tokio::{sync::RwLock, time::Instant};
 
     use super::*;
 
@@ -28,6 +34,9 @@ pub mod move_job {
 
     pub enum OutgoingMessage {
         TimeUntilNextScan(u64),
+        InProgress,
+        Ok,
+        Failed,
     }
 
     pub struct JobStruct;
@@ -48,13 +57,68 @@ pub mod move_job {
             let root_path_local = (*config.root_path_local).to_owned();
             let root_path_ext = (*config.root_path_ext).to_owned();
 
-            let (move_sender, mut move_receiver) = tokio::sync::mpsc::channel(100);
+            let (move_sender, mut move_receiver) = tokio::sync::mpsc::channel::<(
+                Self::IncomingMessage,
+                Option<OneShotSender<Self::OutgoingMessage>>,
+            )>(100);
+            let (front_desk_sender, mut front_desk_receiver) = tokio::sync::mpsc::channel::<(
+                Self::IncomingMessage,
+                Option<OneShotSender<Self::OutgoingMessage>>,
+            )>(100);
+            let is_moving_ = Arc::new(AtomicBool::new(false));
+            let timer_: Arc<RwLock<Option<Instant>>> = Arc::new(RwLock::new(None));
 
+            let is_moving = is_moving_.clone();
+            let timer = timer_.clone();
+
+            // spawning a listening task
+            task::spawn(async move {
+                while let Some(msg) = front_desk_receiver.recv().await {
+                    match msg {
+                        // Start command
+                        (IncomingMessage::Start, Some(sender)) => {
+                            if is_moving.load(std::sync::atomic::Ordering::Relaxed) {
+                                _ = sender.send(OutgoingMessage::InProgress);
+                            } else {
+                                let (oneshot_sender, oneshot_receiver) =
+                                    tokio::sync::oneshot::channel::<Self::OutgoingMessage>();
+                                if let Ok(_) = move_sender
+                                    .send((IncomingMessage::Start, Some(oneshot_sender)))
+                                    .await
+                                {
+                                    let resp = oneshot_receiver.await?;
+                                    _ = sender.send(resp);
+                                }
+                            }
+                        }
+                        // Status request
+                        (IncomingMessage::StatusRequest, Some(sender)) => {
+                            if is_moving.load(std::sync::atomic::Ordering::Relaxed) {
+                                _ = sender.send(OutgoingMessage::InProgress);
+                            } else {
+                                if let Some(ref timer_guard) = *timer.read().await {
+                                    _ = sender.send(OutgoingMessage::TimeUntilNextScan(
+                                        move_job_period - timer_guard.elapsed().as_secs(),
+                                    ));
+                                }
+                            }
+                        }
+                        _ => unreachable!("Unexpected message in front_desk_receiver"),
+                    }
+                }
+
+                Ok::<(), Box<dyn Error + Send + Sync + 'static>>(())
+            });
+
+            let is_moving = is_moving_;
+            let timer = timer_;
             let handle = task::spawn(async move {
                 let root_path_local = PathBuf::from(root_path_local);
                 let root_path_ext = PathBuf::from(root_path_ext);
 
                 loop {
+                    // We are going to make it so that we are moving every loop.
+                    is_moving.store(true, std::sync::atomic::Ordering::Relaxed);
                     let is_full = false;
                     let old_list: Vec<PathBuf> = {
                         let mut full_list = tokio::fs::read_dir(&root_path_local).await?;
@@ -93,27 +157,30 @@ pub mod move_job {
                         }
                     }
 
+                    is_moving.store(false, std::sync::atomic::Ordering::Relaxed);
+                    timer.write().await.replace(Instant::now());
+
                     tokio::select! {
                         _ = tokio::time::sleep(std::time::Duration::from_secs(move_job_period)) => {}
                         msg = move_receiver.recv() => {
-                            'routine: {
-                                let Some(msg) = msg else {
-                                    // TODO: log here
-                                    break 'routine;
-                                };
-
+                            if let Some(msg) = msg {
                                 match msg {
-                                    (IncomingMessage::Start, _) => {
+                                    // Start command
+                                    (IncomingMessage::Start, Some(sender)) => {
+                                        is_moving.store(true, std::sync::atomic::Ordering::Relaxed);
                                         match move_file(&root_path_local, &root_path_ext).await {
                                             Ok(_) => {
                                                 // TODO: log here
+                                                _ = sender.send(OutgoingMessage::Ok);
                                             }
                                             Err(_) => {
                                                 // TODO: log here
+                                                _ = sender.send(OutgoingMessage::Failed);
                                             }
                                         }
+                                        is_moving.store(false, std::sync::atomic::Ordering::Relaxed);
                                     }
-                                    _ => {}
+                                    _ => unreachable!("Unexpected message in move_receiver"),
                                 }
                             }
                         }
@@ -121,7 +188,7 @@ pub mod move_job {
                 }
             });
 
-            Ok(SpawnedJob::new(handle, move_sender))
+            Ok(SpawnedJob::new(handle, front_desk_sender))
         }
     }
 
@@ -247,4 +314,8 @@ mod tests {
 
         clean_up();
     }
+
+    #[tokio::test]
+    #[serial_test::serial]
+    async fn test_channel_for_move_job() {}
 }
