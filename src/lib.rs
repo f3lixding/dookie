@@ -30,6 +30,7 @@ pub mod move_job {
     pub enum IncomingMessage {
         Start,
         StatusRequest,
+        Stop,
     }
 
     pub enum OutgoingMessage {
@@ -100,6 +101,23 @@ pub mod move_job {
                                     _ = sender.send(OutgoingMessage::TimeUntilNextScan(
                                         move_job_period - timer_guard.elapsed().as_secs(),
                                     ));
+                                }
+                            }
+                        }
+                        // Stop command
+                        (IncomingMessage::Stop, Some(sender)) => {
+                            let (oneshot_sender, oneshot_receiver) =
+                                tokio::sync::oneshot::channel::<Self::OutgoingMessage>();
+                            if let Ok(_) = move_sender
+                                .send((IncomingMessage::Stop, Some(oneshot_sender)))
+                                .await
+                            {
+                                match oneshot_receiver.await {
+                                    Ok(OutgoingMessage::Ok) => {
+                                        _ = sender.send(OutgoingMessage::Ok);
+                                        break;
+                                    }
+                                    _ => _ = sender.send(OutgoingMessage::Failed),
                                 }
                             }
                         }
