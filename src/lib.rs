@@ -207,6 +207,11 @@ pub mod move_job {
                                         }
                                         is_moving.store(false, std::sync::atomic::Ordering::Relaxed);
                                     }
+                                    // Stop command
+                                    (IncomingMessage::Stop, Some(sender)) => {
+                                        _ = sender.send(OutgoingMessage::Ok);
+                                        break Ok(());
+                                    }
                                     _ => unreachable!("Unexpected message in move_receiver"),
                                 }
                             }
