@@ -4,7 +4,7 @@ use structopt::StructOpt;
 
 #[derive(StructOpt)]
 struct Opt {
-    #[structopt(short = "c", long = "config_path")]
+    #[structopt(short = "c", long = "config_path", default_value = ".")]
     config_path: String,
 }
 

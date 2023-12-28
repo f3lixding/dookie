@@ -1,4 +1,5 @@
 use std::error::Error;
+use sysinfo::Disks;
 use tokio::sync::oneshot::Sender as OneShotSender;
 use tokio::task;
 
@@ -133,11 +134,19 @@ pub mod move_job {
             let handle = task::spawn(async move {
                 let root_path_local = PathBuf::from(root_path_local);
                 let root_path_ext = PathBuf::from(root_path_ext);
+                let mut disks = Disks::new_with_refreshed_list();
 
                 loop {
                     // We are going to make it so that we are moving every loop.
                     is_moving.store(true, std::sync::atomic::Ordering::Relaxed);
-                    let is_full = false;
+                    let is_full = {
+                        disks.refresh();
+                        // assume there is only one disk
+                        let disk = disks.list().get(0).expect("Disk not found");
+                        let available_percentage =
+                            ((disk.available_space() as f64) / (disk.total_space() as f64)) * 100.0;
+                        available_percentage < 5.0
+                    };
                     let old_list: Vec<PathBuf> = {
                         let mut full_list = tokio::fs::read_dir(&root_path_local).await?;
                         let mut filtered_list = vec![];
