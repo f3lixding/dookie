@@ -52,6 +52,9 @@ pub trait Job {
 
     fn spawn(
         config: &Config,
+        #[cfg(test)] front_desk_handle: &mut Option<
+            JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>,
+        >,
     ) -> Result<
         SpawnedJob<Self::ReturnType, Self::IncomingMessage, Self::OutgoingMessage>,
         Box<dyn Error>,

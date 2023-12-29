@@ -24,16 +24,18 @@ pub mod move_job {
         sync::{atomic::AtomicBool, Arc},
     };
 
-    use tokio::{sync::RwLock, time::Instant};
+    use tokio::{sync::RwLock, task::JoinHandle, time::Instant};
 
     use super::*;
 
+    #[derive(Debug, PartialEq, Eq)]
     pub enum IncomingMessage {
         Start,
         StatusRequest,
         Stop,
     }
 
+    #[derive(Debug, PartialEq, Eq)]
     pub enum OutgoingMessage {
         TimeUntilNextScan(u64),
         InProgress,
@@ -50,6 +52,9 @@ pub mod move_job {
 
         fn spawn(
             config: &Config,
+            #[cfg(test)] front_desk_handle: &mut Option<
+                JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>,
+            >,
         ) -> Result<
             SpawnedJob<Self::ReturnType, Self::IncomingMessage, Self::OutgoingMessage>,
             Box<(dyn Error)>,
@@ -68,13 +73,14 @@ pub mod move_job {
                 Option<OneShotSender<Self::OutgoingMessage>>,
             )>(100);
             let is_moving_ = Arc::new(AtomicBool::new(false));
-            let timer_: Arc<RwLock<Option<Instant>>> = Arc::new(RwLock::new(None));
+            let timer_: Arc<RwLock<Option<Instant>>> = Arc::new(RwLock::new(Some(Instant::now())));
 
             let is_moving = is_moving_.clone();
             let timer = timer_.clone();
 
             // spawning a listening task
-            task::spawn(async move {
+            #[allow(unused)]
+            let fd_handle = task::spawn(async move {
                 while let Some(msg) = front_desk_receiver.recv().await {
                     match msg {
                         // Start command
@@ -98,7 +104,7 @@ pub mod move_job {
                             if is_moving.load(std::sync::atomic::Ordering::Relaxed) {
                                 _ = sender.send(OutgoingMessage::InProgress);
                             } else {
-                                if let Some(ref timer_guard) = *timer.read().await {
+                                if let Some(timer_guard) = &*timer.read().await {
                                     _ = sender.send(OutgoingMessage::TimeUntilNextScan(
                                         move_job_period - timer_guard.elapsed().as_secs(),
                                     ));
@@ -128,6 +134,9 @@ pub mod move_job {
 
                 Ok::<(), Box<dyn Error + Send + Sync + 'static>>(())
             });
+
+            #[cfg(test)]
+            front_desk_handle.replace(fd_handle);
 
             let is_moving = is_moving_;
             let timer = timer_;
@@ -251,6 +260,8 @@ pub mod move_job {
 ///   - QBitTorrent
 ///   - Plex Server
 pub mod spawn_server_job {
+    use tokio::task::JoinHandle;
+
     use super::*;
 
     pub enum Subject {
@@ -277,6 +288,9 @@ pub mod spawn_server_job {
 
         fn spawn(
             config: &Config,
+            #[cfg(test)] front_desk_handle: &mut Option<
+                JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>,
+            >,
         ) -> Result<
             SpawnedJob<Self::ReturnType, Self::IncomingMessage, Self::OutgoingMessage>,
             Box<dyn Error>,
@@ -298,6 +312,26 @@ mod tests {
     const CONFIG_PATH: &'static str = "./var";
     const SRC_FOLDER: &'static str = "src_folder";
     const DST_FOLDER: &'static str = "dst_folder";
+
+    fn create_test_config<'a>() -> Config<'a> {
+        let src_dir = format!("{}/{}", CONFIG_PATH, SRC_FOLDER);
+        let dst_dir = format!("{}/{}", CONFIG_PATH, DST_FOLDER);
+        Config {
+            config_path: CONFIG_PATH.into(),
+            radarr_port: 7878,
+            sonarr_port: 8989,
+            prowlarr_port: 8888,
+            qbit_torrent_port: 9090,
+            radarr_api_key: String::from(""),
+            sonarr_api_key: String::from(""),
+            prowlarr_api_key: String::from(""),
+            qbit_torrent_api_key: String::from(""),
+            move_job_period: 10,
+            age_threshold: 10,
+            root_path_local: src_dir.into(),
+            root_path_ext: dst_dir.into(),
+        }
+    }
 
     fn create_test_files() {
         let src_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, SRC_FOLDER));
@@ -347,7 +381,62 @@ mod tests {
         clean_up();
     }
 
-    #[tokio::test]
+    #[tokio::test(flavor = "multi_thread")]
     #[serial_test::serial]
-    async fn test_channel_for_move_job() {}
+    async fn test_channel_for_move_job() {
+        create_test_files();
+        let config = create_test_config();
+        let mut fd_handle = None;
+        let mut job_move = move_job::JobStruct::spawn(&config, &mut fd_handle).unwrap();
+        let front_desk_sender = job_move.give_sender().unwrap();
+
+        let job_move_handle = task::spawn(async move {
+            tokio::select! {
+                join_result = job_move => {
+                    let join_result = join_result?;
+                    assert!(join_result.is_ok());
+                }
+                _ = tokio::time::sleep(std::time::Duration::from_secs(3)) => {}
+            }
+
+            Ok::<(), Box<dyn Error + Send + Sync>>(())
+        });
+
+        let test_send_msg_handle = task::spawn(async move {
+            let (oneshot_sender, oneshot_receiver) = tokio::sync::oneshot::channel();
+            front_desk_sender
+                .send((
+                    move_job::IncomingMessage::StatusRequest,
+                    Some(oneshot_sender),
+                ))
+                .await
+                .unwrap();
+            let resp = oneshot_receiver.await.unwrap();
+            if let move_job::OutgoingMessage::TimeUntilNextScan(time_left) = resp {
+                assert!(time_left <= 10, "Wrong time left on status request");
+            } else {
+                panic!("Wrong response received from move job upon status request");
+            }
+
+            let (oneshot_sender, oneshot_receiver) = tokio::sync::oneshot::channel();
+            front_desk_sender
+                .send((move_job::IncomingMessage::Stop, Some(oneshot_sender)))
+                .await
+                .unwrap();
+            let resp = oneshot_receiver.await.unwrap();
+            assert_eq!(
+                resp,
+                move_job::OutgoingMessage::Ok,
+                "Shut down of worker task should be successful"
+            );
+        });
+
+        let fd_handle = fd_handle.expect("Failed to get front desk handle");
+        let (job_move_handle_res, test_send_msg_handle_res, _fd_handle_res) =
+            tokio::join!(job_move_handle, test_send_msg_handle, fd_handle);
+        assert!(job_move_handle_res.is_ok());
+        assert!(test_send_msg_handle_res.is_ok());
+
+        clean_up();
+    }
 }
