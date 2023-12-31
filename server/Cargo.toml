@@ -1,0 +1,22 @@
+[package]
+name = "dookie_server"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "dookie_server"
+path = "src/main.rs"
+
+[lib]
+name = "dookie_server_lib"
+path = "src/lib.rs"
+
+[dependencies]
+axum = { workspace = true }
+num_cpus = { workspace = true }
+serde = { workspace = true }
+serde_yaml = { workspace = true }
+serial_test = { workspace = true }
+structopt = { workspace = true }
+sysinfo = { workspace = true }
+tokio = { workspace = true }

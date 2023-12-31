@@ -50,13 +50,23 @@ pub trait Job {
     type IncomingMessage;
     type ReturnType: Send + Sync;
 
-    fn spawn(
+    fn spawn_(
         config: &Config,
-        #[cfg(test)] front_desk_handle: &mut Option<
+        front_desk_handle: &mut Option<
             JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>,
         >,
     ) -> Result<
         SpawnedJob<Self::ReturnType, Self::IncomingMessage, Self::OutgoingMessage>,
         Box<dyn Error>,
     >;
+
+    #[cfg(not(test))]
+    fn spawn(
+        config: &Config,
+    ) -> Result<
+        SpawnedJob<Self::ReturnType, Self::IncomingMessage, Self::OutgoingMessage>,
+        Box<dyn Error>,
+    > {
+        Self::spawn_(config, &mut None)
+    }
 }

@@ -24,7 +24,8 @@ pub mod move_job {
         sync::{atomic::AtomicBool, Arc},
     };
 
-    use tokio::{sync::RwLock, task::JoinHandle, time::Instant};
+    use tokio::task::JoinHandle;
+    use tokio::{sync::RwLock, time::Instant};
 
     use super::*;
 
@@ -50,9 +51,9 @@ pub mod move_job {
         type OutgoingMessage = OutgoingMessage;
         type ReturnType = Result<(), Box<dyn Error + Send + Sync + 'static>>;
 
-        fn spawn(
+        fn spawn_(
             config: &Config,
-            #[cfg(test)] front_desk_handle: &mut Option<
+            #[allow(unused)] front_desk_handle: &mut Option<
                 JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>,
             >,
         ) -> Result<
@@ -286,9 +287,9 @@ pub mod spawn_server_job {
         type OutgoingMessage = ();
         type ReturnType = ();
 
-        fn spawn(
+        fn spawn_(
             config: &Config,
-            #[cfg(test)] front_desk_handle: &mut Option<
+            front_desk_handle: &mut Option<
                 JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>,
             >,
         ) -> Result<
@@ -381,13 +382,15 @@ mod tests {
         clean_up();
     }
 
+    // Perhaps this is one for the readme:
+    // tasks spawned in tests need to be _explicitly_ polled / awaited in order to be executed
     #[tokio::test(flavor = "multi_thread")]
     #[serial_test::serial]
     async fn test_channel_for_move_job() {
         create_test_files();
         let config = create_test_config();
         let mut fd_handle = None;
-        let mut job_move = move_job::JobStruct::spawn(&config, &mut fd_handle).unwrap();
+        let mut job_move = move_job::JobStruct::spawn_(&config, &mut fd_handle).unwrap();
         let front_desk_sender = job_move.give_sender().unwrap();
 
         let job_move_handle = task::spawn(async move {
