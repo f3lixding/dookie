@@ -238,9 +238,15 @@ pub mod move_job {
         let mut files_in_src = tokio::fs::read_dir(source).await?;
 
         while let Ok(Some(file)) = files_in_src.next_entry().await {
-            if file.path().is_file() {
-                tokio::fs::copy(file.path(), destination.join(file.file_name())).await?;
-                tokio::fs::remove_file(file.path()).await?;
+            let metadata = tokio::fs::metadata(file.path()).await?;
+            if file.path().is_file() && !metadata.file_type().is_symlink() {
+                let dst_path = destination.join(file.file_name());
+                let src_path = file.path();
+
+                tokio::fs::copy(src_path.clone(), dst_path.clone()).await?;
+                tokio::fs::remove_file(src_path.clone()).await?;
+
+                tokio::fs::symlink(dst_path, src_path).await?;
             }
         }
 
@@ -377,7 +383,19 @@ mod tests {
         let files_in_dst = dst_dir.read_dir().unwrap();
         let files_in_src = src_dir.read_dir().unwrap();
         assert_eq!(files_in_dst.count(), 2);
-        assert_eq!(files_in_src.count(), 0);
+        assert_eq!(files_in_src.count(), 2);
+
+        for file in src_dir.read_dir().unwrap() {
+            let Ok(file) = file else {
+                panic!("Files remaining in src dir should be ok to read")
+            };
+
+            let metadata = file
+                .metadata()
+                .expect("Failure to retrieve metadata for test files");
+
+            assert!(metadata.is_symlink(), "remaining files should be symlinks");
+        }
 
         clean_up();
     }
