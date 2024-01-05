@@ -243,10 +243,10 @@ pub mod move_job {
                 let dst_path = destination.join(file.file_name());
                 let src_path = file.path();
 
-                tokio::fs::copy(src_path.clone(), dst_path.clone()).await?;
-                tokio::fs::remove_file(src_path.clone()).await?;
+                tokio::fs::copy(&src_path, &dst_path).await?;
+                tokio::fs::remove_file(&src_path).await?;
 
-                tokio::fs::symlink(dst_path, src_path).await?;
+                tokio::fs::symlink(&dst_path, &src_path).await?;
             }
         }
 
