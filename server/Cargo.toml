@@ -20,3 +20,8 @@ serial_test = { workspace = true }
 structopt = { workspace = true }
 sysinfo = { workspace = true }
 tokio = { workspace = true }
+prost = { workspace = true }
+
+[build-dependencies]
+prost-build = { workspace = true }
+cargo_metadata = { workspace = true }

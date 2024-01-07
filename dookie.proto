@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package dookie;
+/* Envelope Related Constructs */
+message Envelope {
+  DataType data_type = 1;
+  oneof data {
+    MoveJobRequest move_job_request = 2;
+    MoveJobResponse move_job_response = 3;
+    ShowRequest show_request = 4;
+    ShowResponse show_response = 5;
+    MovieRequest movie_request = 6;
+    MovieResponse movie_response = 7;
+    TorrentRequest torrent_request = 8;
+    TorrentResponse torrent_response = 9;
+    PlexRequest plex_request = 10;
+    PlexResponse plex_response = 11;
+    ProwlArrRequest prowl_arr_request = 12;
+    ProwlArrResponse prowl_arr_response = 13;
+    VPNRequest vpn_request = 14;
+    VPNResponse vpn_response = 15;
+  }
+}
+
+enum DataType {
+  MOVEJOBREQUEST = 0;
+  MOVEJOBRESPONSE = 1;
+  SHOWREQUEST = 2;
+  SHOWRESPONSE = 3;
+  MOVIEREQUEST = 4;
+  MOVIERESPONSE = 5;
+  TORRENTREQUEST = 6;
+  TORRENTRESPONSE = 7;
+  PLEXREQUEST = 8;
+  PLEXRESPONSE = 9;
+  PROWLARRREQUEST = 10;
+  PROWLARRRESPONSE = 11;
+  VPNREQUEST = 12;
+  VPNRESPONSE = 13;
+}
+
+/* Move Job Related Constructs */
+message MoveJobRequest {
+  MoveJobCommand command = 1;
+}
+
+message MoveJobResponse {
+  optional MoveJobStatus status = 1;
+  optional uint64 time_to_next_run = 2;
+}
+
+enum MoveJobCommand {
+  STATUSREQUEST = 0;
+  STARTJOB = 1;
+}
+
+enum MoveJobStatus {
+  IDLE = 0;
+  RUNNING = 1;
+}
+
+/* Show Related Constructs */
+message ShowRequest {}
+
+message ShowResponse {}
+
+/* Movie Related Constructs */
+message MovieRequest {}
+
+message MovieResponse {}
+
+/* Torrent Related Constructs */
+message TorrentRequest {}
+
+message TorrentResponse {}
+
+/* Plex Related Constructs */
+message PlexRequest {}
+
+message PlexResponse {}
+
+/* Prowlarr Related Constructs */
+message ProwlarrRequest {}
+
+message ProwlarrResponse {}
+
+/* VPN Related Constructs */
+message VPNRequest {}
+
+message VPNResponse {}

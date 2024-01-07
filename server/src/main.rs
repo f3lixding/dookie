@@ -1,6 +1,12 @@
 use dookie_server_lib::{move_job, Config, Job};
-use std::error::Error;
+use std::{env::temp_dir, error::Error};
 use structopt::StructOpt;
+
+mod dookie_proto {
+    include!(concat!(env!("OUT_DIR"), "/dookie.rs"));
+}
+
+use dookie_proto::{MoveJobRequest, MoveJobResponse, MoveJobStatus};
 
 #[derive(StructOpt)]
 struct Opt {
@@ -32,7 +38,35 @@ async fn main() -> Result<(), Box<dyn Error>> {
         root_path_local: src_dir.into(),
         root_path_ext: dst_dir.into(),
     };
-    let spawned_move_job = move_job::JobStruct::spawn(&config);
+    // let spawned_move_job = move_job::JobStruct::spawn(&config);
 
+    listen().await?;
     Ok::<(), Box<dyn Error>>(())
+}
+
+async fn listen() -> Result<(), Box<dyn std::error::Error>> {
+    let socket_path = "/tmp/dookie.sock";
+    let listener = tokio::net::UnixListener::bind(&socket_path)?;
+
+    loop {
+        match listener.accept().await {
+            Ok((stream, _addr)) => {
+                let ready = stream.ready(tokio::io::Interest::READABLE).await?;
+                let mut data = vec![0; 1024];
+                match stream.try_read(&mut data) {
+                    Ok(n) => {
+                        println!("received data");
+                    }
+                    Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                        continue;
+                    }
+                    Err(e) => return Err(e.into()),
+                }
+            }
+            Err(err) => println!("Error accepting connection: {}", err),
+        }
+    }
+
+    #[allow(unreachable_code)]
+    Ok(())
 }

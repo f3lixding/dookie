@@ -9,3 +9,8 @@ path = "src/main.rs"
 
 [dependencies]
 confy = { workspace = true }
+prost = { workspace = true }
+
+[build-dependencies]
+prost-build = { workspace = true }
+cargo_metadata = { workspace = true }
