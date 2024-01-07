@@ -1,4 +1,5 @@
 use dookie_server_lib::{move_job, Config, Job};
+use prost::Message;
 use std::{env::temp_dir, error::Error};
 use structopt::StructOpt;
 
@@ -6,7 +7,7 @@ mod dookie_proto {
     include!(concat!(env!("OUT_DIR"), "/dookie.rs"));
 }
 
-use dookie_proto::{MoveJobRequest, MoveJobResponse, MoveJobStatus};
+use dookie_proto::*;
 
 #[derive(StructOpt)]
 struct Opt {
@@ -56,6 +57,20 @@ async fn listen() -> Result<(), Box<dyn std::error::Error>> {
                 match stream.try_read(&mut data) {
                     Ok(n) => {
                         println!("received data");
+                        let envelope = Envelope::decode(&data[..n])?;
+                        match envelope.data {
+                            Some(envelope::Data::MoveJobRequest(inner_request)) => {
+                                match MoveJobCommand::from_i32(inner_request.command) {
+                                    Some(MoveJobCommand::Statusrequest) => {
+                                        println!("Received a status request for move job");
+                                    }
+                                    _ => println!(
+                                        "Received a message that was not a move job request"
+                                    ),
+                                }
+                            }
+                            _ => println!("Received a message that was not a move job request"),
+                        }
                     }
                     Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
                         continue;

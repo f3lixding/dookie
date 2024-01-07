@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package dookie;
+
 /* Envelope Related Constructs */
 message Envelope {
   DataType data_type = 1;
@@ -15,8 +16,8 @@ message Envelope {
     TorrentResponse torrent_response = 9;
     PlexRequest plex_request = 10;
     PlexResponse plex_response = 11;
-    ProwlArrRequest prowl_arr_request = 12;
-    ProwlArrResponse prowl_arr_response = 13;
+    ProwlarrRequest prowl_arr_request = 12;
+    ProwlarrResponse prowl_arr_response = 13;
     VPNRequest vpn_request = 14;
     VPNResponse vpn_response = 15;
   }
