@@ -1,13 +1,6 @@
 use dookie_server_lib::{move_job, Config, Job};
-use prost::Message;
 use std::{env::temp_dir, error::Error};
 use structopt::StructOpt;
-
-mod dookie_proto {
-    include!(concat!(env!("OUT_DIR"), "/dookie.rs"));
-}
-
-use dookie_proto::*;
 
 #[derive(StructOpt)]
 struct Opt {
@@ -41,47 +34,5 @@ async fn main() -> Result<(), Box<dyn Error>> {
     };
     // let spawned_move_job = move_job::JobStruct::spawn(&config);
 
-    listen().await?;
     Ok::<(), Box<dyn Error>>(())
-}
-
-async fn listen() -> Result<(), Box<dyn std::error::Error>> {
-    let socket_path = "/tmp/dookie.sock";
-    let listener = tokio::net::UnixListener::bind(&socket_path)?;
-
-    loop {
-        match listener.accept().await {
-            Ok((stream, _addr)) => {
-                let ready = stream.ready(tokio::io::Interest::READABLE).await?;
-                let mut data = vec![0; 1024];
-                match stream.try_read(&mut data) {
-                    Ok(n) => {
-                        println!("received data");
-                        let envelope = Envelope::decode(&data[..n])?;
-                        match envelope.data {
-                            Some(envelope::Data::MoveJobRequest(inner_request)) => {
-                                match MoveJobCommand::from_i32(inner_request.command) {
-                                    Some(MoveJobCommand::Statusrequest) => {
-                                        println!("Received a status request for move job");
-                                    }
-                                    _ => println!(
-                                        "Received a message that was not a move job request"
-                                    ),
-                                }
-                            }
-                            _ => println!("Received a message that was not a move job request"),
-                        }
-                    }
-                    Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
-                        continue;
-                    }
-                    Err(e) => return Err(e.into()),
-                }
-            }
-            Err(err) => println!("Error accepting connection: {}", err),
-        }
-    }
-
-    #[allow(unreachable_code)]
-    Ok(())
 }

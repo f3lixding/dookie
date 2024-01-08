@@ -5,9 +5,15 @@ use tokio::task;
 
 mod config;
 mod job;
+mod listener;
+mod dookie_proto {
+    include!(concat!(env!("OUT_DIR"), "/dookie.rs"));
+}
 
 pub use config::Config;
+pub use dookie_proto::*;
 pub use job::*;
+pub use listener::*;
 
 /// This job monitors local drive to check for various factors to determine if content in the
 /// specified directory should be moved to the "cold" storage.
