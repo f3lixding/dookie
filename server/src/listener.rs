@@ -1,4 +1,4 @@
-use crate::Envelope;
+use crate::{media_bundle::MediaBundle, Envelope};
 use prost::Message;
 use std::future::Future;
 use std::pin::Pin;
@@ -14,21 +14,15 @@ pub struct Unassigned;
 #[allow(dead_code)]
 pub struct Assigned;
 
-#[derive(Debug, Clone)]
-pub struct SenderBundle {}
-
-unsafe impl Send for SenderBundle {}
-unsafe impl Sync for SenderBundle {}
-
 #[derive(Debug, Default)]
 pub struct MainListener<Status = Unassigned> {
     handle: Option<JoinHandle<Result<(), Box<dyn std::error::Error + Send + Sync + 'static>>>>,
-    bundle: Option<SenderBundle>,
+    bundle: Option<MediaBundle>,
     _status: std::marker::PhantomData<Status>,
 }
 
 impl MainListener<Unassigned> {
-    pub fn assign_sender_bundle(self, bundle: SenderBundle) -> MainListener<Assigned> {
+    pub fn assign_sender_bundle(self, bundle: MediaBundle) -> MainListener<Assigned> {
         MainListener {
             handle: self.handle,
             bundle: Some(bundle),

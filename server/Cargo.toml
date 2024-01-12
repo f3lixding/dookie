@@ -21,6 +21,7 @@ structopt = { workspace = true }
 sysinfo = { workspace = true }
 tokio = { workspace = true }
 prost = { workspace = true }
+async-trait = { workspace = true }
 
 [build-dependencies]
 prost-build = { workspace = true }
