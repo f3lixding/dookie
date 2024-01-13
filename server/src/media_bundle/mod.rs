@@ -13,8 +13,55 @@ use sonarr::*;
 use async_trait::async_trait;
 use std::error::Error;
 
+/// This is really just a wrapper around reqwest::Client.
+/// The existence of it is to also retain information about the port. This way the constructor for
+/// ServerEntity is "prettier".
+#[derive(Debug, Clone)]
+pub(in crate::media_bundle) struct BundleClient {
+    client: reqwest::Client,
+    port: u16,
+}
+
+impl BundleClient {
+    pub fn from_scratch(port: u16) -> Self {
+        BundleClient {
+            client: reqwest::Client::new(),
+            port,
+        }
+    }
+
+    pub fn clone_with_port(&self, port: u16) -> Self {
+        BundleClient {
+            client: self.client.clone(),
+            port,
+        }
+    }
+
+    pub async fn get(&self, url: &str) -> Result<reqwest::Response, Box<dyn Error + Send + Sync>> {
+        let url = format!("http://localhost:{}/{}", self.port, url);
+        Ok(self.client.get(&url).send().await?)
+    }
+
+    pub async fn post(
+        &self,
+        url: &str,
+        body: impl Into<reqwest::Body>,
+    ) -> Result<reqwest::Response, Box<dyn Error + Send + Sync>> {
+        let url = format!("http://localhost:{}/{}", self.port, url);
+        let msg_body: reqwest::Body = body.into();
+
+        Ok(self
+            .client
+            .post(&url)
+            .body::<reqwest::Body>(msg_body)
+            .send()
+            .await?)
+    }
+}
+
 #[async_trait]
 pub(in crate::media_bundle) trait ServerEntity {
+    fn from_bundle_client(client: BundleClient) -> impl ServerEntity;
     async fn start(&self) -> Result<(), Box<dyn Error + Send + Sync>>;
     async fn shutdown(&self) -> Result<(), Box<dyn Error + Send + Sync>>;
 }
@@ -24,3 +71,79 @@ pub struct MediaBundle {}
 
 unsafe impl Send for MediaBundle {}
 unsafe impl Sync for MediaBundle {}
+
+/// A collection of utility functions for media bundles
+pub(in crate::media_bundle) mod bundle_util {
+    use std::error::Error;
+    use std::process::Command;
+    use std::{thread, time};
+
+    pub fn get_process_id(process_name: &str) -> Result<Option<u32>, Box<dyn Error>> {
+        let processed_process_name = if !process_name.is_empty() {
+            let first_letter_wrapped = format!(
+                "[{}]",
+                process_name.get(..1).ok_or("Process name is empty")?
+            );
+
+            format!(
+                "{}{}",
+                first_letter_wrapped,
+                process_name.get(1..).ok_or("Process name is empty")?
+            )
+        } else {
+            return Err("Process name is empty".into());
+        };
+
+        let process_search_arg = format!(r#"ps aux | grep -i "{}""#, processed_process_name);
+        let output = Command::new("sh")
+            .arg("-c")
+            .arg(process_search_arg)
+            .output()?;
+
+        let binding = String::from_utf8_lossy(&output.stdout);
+        let output = binding.split_whitespace().collect::<Vec<&str>>();
+        let pid: u32 = output.get(1).ok_or("PID not found")?.parse()?;
+
+        Ok(Some(pid))
+    }
+
+    pub fn start_process(process_name: &str) -> Result<u32, Box<dyn Error>> {
+        let pid = get_process_id(process_name)?;
+        if pid.is_some() {
+            return Ok(pid.unwrap());
+        }
+
+        let _ = Command::new("sh")
+            .arg("-c")
+            .arg(format!(r#"open -a {}"#, process_name))
+            .output()?;
+
+        // Wait for process to start
+        thread::sleep(time::Duration::from_millis(500));
+        let pid = get_process_id(process_name)?;
+
+        Ok(pid.ok_or("Failed to start process")?)
+    }
+
+    #[cfg(test)]
+    // TODO: Test start process as well (we might need to manually spawn a process for it)
+    mod tests {
+        use super::*;
+
+        // I am not sure if this is a good way to test it but I need some process to be searched
+        // for in order to test for the functions. And
+        const PROCESS_NAME: &'static str = "Application";
+
+        #[test]
+        fn test_get_process_id() {
+            let pid = get_process_id(PROCESS_NAME);
+            assert!(pid.is_ok());
+
+            let pid = pid.unwrap();
+            assert!(pid.is_some());
+
+            let pid = pid.unwrap();
+            assert!(pid > 0);
+        }
+    }
+}
