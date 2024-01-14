@@ -2,6 +2,8 @@ use crate::media_bundle::{bundle_util, BundleClient, ServerEntity};
 use async_trait::async_trait;
 use std::error::Error;
 
+const APP_NAME: &'static str = "Radarr";
+
 pub(in crate::media_bundle) struct Radarr {
     client: BundleClient,
 }
@@ -12,11 +14,12 @@ impl ServerEntity for Radarr {
         Radarr { client }
     }
 
-    async fn start(&self) -> Result<(), Box<dyn Error + Send + Sync>> {
-        Ok(())
+    fn get_app_name(&self) -> &str {
+        APP_NAME
     }
+}
 
-    async fn shutdown(&self) -> Result<(), Box<dyn Error + Send + Sync>> {
-        Ok(())
-    }
+impl Radarr {
+    pub async fn find(&self, name: &str) {}
+    pub async fn monitor(&self, body: &str) {}
 }

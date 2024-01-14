@@ -60,7 +60,6 @@ pub trait Job {
         Box<dyn Error>,
     >;
 
-    #[cfg(not(test))]
     fn spawn(
         config: &Config,
     ) -> Result<

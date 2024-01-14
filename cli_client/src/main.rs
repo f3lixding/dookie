@@ -1,4 +1,7 @@
-use std::{io::Write, os::unix::net::UnixStream};
+use std::{
+    io::{Read, Write},
+    os::unix::net::UnixStream,
+};
 
 mod dookie_proto {
     include!(concat!(env!("OUT_DIR"), "/dookie.rs"));
@@ -21,6 +24,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let request = request.encode_to_vec();
 
     stream.write_all(&request)?;
+
+    let mut buf = Vec::new();
+    let mut temp_buf = [0; 1024];
+    while let Ok(size) = stream.read(&mut temp_buf) {
+        if size == 0 {
+            break;
+        }
+
+        buf.extend_from_slice(&temp_buf[..size]);
+    }
+
+    println!("Response: {:?}", Envelope::decode(buf.as_slice())?);
 
     Ok(())
 }

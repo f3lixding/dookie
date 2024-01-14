@@ -1,4 +1,4 @@
-use dookie_server_lib::{move_job, Config, Job};
+use dookie_server_lib::{move_job, Config, Job, MainListener, MediaBundle, Unassigned};
 use std::{env::temp_dir, error::Error};
 use structopt::StructOpt;
 
@@ -27,12 +27,32 @@ async fn main() -> Result<(), Box<dyn Error>> {
         sonarr_api_key: String::from(""),
         prowlarr_api_key: String::from(""),
         qbit_torrent_api_key: String::from(""),
-        move_job_period: 10,
-        age_threshold: 10,
+        move_job_period: 100,
+        age_threshold: 100,
         root_path_local: src_dir.into(),
         root_path_ext: dst_dir.into(),
     };
-    // let spawned_move_job = move_job::JobStruct::spawn(&config);
+
+    let (move_job_handle, move_job_sender) = {
+        let mut move_job_handle = move_job::JobStruct::spawn(&config)?;
+        let sender = move_job_handle.give_sender()?;
+        (move_job_handle, sender)
+    };
+    let bundle = MediaBundle::default();
+
+    let listener: MainListener<Unassigned> = MainListener::default();
+    let listener = listener.assign_sender_bundle(bundle);
+    let listener = listener.assign_movejob_sender(move_job_sender);
+    let listener = listener.initiate_listener();
+
+    tokio::select! {
+        move_job_return = move_job_handle => {
+            println!("Move job finished {:?}", move_job_return);
+        }
+        listener_return = listener => {
+            println!("Listener finished {:?}", listener_return);
+        }
+    }
 
     Ok::<(), Box<dyn Error>>(())
 }

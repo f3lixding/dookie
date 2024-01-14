@@ -62,11 +62,21 @@ impl BundleClient {
 #[async_trait]
 pub(in crate::media_bundle) trait ServerEntity {
     fn from_bundle_client(client: BundleClient) -> impl ServerEntity;
-    async fn start(&self) -> Result<(), Box<dyn Error + Send + Sync>>;
-    async fn shutdown(&self) -> Result<(), Box<dyn Error + Send + Sync>>;
+    fn get_app_name(&self) -> &str;
+
+    /// Provided method to start the underlying server.
+    async fn start(&self) -> Result<u32, Box<dyn Error + Send + Sync>> {
+        Ok(bundle_util::start_process(self.get_app_name())?)
+    }
+
+    /// Provided method to stop the underlying server.
+    async fn shutdown(&self) -> Result<(), Box<dyn Error + Send + Sync>> {
+        let process_name = self.get_app_name();
+        Ok(())
+    }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct MediaBundle {}
 
 unsafe impl Send for MediaBundle {}
@@ -78,7 +88,7 @@ pub(in crate::media_bundle) mod bundle_util {
     use std::process::Command;
     use std::{thread, time};
 
-    pub fn get_process_id(process_name: &str) -> Result<Option<u32>, Box<dyn Error>> {
+    pub fn get_process_id(process_name: &str) -> Result<Option<u32>, Box<dyn Error + Send + Sync>> {
         let processed_process_name = if !process_name.is_empty() {
             let first_letter_wrapped = format!(
                 "[{}]",
@@ -102,12 +112,12 @@ pub(in crate::media_bundle) mod bundle_util {
 
         let binding = String::from_utf8_lossy(&output.stdout);
         let output = binding.split_whitespace().collect::<Vec<&str>>();
-        let pid: u32 = output.get(1).ok_or("PID not found")?.parse()?;
+        let pid: Option<u32> = output.get(1).and_then(|s| s.parse().ok());
 
-        Ok(Some(pid))
+        Ok(pid)
     }
 
-    pub fn start_process(process_name: &str) -> Result<u32, Box<dyn Error>> {
+    pub fn start_process(process_name: &str) -> Result<u32, Box<dyn Error + Send + Sync>> {
         let pid = get_process_id(process_name)?;
         if pid.is_some() {
             return Ok(pid.unwrap());
@@ -145,5 +155,17 @@ pub(in crate::media_bundle) mod bundle_util {
             let pid = pid.unwrap();
             assert!(pid > 0);
         }
+
+        // #[test]
+        // fn test_start_process() {
+        //     let pid = start_process(RADARR_PROCESS_NAME);
+        //     println!("pid is: {:?}", pid);
+        //     assert!(pid.is_ok());
+
+        //     let pid = pid.unwrap();
+        //     assert!(pid > 0);
+
+        //     println!("pid is: {}", pid);
+        // }
     }
 }

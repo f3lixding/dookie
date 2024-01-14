@@ -52,6 +52,36 @@ pub mod move_job {
         Failed,
     }
 
+    impl Into<Envelope> for OutgoingMessage {
+        fn into(self) -> Envelope {
+            let mut envelop = Envelope::default();
+            envelop.set_data_type(DataType::Movejobresponse);
+            let data = envelope::Data::MoveJobResponse({
+                let mut response = MoveJobResponse::default();
+                match self {
+                    OutgoingMessage::TimeUntilNextScan(time) => {
+                        response.set_status(MoveJobStatus::Idle);
+                        response.time_to_next_run = Some(time);
+                    }
+                    OutgoingMessage::InProgress => {
+                        response.set_status(MoveJobStatus::Running);
+                    }
+                    OutgoingMessage::Ok => {
+                        response.set_status(MoveJobStatus::Ok);
+                    }
+                    OutgoingMessage::Failed => {
+                        response.set_status(MoveJobStatus::Error);
+                    }
+                }
+
+                response
+            });
+
+            envelop.data = Some(data);
+            envelop
+        }
+    }
+
     pub struct JobStruct;
 
     impl Job for JobStruct {

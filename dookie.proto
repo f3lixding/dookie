@@ -58,6 +58,8 @@ enum MoveJobCommand {
 enum MoveJobStatus {
   IDLE = 0;
   RUNNING = 1;
+  OK = 2;
+  ERROR = 3;
 }
 
 /* Show Related Constructs */
