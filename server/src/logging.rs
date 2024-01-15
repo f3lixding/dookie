@@ -4,11 +4,11 @@ use std::{
     path::PathBuf,
     pin::Pin,
     task::{Context, Poll},
-    time,
+    time::{self, SystemTime, UNIX_EPOCH},
 };
 use tokio::task;
+use tokio::task::JoinError;
 use tokio::task::JoinHandle;
-use tokio::{sync::oneshot, task::JoinError};
 use tracing_appender::{
     non_blocking::WorkerGuard,
     rolling::{RollingFileAppender, Rotation},
@@ -36,7 +36,7 @@ impl Logger<Unprimed> {
     pub fn from_config(config: &Config) -> Logger<Unprimed> {
         Logger {
             retention_control_handle: None,
-            log_path: config.log_path.clone().into(),
+            log_path: config.log_path.clone().into_owned().into(),
             _status: std::marker::PhantomData,
         }
     }
@@ -53,17 +53,30 @@ impl Logger<Unprimed> {
         tracing_subscriber::registry()
             .with(fmt::layer().with_writer(non_blocking))
             .init();
+        let path = self.log_path.clone();
 
         let handle = task::spawn(async move {
             // Retention rate of 7 days
             let threshold = 60 * 60 * 24 * 7;
             loop {
-                // TODO: assess which files are qualified to be deleted in accordance to the
-                // threshold
+                let mut files = tokio::fs::read_dir(&path).await?;
+                let now = SystemTime::now().duration_since(UNIX_EPOCH)?;
+                while let Ok(Some(file)) = files.next_entry().await {
+                    let metadata = tokio::fs::metadata(file.path()).await?;
+                    let age = now - metadata.modified()?.duration_since(UNIX_EPOCH)?;
+                    if age.as_secs() > threshold {
+                        tokio::fs::remove_file(file.path()).await?;
+                        tracing::info!("Log {} deleted", file.file_name().to_str().unwrap());
+                    }
+                }
+
                 tokio::select! {
-                    _ = tokio::time::sleep(time::Duration::from_secs(5)) => {}
+                    _ = tokio::time::sleep(time::Duration::from_secs(60 * 60 * 24)) => {
+                        tracing::info!("Log deleteion check routine initiated");
+                    }
                     _ = rx.recv() => {
                         // TODO: terminate loop and log here
+                        tracing::info!("Log deletion routine terminated");
                         break;
                     }
                 }

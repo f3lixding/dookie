@@ -1,7 +1,8 @@
 use dookie_server_lib::{
     move_job, Config, Job, Logger, MainListener, MediaBundle, Unassigned, Unprimed,
 };
-use std::{env::temp_dir, error::Error};
+use std::borrow::Cow;
+use std::error::Error;
 use structopt::StructOpt;
 use tracing::Instrument;
 
@@ -14,6 +15,7 @@ struct Opt {
 const CONFIG_PATH: &'static str = "./var";
 const SRC_FOLDER: &'static str = "src_folder";
 const DST_FOLDER: &'static str = "dst_folder";
+const DEFAULT_LOG_PATH: &'static str = "~/Library/Logs/dookie/";
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -27,10 +29,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
         sonarr_port: 8989,
         prowlarr_port: 8888,
         qbit_torrent_port: 9090,
-        radarr_api_key: String::from(""),
-        sonarr_api_key: String::from(""),
-        prowlarr_api_key: String::from(""),
-        qbit_torrent_api_key: String::from(""),
+        radarr_api_key: Cow::from(""),
+        sonarr_api_key: Cow::from(""),
+        prowlarr_api_key: Cow::from(""),
+        qbit_torrent_api_key: Cow::from(""),
         move_job_period: 100,
         age_threshold: 100,
         root_path_local: src_dir.into(),
@@ -42,6 +44,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         let sender = move_job_handle.give_sender()?;
         (move_job_handle, sender)
     };
+    let move_job_handle = move_job_handle.instrument(tracing::trace_span!("move_job"));
     let bundle = MediaBundle::default();
 
     // Main listener set up
@@ -50,7 +53,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let listener = listener.assign_movejob_sender(move_job_sender);
     let listener = listener
         .initiate_listener()
-        .instrument(tracing::info_span!("listener"));
+        .instrument(tracing::trace_span!("listener"));
 
     // Logging set up
     let logger: Logger<Unprimed> = Logger::from_config(&config);

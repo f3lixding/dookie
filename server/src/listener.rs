@@ -115,7 +115,7 @@ impl MainListener<Assigned> {
                 let resp: Option<Envelope> = match envelope.data_type() {
                     DataType::Movejobrequest => {
                         let Data::MoveJobRequest(data) = envelope.data.ok_or("no data")? else {
-                            // TODO: log this
+                            tracing::error!("No data associated with MoveJobRequest");
                             continue;
                         };
 

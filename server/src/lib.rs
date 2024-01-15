@@ -215,24 +215,38 @@ pub mod move_job {
                     };
 
                     if is_full {
-                        // TODO: log here
                         match move_file(&root_path_local, &root_path_ext).await {
                             Ok(_) => {
-                                // TODO: log here
+                                tracing::info!(
+                                    "Moved files from {} to {}, due to disk full",
+                                    root_path_local.display(),
+                                    root_path_ext.display()
+                                );
                             }
                             Err(_) => {
-                                // TODO: log here
+                                tracing::error!(
+                                    "Failed to move files from {} to {}, initiated due to disk full",
+                                    root_path_local.display(),
+                                    root_path_ext.display()
+                                );
                             }
                         }
                     } else if !old_list.is_empty() {
-                        // TODO: log here
                         for file in old_list {
                             match move_file(&file, &root_path_ext).await {
                                 Ok(_) => {
-                                    // TODO: log here
+                                    tracing::info!(
+                                        "Moved files from {} to {}, due to old file age",
+                                        root_path_local.display(),
+                                        root_path_ext.display()
+                                    );
                                 }
                                 Err(_) => {
-                                    // TODO: log here
+                                    tracing::error!(
+                                        "Failed to move files from {} to {}, initiated due to old file age",
+                                        root_path_local.display(),
+                                        root_path_ext.display()
+                                    );
                                 }
                             }
                         }
@@ -251,11 +265,19 @@ pub mod move_job {
                                         is_moving.store(true, std::sync::atomic::Ordering::Relaxed);
                                         match move_file(&root_path_local, &root_path_ext).await {
                                             Ok(_) => {
-                                                // TODO: log here
+                                                tracing::info!(
+                                                    "Moved files from {} to {}, due to explicit request",
+                                                    root_path_local.display(),
+                                                    root_path_ext.display()
+                                                );
                                                 _ = sender.send(OutgoingMessage::Ok);
                                             }
                                             Err(_) => {
-                                                // TODO: log here
+                                                tracing::error!(
+                                                    "Failed to move files from {} to {}, initiated due to explicit request",
+                                                    root_path_local.display(),
+                                                    root_path_ext.display()
+                                                );
                                                 _ = sender.send(OutgoingMessage::Failed);
                                             }
                                         }
