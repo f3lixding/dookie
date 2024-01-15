@@ -199,7 +199,11 @@ pub mod move_job {
                         let mut full_list = tokio::fs::read_dir(&root_path_local).await?;
                         let mut filtered_list = vec![];
                         while let Some(file) = full_list.next_entry().await? {
-                            let age = file.metadata().await?.created()?.elapsed()?.as_secs();
+                            let metadata = file.metadata().await?;
+                            if metadata.is_symlink() {
+                                continue;
+                            }
+                            let age = metadata.created()?.elapsed()?.as_secs();
                             let age: u64 = age / (60 * 60 * 24);
                             if age >= age_threshold {
                                 filtered_list.push(file.path());
