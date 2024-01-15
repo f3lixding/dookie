@@ -9,12 +9,14 @@ mod listener;
 mod dookie_proto {
     include!(concat!(env!("OUT_DIR"), "/dookie.rs"));
 }
+mod logging;
 mod media_bundle;
 
 pub use config::Config;
 pub use dookie_proto::*;
 pub use job::*;
 pub use listener::*;
+pub use logging::*;
 pub use media_bundle::*;
 
 /// This job monitors local drive to check for various factors to determine if content in the

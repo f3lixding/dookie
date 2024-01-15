@@ -1,6 +1,9 @@
-use dookie_server_lib::{move_job, Config, Job, MainListener, MediaBundle, Unassigned};
+use dookie_server_lib::{
+    move_job, Config, Job, Logger, MainListener, MediaBundle, Unassigned, Unprimed,
+};
 use std::{env::temp_dir, error::Error};
 use structopt::StructOpt;
+use tracing::Instrument;
 
 #[derive(StructOpt)]
 struct Opt {
@@ -19,6 +22,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let dst_dir = format!("{}/{}", CONFIG_PATH, DST_FOLDER);
     let config = Config {
         config_path: CONFIG_PATH.into(),
+        log_path: CONFIG_PATH.into(),
         radarr_port: 7878,
         sonarr_port: 8989,
         prowlarr_port: 8888,
@@ -40,10 +44,17 @@ async fn main() -> Result<(), Box<dyn Error>> {
     };
     let bundle = MediaBundle::default();
 
+    // Main listener set up
     let listener: MainListener<Unassigned> = MainListener::default();
     let listener = listener.assign_sender_bundle(bundle);
     let listener = listener.assign_movejob_sender(move_job_sender);
-    let listener = listener.initiate_listener();
+    let listener = listener
+        .initiate_listener()
+        .instrument(tracing::info_span!("listener"));
+
+    // Logging set up
+    let logger: Logger<Unprimed> = Logger::from_config(&config);
+    let (logger, _guard, logger_tx) = logger.prime();
 
     tokio::select! {
         move_job_return = move_job_handle => {
@@ -51,6 +62,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
         }
         listener_return = listener => {
             println!("Listener finished {:?}", listener_return);
+        }
+        _ = logger => {
+            println!("Logger finished");
         }
     }
 

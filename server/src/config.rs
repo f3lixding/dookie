@@ -6,6 +6,7 @@ use std::error::Error;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Config<'a> {
     pub config_path: Cow<'a, str>,
+    pub log_path: String,
     pub radarr_port: u16,
     pub sonarr_port: u16,
     pub prowlarr_port: u16,

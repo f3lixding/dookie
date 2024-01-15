@@ -122,6 +122,7 @@ impl MainListener<Assigned> {
                         let (sender, receiver) = oneshot::channel();
                         match data.command() {
                             MoveJobCommand::Statusrequest => {
+                                tracing::info!("Received status request");
                                 move_job_sender
                                     .send((IncomingMessage::StatusRequest, Some(sender)))
                                     .await?;
