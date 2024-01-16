@@ -206,7 +206,6 @@ pub mod move_job {
                                 continue;
                             }
                             let age = metadata.created()?.elapsed()?.as_secs();
-                            let age: u64 = age / (60 * 60 * 24);
                             if age >= age_threshold {
                                 filtered_list.push(file.path());
                             }
@@ -223,11 +222,12 @@ pub mod move_job {
                                     root_path_ext.display()
                                 );
                             }
-                            Err(_) => {
+                            Err(e) => {
                                 tracing::error!(
-                                    "Failed to move files from {} to {}, initiated due to disk full",
+                                    "Failed to move files from {} to {}, initiated due to disk full. Error: {:?}",
                                     root_path_local.display(),
-                                    root_path_ext.display()
+                                    root_path_ext.display(),
+                                    e
                                 );
                             }
                         }
@@ -241,11 +241,12 @@ pub mod move_job {
                                         root_path_ext.display()
                                     );
                                 }
-                                Err(_) => {
+                                Err(e) => {
                                     tracing::error!(
-                                        "Failed to move files from {} to {}, initiated due to old file age",
+                                        "Failed to move files from {} to {}, initiated due to old file age. Error: {:?}",
                                         root_path_local.display(),
-                                        root_path_ext.display()
+                                        root_path_ext.display(),
+                                        e
                                     );
                                 }
                             }
@@ -272,11 +273,12 @@ pub mod move_job {
                                                 );
                                                 _ = sender.send(OutgoingMessage::Ok);
                                             }
-                                            Err(_) => {
+                                            Err(e) => {
                                                 tracing::error!(
-                                                    "Failed to move files from {} to {}, initiated due to explicit request",
+                                                    "Failed to move files from {} to {}, initiated due to explicit request. Error: {:?}",
                                                     root_path_local.display(),
-                                                    root_path_ext.display()
+                                                    root_path_ext.display(),
+                                                    e
                                                 );
                                                 _ = sender.send(OutgoingMessage::Failed);
                                             }
@@ -301,19 +303,32 @@ pub mod move_job {
     }
 
     async fn move_file(source: &PathBuf, destination: &PathBuf) -> Result<(), Box<dyn Error>> {
-        let mut files_in_src = tokio::fs::read_dir(source).await?;
+        if tokio::fs::metadata(source).await?.is_dir() {
+            let mut files_in_src = tokio::fs::read_dir(source).await?;
 
-        while let Ok(Some(file)) = files_in_src.next_entry().await {
-            let metadata = tokio::fs::metadata(file.path()).await?;
-            if file.path().is_file() && !metadata.file_type().is_symlink() {
-                let dst_path = destination.join(file.file_name());
-                let src_path = file.path();
+            while let Ok(Some(file)) = files_in_src.next_entry().await {
+                let metadata = tokio::fs::metadata(file.path()).await?;
+                if !metadata.file_type().is_symlink() {
+                    let dst_path = destination.join(file.file_name());
+                    let src_path = file.path();
 
-                tokio::fs::copy(&src_path, &dst_path).await?;
-                tokio::fs::remove_file(&src_path).await?;
+                    tokio::fs::copy(&src_path, &dst_path).await?;
+                    tokio::fs::remove_file(&src_path).await?;
 
-                tokio::fs::symlink(&dst_path, &src_path).await?;
+                    tokio::fs::symlink(&dst_path, &src_path).await?;
+                }
             }
+        } else {
+            // There is no need to check for is_symlink here since invocation of this function with
+            // individual file would always have been done after is_symlink has already been
+            // checked.
+            let file_name = source.file_name().ok_or("Failed to get file name")?;
+            let dst_path = destination.join(file_name);
+
+            tokio::fs::copy(source, &dst_path).await?;
+            tokio::fs::remove_file(source).await?;
+
+            tokio::fs::symlink(&dst_path, source).await?;
         }
 
         Ok(())
@@ -379,6 +394,7 @@ pub mod spawn_server_job {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::borrow::Cow;
     use std::fs::{create_dir_all, remove_dir_all, File};
     use std::path::PathBuf;
 
@@ -391,14 +407,15 @@ mod tests {
         let dst_dir = format!("{}/{}", CONFIG_PATH, DST_FOLDER);
         Config {
             config_path: CONFIG_PATH.into(),
+            log_path: Cow::from(""),
             radarr_port: 7878,
             sonarr_port: 8989,
             prowlarr_port: 8888,
             qbit_torrent_port: 9090,
-            radarr_api_key: String::from(""),
-            sonarr_api_key: String::from(""),
-            prowlarr_api_key: String::from(""),
-            qbit_torrent_api_key: String::from(""),
+            radarr_api_key: Cow::from(""),
+            sonarr_api_key: Cow::from(""),
+            prowlarr_api_key: Cow::from(""),
+            qbit_torrent_api_key: Cow::from(""),
             move_job_period: 10,
             age_threshold: 10,
             root_path_local: src_dir.into(),

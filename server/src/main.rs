@@ -1,7 +1,6 @@
 use dookie_server_lib::{
     move_job, Config, Job, Logger, MainListener, MediaBundle, Unassigned, Unprimed,
 };
-use std::borrow::Cow;
 use std::error::Error;
 use structopt::StructOpt;
 use tracing::Instrument;
@@ -12,32 +11,11 @@ struct Opt {
     config_path: String,
 }
 
-const CONFIG_PATH: &'static str = "./var";
-const SRC_FOLDER: &'static str = "src_folder";
-const DST_FOLDER: &'static str = "dst_folder";
-const DEFAULT_LOG_PATH: &'static str = "~/Library/Logs/dookie/";
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let Opt { config_path } = Opt::from_args();
-    let src_dir = format!("{}/{}", CONFIG_PATH, SRC_FOLDER);
-    let dst_dir = format!("{}/{}", CONFIG_PATH, DST_FOLDER);
-    let config = Config {
-        config_path: CONFIG_PATH.into(),
-        log_path: CONFIG_PATH.into(),
-        radarr_port: 7878,
-        sonarr_port: 8989,
-        prowlarr_port: 8888,
-        qbit_torrent_port: 9090,
-        radarr_api_key: Cow::from(""),
-        sonarr_api_key: Cow::from(""),
-        prowlarr_api_key: Cow::from(""),
-        qbit_torrent_api_key: Cow::from(""),
-        move_job_period: 100,
-        age_threshold: 100,
-        root_path_local: src_dir.into(),
-        root_path_ext: dst_dir.into(),
-    };
+    let config_file = std::fs::read(config_path)?;
+    let config = Config::from_buffer(&config_file)?;
 
     let (move_job_handle, move_job_sender) = {
         let mut move_job_handle = move_job::JobStruct::spawn(&config)?;
