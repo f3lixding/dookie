@@ -96,10 +96,8 @@ impl MainListener<Assigned> {
                 let n = match stream.try_read(&mut data) {
                     Ok(n) => {
                         if n > 0 {
-                            println!("read {} bytes", n);
                             n
                         } else {
-                            println!("read 0 bytes");
                             continue;
                         }
                     }
@@ -147,12 +145,9 @@ impl MainListener<Assigned> {
                     }
                 };
 
-                println!("Response: {:?}", resp);
-
                 // Send the response back via UDS
                 stream.ready(Interest::WRITABLE).await?;
                 let buf = resp.unwrap_or_default().encode_to_vec();
-                println!("Write {} bytes", buf.len());
                 stream.write_all(buf.as_slice()).await?;
             }
 

@@ -72,7 +72,6 @@ mod tests {
     #[test]
     fn test_read_config() {
         let config = Config::from_buffer(TEST_YML.as_bytes());
-        println!("{:?}", config);
         assert!(config.is_ok());
     }
 }
