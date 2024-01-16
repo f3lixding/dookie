@@ -30,6 +30,7 @@ pub use media_bundle::*;
 ///   - If the task is explicitly being told to do so right now
 pub mod move_job {
     use std::{
+        collections::HashMap,
         path::PathBuf,
         sync::{atomic::AtomicBool, Arc},
     };
@@ -102,8 +103,16 @@ pub mod move_job {
         > {
             let move_job_period = config.move_job_period;
             let age_threshold = config.age_threshold;
-            let root_path_local = (*config.root_path_local).to_owned();
-            let root_path_ext = (*config.root_path_ext).to_owned();
+            let move_map = config.move_map.iter().fold(
+                HashMap::<PathBuf, PathBuf>::new(),
+                |mut acc, (src_path, dst_path)| {
+                    let src_path = src_path.to_owned().to_string();
+                    let dst_path = dst_path.to_owned().to_string();
+                    acc.insert(PathBuf::from(src_path), PathBuf::from(dst_path));
+
+                    acc
+                },
+            );
 
             let (move_sender, mut move_receiver) = tokio::sync::mpsc::channel::<(
                 Self::IncomingMessage,
@@ -182,8 +191,6 @@ pub mod move_job {
             let is_moving = is_moving_;
             let timer = timer_;
             let handle = task::spawn(async move {
-                let root_path_local = PathBuf::from(root_path_local);
-                let root_path_ext = PathBuf::from(root_path_ext);
                 let mut disks = Disks::new_with_refreshed_list();
 
                 loop {
@@ -197,55 +204,65 @@ pub mod move_job {
                             ((disk.available_space() as f64) / (disk.total_space() as f64)) * 100.0;
                         available_percentage < 5.0
                     };
-                    let old_list: Vec<PathBuf> = {
-                        let mut full_list = tokio::fs::read_dir(&root_path_local).await?;
+
+                    // key: PathBuf to the file
+                    // value: Reference to the PathBuf to the destination folder
+                    let old_list: Vec<(PathBuf, &PathBuf)> = {
                         let mut filtered_list = vec![];
-                        while let Some(file) = full_list.next_entry().await? {
-                            let metadata = file.metadata().await?;
-                            if metadata.is_symlink() {
-                                continue;
-                            }
-                            let age = metadata.created()?.elapsed()?.as_secs();
-                            if age >= age_threshold {
-                                filtered_list.push(file.path());
+
+                        // We do this for each directory we monitor
+                        for (src, dst) in &move_map {
+                            let mut full_list = tokio::fs::read_dir(&src).await?;
+                            while let Some(file) = full_list.next_entry().await? {
+                                let metadata = file.metadata().await?;
+                                if metadata.is_symlink() {
+                                    continue;
+                                }
+                                let age = metadata.created()?.elapsed()?.as_secs();
+                                if age >= age_threshold {
+                                    filtered_list.push((file.path(), dst));
+                                }
                             }
                         }
+
                         filtered_list
                     };
 
                     if is_full {
-                        match move_file(&root_path_local, &root_path_ext).await {
-                            Ok(_) => {
-                                tracing::info!(
-                                    "Moved files from {} to {}, due to disk full",
-                                    root_path_local.display(),
-                                    root_path_ext.display()
-                                );
-                            }
-                            Err(e) => {
-                                tracing::error!(
-                                    "Failed to move files from {} to {}, initiated due to disk full. Error: {:?}",
-                                    root_path_local.display(),
-                                    root_path_ext.display(),
-                                    e
-                                );
-                            }
-                        }
-                    } else if !old_list.is_empty() {
-                        for file in old_list {
-                            match move_file(&file, &root_path_ext).await {
+                        for (root_path_local, root_path_ext) in &move_map {
+                            match move_file(root_path_local, root_path_ext).await {
                                 Ok(_) => {
                                     tracing::info!(
-                                        "Moved files from {} to {}, due to old file age",
+                                        "Moved files from {} to {}, due to disk full",
                                         root_path_local.display(),
                                         root_path_ext.display()
                                     );
                                 }
                                 Err(e) => {
                                     tracing::error!(
+                                    "Failed to move files from {} to {}, initiated due to disk full. Error: {:?}",
+                                    root_path_local.display(),
+                                    root_path_ext.display(),
+                                    e
+                                );
+                                }
+                            }
+                        }
+                    } else if !old_list.is_empty() {
+                        for (file, dst_path) in old_list {
+                            match move_file(&file, dst_path).await {
+                                Ok(_) => {
+                                    tracing::info!(
+                                        "Moved files from {} to {}, due to old file age",
+                                        file.display(),
+                                        dst_path.display()
+                                    );
+                                }
+                                Err(e) => {
+                                    tracing::error!(
                                         "Failed to move files from {} to {}, initiated due to old file age. Error: {:?}",
-                                        root_path_local.display(),
-                                        root_path_ext.display(),
+                                        file.display(),
+                                        dst_path.display(),
                                         e
                                     );
                                 }
@@ -264,32 +281,44 @@ pub mod move_job {
                                     // Start command
                                     (IncomingMessage::Start, Some(sender)) => {
                                         is_moving.store(true, std::sync::atomic::Ordering::Relaxed);
-                                        match move_file(&root_path_local, &root_path_ext).await {
-                                            Ok(_) => {
-                                                tracing::info!(
-                                                    "Moved files from {} to {}, due to explicit request",
-                                                    root_path_local.display(),
-                                                    root_path_ext.display()
-                                                );
-                                                _ = sender.send(OutgoingMessage::Ok);
-                                            }
-                                            Err(e) => {
-                                                tracing::error!(
-                                                    "Failed to move files from {} to {}, initiated due to explicit request. Error: {:?}",
-                                                    root_path_local.display(),
-                                                    root_path_ext.display(),
-                                                    e
-                                                );
-                                                _ = sender.send(OutgoingMessage::Failed);
+
+                                        let mut has_failed = false;
+                                        for (src_dir, dst_dir) in &move_map {
+                                            match move_file(src_dir, dst_dir).await {
+                                                Ok(_) => {
+                                                    tracing::info!(
+                                                        "Moved files from {} to {}, due to explicit request",
+                                                        src_dir.display(),
+                                                        dst_dir.display()
+                                                    );
+                                                }
+                                                Err(e) => {
+                                                    tracing::error!(
+                                                        "Failed to move files from {} to {}, initiated due to explicit request. Error: {:?}",
+                                                        src_dir.display(),
+                                                        dst_dir.display(),
+                                                        e
+                                                    );
+                                                    has_failed = true;
+                                                }
                                             }
                                         }
+
+                                        if has_failed {
+                                            _ = sender.send(OutgoingMessage::Ok);
+                                        } else {
+                                            _ = sender.send(OutgoingMessage::Failed);
+                                        }
+
                                         is_moving.store(false, std::sync::atomic::Ordering::Relaxed);
                                     }
+
                                     // Stop command
                                     (IncomingMessage::Stop, Some(sender)) => {
                                         _ = sender.send(OutgoingMessage::Ok);
                                         break Ok(());
                                     }
+
                                     _ => unreachable!("Unexpected message in move_receiver"),
                                 }
                             }
@@ -395,6 +424,7 @@ pub mod spawn_server_job {
 mod tests {
     use super::*;
     use std::borrow::Cow;
+    use std::collections::HashMap;
     use std::fs::{create_dir_all, remove_dir_all, File};
     use std::path::PathBuf;
 
@@ -418,8 +448,11 @@ mod tests {
             qbit_torrent_api_key: Cow::from(""),
             move_job_period: 10,
             age_threshold: 10,
-            root_path_local: src_dir.into(),
-            root_path_ext: dst_dir.into(),
+            move_map: {
+                let mut map = HashMap::new();
+                map.insert(Cow::from(src_dir), Cow::from(dst_dir));
+                map
+            },
         }
     }
 

@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use serde_yaml;
 use std::borrow::Cow;
+use std::collections::HashMap;
 use std::error::Error;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -17,8 +18,7 @@ pub struct Config<'a> {
     pub qbit_torrent_api_key: Cow<'a, str>,
     pub move_job_period: u64,
     pub age_threshold: u64,
-    pub root_path_local: Cow<'a, str>,
-    pub root_path_ext: Cow<'a, str>,
+    pub move_map: HashMap<Cow<'a, str>, Cow<'a, str>>,
 }
 
 impl<'a> Config<'a> {
@@ -42,8 +42,7 @@ impl<'a> Default for Config<'a> {
             qbit_torrent_api_key: "".into(),
             move_job_period: 100,
             age_threshold: 100,
-            root_path_local: "".into(),
-            root_path_ext: "".into(),
+            move_map: HashMap::new(),
         }
     }
 }
@@ -65,13 +64,15 @@ mod tests {
             qbit_torrent_api_key: "some_key"
             move_job_period: 100
             age_threshold: 100
-            root_path_local: "/root/path/local/"
-            root_path_ext: "/root/path/ext/"
+            move_map:
+                "/root/path/local/one": "/root/path/ext/one"
+                "/root/path/local/two": "/root/path/ext/two"
         "#;
 
     #[test]
     fn test_read_config() {
         let config = Config::from_buffer(TEST_YML.as_bytes());
+        println!("{:?}", config);
         assert!(config.is_ok());
     }
 }
