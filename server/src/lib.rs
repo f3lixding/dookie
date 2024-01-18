@@ -563,6 +563,43 @@ mod tests {
         .unwrap();
     }
 
+    fn create_nested_test_dirs() {
+        let src_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, SRC_FOLDER));
+        let dst_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, DST_FOLDER));
+
+        let sub_dir_one = src_dir.join("sub_dir_one").join("sub_sub_dir");
+        let sub_dir_two = src_dir.join("sub_dir_two").join("sub_sub_dir");
+
+        create_dir_all(&sub_dir_one).unwrap();
+        create_dir_all(&sub_dir_two).unwrap();
+        create_dir_all(&dst_dir).unwrap();
+
+        _ = File::create(format!(
+            "{}/{}",
+            sub_dir_one.to_str().unwrap(),
+            "test_file_1.txt"
+        ))
+        .unwrap();
+        _ = File::create(format!(
+            "{}/{}",
+            sub_dir_one.to_str().unwrap(),
+            "test_file_2.txt"
+        ))
+        .unwrap();
+        _ = File::create(format!(
+            "{}/{}",
+            sub_dir_two.to_str().unwrap(),
+            "test_file_1.txt"
+        ))
+        .unwrap();
+        _ = File::create(format!(
+            "{}/{}",
+            sub_dir_two.to_str().unwrap(),
+            "test_file_2.txt"
+        ))
+        .unwrap();
+    }
+
     fn clean_up() {
         remove_dir_all(CONFIG_PATH).unwrap();
     }
@@ -612,6 +649,53 @@ mod tests {
         let dst_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, "dst_folder"));
 
         create_test_dirs();
+
+        // Testing targeted move first
+        let targeted_dir = src_dir.join("sub_dir_one");
+        let move_res = move_job::move_dir_(true, false, &targeted_dir, &dst_dir).await;
+        if move_res.is_err() {
+            println!("move_res error: {:?}", move_res);
+        }
+        assert!(move_res.is_ok());
+        let files_in_dst = dst_dir.read_dir().unwrap();
+        let files_in_src = src_dir.read_dir().unwrap();
+        assert_eq!(files_in_dst.count(), 1);
+        assert_eq!(files_in_src.count(), 2);
+
+        let mut num_normal_files = 0;
+        let mut num_symlinks = 0;
+        for file in src_dir.read_dir().unwrap() {
+            let file = file.expect("Files remaining in src dir should be ok to read");
+
+            if file.metadata().unwrap().is_symlink() {
+                num_symlinks += 1;
+            } else {
+                num_normal_files += 1;
+            }
+        }
+        assert_eq!(num_normal_files, 1);
+        assert_eq!(num_symlinks, 1);
+
+        // And now we test the mass move
+        let move_res = move_job::move_dir_(true, true, &src_dir, &dst_dir).await;
+        if move_res.is_err() {
+            println!("move_res error: {:?}", move_res);
+        }
+        assert!(move_res.is_ok());
+        let files_in_dst = dst_dir.read_dir().unwrap();
+        let files_in_src = src_dir.read_dir().unwrap();
+        assert_eq!(files_in_dst.count(), 2);
+        assert_eq!(files_in_src.count(), 2);
+        for file in src_dir.read_dir().unwrap() {
+            let file = file.expect("Files remaining in src dir should be ok to read");
+
+            // Whatever is left should just be symlinks
+            assert!(file.metadata().unwrap().is_symlink());
+        }
+        clean_up();
+
+        // Now we test for further nested directories
+        create_nested_test_dirs();
 
         // Testing targeted move first
         let targeted_dir = src_dir.join("sub_dir_one");
