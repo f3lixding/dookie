@@ -31,7 +31,9 @@ pub use media_bundle::*;
 pub mod move_job {
     use std::{
         collections::HashMap,
+        future::Future,
         path::PathBuf,
+        pin::Pin,
         sync::{atomic::AtomicBool, Arc},
     };
 
@@ -214,6 +216,7 @@ pub mod move_job {
                         for (src, dst) in &move_map {
                             let mut full_list = tokio::fs::read_dir(&src).await?;
                             while let Some(file) = full_list.next_entry().await? {
+                                println!("{} {}", file.path().display(), dst.display());
                                 let metadata = file.metadata().await?;
                                 if metadata.is_symlink() {
                                     continue;
@@ -230,7 +233,7 @@ pub mod move_job {
 
                     if is_full {
                         for (root_path_local, root_path_ext) in &move_map {
-                            match move_file(root_path_local, root_path_ext).await {
+                            match move_dir(true, true, root_path_local, root_path_ext).await {
                                 Ok(_) => {
                                     tracing::info!(
                                         "Moved files from {} to {}, due to disk full",
@@ -250,7 +253,7 @@ pub mod move_job {
                         }
                     } else if !old_list.is_empty() {
                         for (file, dst_path) in old_list {
-                            match move_file(&file, dst_path).await {
+                            match move_dir(true, false, &file, dst_path).await {
                                 Ok(_) => {
                                     tracing::info!(
                                         "Moved files from {} to {}, due to old file age",
@@ -284,7 +287,7 @@ pub mod move_job {
 
                                         let mut has_failed = false;
                                         for (src_dir, dst_dir) in &move_map {
-                                            match move_file(src_dir, dst_dir).await {
+                                            match move_dir(true, true, src_dir, dst_dir).await {
                                                 Ok(_) => {
                                                     tracing::info!(
                                                         "Moved files from {} to {}, due to explicit request",
@@ -331,41 +334,88 @@ pub mod move_job {
         }
     }
 
-    async fn move_file(source: &PathBuf, destination: &PathBuf) -> Result<(), Box<dyn Error>> {
-        if tokio::fs::metadata(source).await?.is_dir() {
-            let mut files_in_src = tokio::fs::read_dir(source).await?;
+    // src_path is pointing to a particular folder to move if is_mass_move is false
+    // Otherwise src_path is pointing to a root folder for evertyhing in it to be moved
+    // If is_root and is_mass_move are both true, then the function would need to symlink moved
+    // items.
+    // If is_root is false, and is_mass_move is true, then the function would not symlink
+    // If is_root is true, and is_mass_move is false, then the function would symlink src path
+    // (which is a folder to a content) to dst_path (which never have the end path attached, which
+    // means you would need to attach the end segment to it before you call move).
+    fn move_dir(
+        is_root: bool,
+        is_mass_move: bool,
+        src_path: &PathBuf,
+        dst_path: &PathBuf,
+    ) -> Pin<Box<dyn Future<Output = Result<(), Box<dyn Error>>> + Send>> {
+        // This cloning is needed because I am forced to put the function body in the async block.
+        let src_path = src_path.clone();
+        let mut dst_path = dst_path.clone();
 
-            while let Ok(Some(file)) = files_in_src.next_entry().await {
-                let metadata = tokio::fs::metadata(file.path()).await?;
-                if !metadata.file_type().is_symlink() {
-                    let dst_path = destination.join(file.file_name());
-                    let src_path = file.path();
+        Box::pin(async move {
+            let file_name = src_path.file_name().ok_or("Failed to get file name")?;
+            if (is_root && !is_mass_move) || !is_root {
+                dst_path.push(file_name);
+            }
 
-                    tokio::fs::copy(&src_path, &dst_path).await?;
-                    tokio::fs::remove_file(&src_path).await?;
+            if src_path.is_file() {
+                tokio::fs::copy(&src_path, &dst_path).await?;
 
-                    tokio::fs::symlink(&dst_path, &src_path).await?;
+                return Ok(());
+            }
+
+            if (is_root && !is_mass_move) || !is_root {
+                tokio::fs::create_dir_all(&dst_path).await?;
+            }
+            let mut files_in_src = tokio::fs::read_dir(&src_path).await?;
+
+            while let Some(file) = files_in_src.next_entry().await? {
+                if !file.metadata().await?.is_symlink() {
+                    move_dir(false, is_mass_move, &file.path(), &dst_path).await?;
+                    if file.metadata().await?.is_dir() {
+                        tokio::fs::remove_dir(&file.path()).await?;
+                    } else {
+                        tokio::fs::remove_file(&file.path()).await?;
+                    }
+
+                    if is_root {
+                        if is_mass_move {
+                            // If this is a mass move, we would need to create another pathbuf to
+                            // point to the specific file / folder we had just moved
+                            let dst_path = dst_path.join(file.file_name());
+                            tokio::fs::symlink(&dst_path, &file.path()).await?;
+                            tracing::info!(
+                                "Symlinked {} to {}",
+                                dst_path.display(),
+                                file.path().display()
+                            );
+                        }
+                    }
                 }
             }
-        } else {
-            // There is no need to check for is_symlink here since invocation of this function with
-            // individual file would always have been done after is_symlink has already been
-            // checked.
-            let file_name = source.file_name().ok_or("Failed to get file name")?;
-            let dst_path = destination.join(file_name);
 
-            tokio::fs::copy(source, &dst_path).await?;
-            tokio::fs::remove_file(source).await?;
+            // Here we check if this is a targeted move to symlink itself
+            if is_root && !is_mass_move {
+                if src_path.is_dir() {
+                    tokio::fs::remove_dir(&src_path).await?;
+                } else {
+                    tokio::fs::remove_file(&src_path).await?;
+                }
+                tokio::fs::symlink(&dst_path, &src_path).await?;
+            }
 
-            tokio::fs::symlink(&dst_path, source).await?;
-        }
-
-        Ok(())
+            Ok(())
+        })
     }
 
     #[cfg(test)]
-    pub async fn move_file_(source: &PathBuf, destination: &PathBuf) -> Result<(), Box<dyn Error>> {
-        Ok(move_file(source, destination).await?)
+    pub async fn move_dir_(
+        is_root: bool,
+        is_mass_move: bool,
+        src_path: &PathBuf,
+        dst_path: &PathBuf,
+    ) -> Result<(), Box<dyn Error>> {
+        move_dir(is_root, is_mass_move, src_path, dst_path).await
     }
 }
 
@@ -428,7 +478,7 @@ mod tests {
     use std::fs::{create_dir_all, remove_dir_all, File};
     use std::path::PathBuf;
 
-    const CONFIG_PATH: &'static str = "./var";
+    const CONFIG_PATH: &'static str = "./var_";
     const SRC_FOLDER: &'static str = "src_folder";
     const DST_FOLDER: &'static str = "dst_folder";
 
@@ -476,12 +526,50 @@ mod tests {
         .unwrap();
     }
 
+    fn create_test_dirs() {
+        let src_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, SRC_FOLDER));
+        let dst_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, DST_FOLDER));
+
+        let sub_dir_one = src_dir.join("sub_dir_one");
+        let sub_dir_two = src_dir.join("sub_dir_two");
+
+        create_dir_all(&sub_dir_one).unwrap();
+        create_dir_all(&sub_dir_two).unwrap();
+        create_dir_all(&dst_dir).unwrap();
+
+        _ = File::create(format!(
+            "{}/{}",
+            sub_dir_one.to_str().unwrap(),
+            "test_file_1.txt"
+        ))
+        .unwrap();
+        _ = File::create(format!(
+            "{}/{}",
+            sub_dir_one.to_str().unwrap(),
+            "test_file_2.txt"
+        ))
+        .unwrap();
+        _ = File::create(format!(
+            "{}/{}",
+            sub_dir_two.to_str().unwrap(),
+            "test_file_1.txt"
+        ))
+        .unwrap();
+        _ = File::create(format!(
+            "{}/{}",
+            sub_dir_two.to_str().unwrap(),
+            "test_file_2.txt"
+        ))
+        .unwrap();
+    }
+
     fn clean_up() {
         remove_dir_all(CONFIG_PATH).unwrap();
     }
 
     #[tokio::test]
     #[serial_test::serial]
+    // This tests moving of files directly without having them in the target directory
     async fn test_move_func_for_move_job() {
         create_test_files();
 
@@ -491,7 +579,7 @@ mod tests {
         let files_in_src = src_dir.read_dir().unwrap();
         assert_eq!(files_in_src.count(), 2);
 
-        let move_res = move_job::move_file_(&src_dir, &dst_dir).await;
+        let move_res = move_job::move_dir_(true, true, &src_dir, &dst_dir).await;
         if move_res.is_err() {
             println!("{:?}", move_res);
         }
@@ -511,6 +599,61 @@ mod tests {
                 .expect("Failure to retrieve metadata for test files");
 
             assert!(metadata.is_symlink(), "remaining files should be symlinks");
+        }
+
+        clean_up();
+    }
+
+    #[tokio::test]
+    #[serial_test::serial]
+    // This tests moving of files in target folders
+    async fn test_move_func_for_move_job_two() {
+        let src_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, "src_folder"));
+        let dst_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, "dst_folder"));
+
+        create_test_dirs();
+
+        // Testing targeted move first
+        let targeted_dir = src_dir.join("sub_dir_one");
+        let move_res = move_job::move_dir_(true, false, &targeted_dir, &dst_dir).await;
+        if move_res.is_err() {
+            println!("move_res error: {:?}", move_res);
+        }
+        assert!(move_res.is_ok());
+        let files_in_dst = dst_dir.read_dir().unwrap();
+        let files_in_src = src_dir.read_dir().unwrap();
+        assert_eq!(files_in_dst.count(), 1);
+        assert_eq!(files_in_src.count(), 2);
+
+        let mut num_normal_files = 0;
+        let mut num_symlinks = 0;
+        for file in src_dir.read_dir().unwrap() {
+            let file = file.expect("Files remaining in src dir should be ok to read");
+
+            if file.metadata().unwrap().is_symlink() {
+                num_symlinks += 1;
+            } else {
+                num_normal_files += 1;
+            }
+        }
+        assert_eq!(num_normal_files, 1);
+        assert_eq!(num_symlinks, 1);
+
+        // And now we test the mass move
+        let move_res = move_job::move_dir_(true, true, &src_dir, &dst_dir).await;
+        if move_res.is_err() {
+            println!("move_res error: {:?}", move_res);
+        }
+        assert!(move_res.is_ok());
+        let files_in_dst = dst_dir.read_dir().unwrap();
+        let files_in_src = src_dir.read_dir().unwrap();
+        assert_eq!(files_in_dst.count(), 2);
+        assert_eq!(files_in_src.count(), 2);
+        for file in src_dir.read_dir().unwrap() {
+            let file = file.expect("Files remaining in src dir should be ok to read");
+
+            // Whatever is left should just be symlinks
+            assert!(file.metadata().unwrap().is_symlink());
         }
 
         clean_up();
