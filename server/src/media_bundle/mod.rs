@@ -13,6 +13,24 @@ use sonarr::*;
 use async_trait::async_trait;
 use std::error::Error;
 
+/// Test related. Not sure if there is a better way to do this but this mainly helps with mocking
+/// so that tests can be written more easily.
+pub(in crate::media_bundle) trait BundleResponse {}
+
+impl BundleResponse for reqwest::Response {}
+
+#[async_trait]
+pub(in crate::media_bundle) trait IBundleClient: Send + Sync {
+    fn from_scratch(port: u16) -> Self;
+    fn clone_with_port(&self, port: u16) -> Self;
+    async fn get(&self, url: &str) -> Result<impl BundleResponse, Box<dyn Error + Send + Sync>>;
+    async fn post(
+        &self,
+        url: &str,
+        body: impl Into<reqwest::Body> + Send + Sync,
+    ) -> Result<impl BundleResponse, Box<dyn Error + Send + Sync>>;
+}
+
 /// This is really just a wrapper around reqwest::Client.
 /// The existence of it is to also retain information about the port. This way the constructor for
 /// ServerEntity is "prettier".
@@ -22,30 +40,31 @@ pub(in crate::media_bundle) struct BundleClient {
     port: u16,
 }
 
-impl BundleClient {
-    pub fn from_scratch(port: u16) -> Self {
+#[async_trait]
+impl IBundleClient for BundleClient {
+    fn from_scratch(port: u16) -> Self {
         BundleClient {
             client: reqwest::Client::new(),
             port,
         }
     }
 
-    pub fn clone_with_port(&self, port: u16) -> Self {
+    fn clone_with_port(&self, port: u16) -> Self {
         BundleClient {
             client: self.client.clone(),
             port,
         }
     }
 
-    pub async fn get(&self, url: &str) -> Result<reqwest::Response, Box<dyn Error + Send + Sync>> {
+    async fn get(&self, url: &str) -> Result<reqwest::Response, Box<dyn Error + Send + Sync>> {
         let url = format!("http://localhost:{}/{}", self.port, url);
         Ok(self.client.get(&url).send().await?)
     }
 
-    pub async fn post(
+    async fn post(
         &self,
         url: &str,
-        body: impl Into<reqwest::Body>,
+        body: impl Into<reqwest::Body> + Send + Sync,
     ) -> Result<reqwest::Response, Box<dyn Error + Send + Sync>> {
         let url = format!("http://localhost:{}/{}", self.port, url);
         let msg_body: reqwest::Body = body.into();
@@ -61,7 +80,13 @@ impl BundleClient {
 
 #[async_trait]
 pub(in crate::media_bundle) trait ServerEntity {
-    fn from_bundle_client(client: BundleClient) -> impl ServerEntity;
+    type Input;
+    type Output;
+    type Client: IBundleClient;
+
+    async fn make_call(&self, input: Self::Input) -> Self::Output;
+
+    fn from_bundle_client(client: Self::Client) -> impl ServerEntity;
     fn get_app_name(&self) -> &str;
 
     /// Provided method to start the underlying server.
@@ -72,10 +97,15 @@ pub(in crate::media_bundle) trait ServerEntity {
     /// Provided method to stop the underlying server.
     async fn shutdown(&self) -> Result<(), Box<dyn Error + Send + Sync>> {
         let process_name = self.get_app_name();
+        todo!("Implement proper shutdown logic for {}", process_name);
+        // TODO: implement proper shutdown logic
         Ok(())
     }
 }
 
+/// This is the construct used to bundle up all the different clients (i.e. radarr, sonarr, plex,
+/// etc)
+/// MediaBundle is to have a compositional relationship with ServerEntity.
 #[derive(Debug, Clone, Default)]
 pub struct MediaBundle {}
 
