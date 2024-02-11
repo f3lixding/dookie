@@ -15,9 +15,19 @@ use std::error::Error;
 
 /// Test related. Not sure if there is a better way to do this but this mainly helps with mocking
 /// so that tests can be written more easily.
-pub(in crate::media_bundle) trait BundleResponse {}
+#[async_trait]
+pub(in crate::media_bundle) trait BundleResponse {
+    async fn as_bytes(self) -> Result<Vec<u8>, Box<dyn Error + Send + Sync>>;
+}
 
-impl BundleResponse for reqwest::Response {}
+#[async_trait]
+impl BundleResponse for reqwest::Response {
+    async fn as_bytes(self) -> Result<Vec<u8>, Box<dyn Error + Send + Sync>> {
+        let res = self.bytes().await?.into();
+
+        Ok(res)
+    }
+}
 
 #[async_trait]
 pub(in crate::media_bundle) trait IBundleClient: Send + Sync {
@@ -84,7 +94,10 @@ pub(in crate::media_bundle) trait ServerEntity {
     type Output;
     type Client: IBundleClient;
 
-    async fn make_call(&self, input: Self::Input) -> Self::Output;
+    async fn make_call(
+        &self,
+        input: Self::Input,
+    ) -> Result<Self::Output, Box<dyn Error + Send + Sync>>;
 
     fn from_bundle_client(client: Self::Client) -> impl ServerEntity;
     fn get_app_name(&self) -> &str;

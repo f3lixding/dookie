@@ -216,7 +216,6 @@ pub mod move_job {
                         for (src, dst) in &move_map {
                             let mut full_list = tokio::fs::read_dir(&src).await?;
                             while let Some(file) = full_list.next_entry().await? {
-                                println!("{} {}", file.path().display(), dst.display());
                                 let metadata = file.metadata().await?;
                                 if metadata.is_symlink() {
                                     continue;

@@ -1,5 +1,6 @@
 use crate::media_bundle::{IBundleClient, ServerEntity};
 use async_trait::async_trait;
+use std::error::Error;
 
 const APP_NAME: &'static str = "Radarr";
 
@@ -19,7 +20,10 @@ where
     type Output = ();
     type Client = C;
 
-    async fn make_call(&self, input: Self::Input) -> Self::Output {
+    async fn make_call(
+        &self,
+        input: Self::Input,
+    ) -> Result<Self::Output, Box<dyn Error + Send + Sync>> {
         todo!()
     }
 
