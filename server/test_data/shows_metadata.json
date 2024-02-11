@@ -1,0 +1,3290 @@
+{
+  "MediaContainer": {
+    "size": 65,
+    "allowSync": true,
+    "art": "/:/resources/show-fanart.jpg",
+    "identifier": "com.plexapp.plugins.library",
+    "librarySectionID": 2,
+    "librarySectionTitle": "TV Shows",
+    "librarySectionUUID": "fbe69fb9-ac01-4c74-89f4-b95ecc0ec4a2",
+    "mediaTagPrefix": "/system/bundle/media/flags/",
+    "mediaTagVersion": 1698860282,
+    "nocache": true,
+    "thumb": "/:/resources/show.png",
+    "title1": "TV Shows",
+    "title2": "All Shows",
+    "viewGroup": "show",
+    "viewMode": 65592,
+    "Metadata": [
+      {
+        "ratingKey": "3043",
+        "key": "/library/metadata/3043/children",
+        "guid": "plex://show/5fd4f9d0618d00002df3959f",
+        "studio": "Lucasfilm Ltd.",
+        "type": "show",
+        "title": "Ahsoka",
+        "contentRating": "TV-14",
+        "summary": "After the fall of the Galactic Empire, former Jedi Ahsoka Tano investigates an emerging threat to a vulnerable galaxy.",
+        "index": 1,
+        "audienceRating": 7.7,
+        "viewCount": 1,
+        "lastViewedAt": 1706923900,
+        "year": 2023,
+        "thumb": "/library/metadata/3043/thumb/1705795870",
+        "art": "/library/metadata/3043/art/1705795870",
+        "theme": "/library/metadata/3043/theme/1705795870",
+        "duration": 3240000,
+        "originallyAvailableAt": "2023-08-23",
+        "leafCount": 8,
+        "viewedLeafCount": 1,
+        "childCount": 1,
+        "addedAt": 1705795869,
+        "updatedAt": 1705795870,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/3054",
+        "Genre": [
+          {
+            "tag": "Action"
+          },
+          {
+            "tag": "Adventure"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Rosario Dawson"
+          },
+          {
+            "tag": "Natasha Liu Bordizzo"
+          },
+          {
+            "tag": "Mary Elizabeth Winstead"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2441",
+        "key": "/library/metadata/2441/children",
+        "guid": "plex://show/628518adc03a80842c2275d8",
+        "studio": "Beach Road Pictures",
+        "type": "show",
+        "title": "The Artful Dodger",
+        "titleSort": "Artful Dodger",
+        "contentRating": "TV-14",
+        "summary": "In 1850s Australia, in the lively colony of Port Victory, Jack Dawkins aka The Artful Dodger, has transferred his fast fingers as a pickpocket to the nimble skilled fingers of a surgeon. Dodger's past returns to haunt him with the arrival of Fagin, luring him back into a world of crime. A greater threat – to Dodger's heart – is Lady Belle, the Governor's daughter, determined to become the colony's first female surgeon.",
+        "index": 1,
+        "audienceRating": 8.5,
+        "year": 2023,
+        "tagline": "The Dodger Will See You Now",
+        "thumb": "/library/metadata/2441/thumb/1705739093",
+        "art": "/library/metadata/2441/art/1705739093",
+        "duration": 2940000,
+        "originallyAvailableAt": "2023-11-29",
+        "leafCount": 8,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1705739092,
+        "updatedAt": 1705739093,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/2468",
+        "Genre": [
+          {
+            "tag": "Crime"
+          },
+          {
+            "tag": "Drama"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "Australia"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Thomas Brodie-Sangster"
+          },
+          {
+            "tag": "David Thewlis"
+          },
+          {
+            "tag": "Maia Mitchell"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3193",
+        "key": "/library/metadata/3193/children",
+        "guid": "plex://show/5d9c08da4eefaa001f5e44af",
+        "studio": "Alec Berg Productions",
+        "type": "show",
+        "title": "Barry",
+        "contentRating": "TV-MA",
+        "summary": "A hit man from the Midwest moves to Los Angeles and gets caught up in the city's theatre arts scene.",
+        "index": 1,
+        "audienceRating": 7.9,
+        "viewCount": 23,
+        "skipCount": 1,
+        "lastViewedAt": 1707620558,
+        "year": 2018,
+        "tagline": "A hitman searching for some direction. (Season 1)",
+        "thumb": "/library/metadata/3193/thumb/1705807532",
+        "art": "/library/metadata/3193/art/1705807532",
+        "theme": "/library/metadata/3193/theme/1705807532",
+        "duration": 1800000,
+        "originallyAvailableAt": "2018-03-25",
+        "leafCount": 32,
+        "viewedLeafCount": 23,
+        "childCount": 4,
+        "addedAt": 1705807531,
+        "updatedAt": 1705807532,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/3217",
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Crime"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Bill Hader"
+          },
+          {
+            "tag": "Sarah Goldberg"
+          },
+          {
+            "tag": "Anthony Carrigan"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3519",
+        "key": "/library/metadata/3519/children",
+        "guid": "plex://show/611f8407767ddf002cb05be2",
+        "studio": "FX Productions",
+        "type": "show",
+        "title": "The Bear",
+        "titleSort": "Bear",
+        "contentRating": "TV-MA",
+        "summary": "Carmy, a young fine-dining chef, comes home to Chicago to run his family sandwich shop. As he fights to transform the shop and himself, he works alongside a rough-around-the-edges crew that ultimately reveal themselves as his chosen family.",
+        "index": 1,
+        "audienceRating": 8.3,
+        "userRating": 10.0,
+        "viewCount": 18,
+        "lastViewedAt": 1707114097,
+        "lastRatedAt": 1707364144,
+        "year": 2022,
+        "thumb": "/library/metadata/3519/thumb/1706201779",
+        "art": "/library/metadata/3519/art/1706201779",
+        "theme": "/library/metadata/3519/theme/1706201779",
+        "duration": 1800000,
+        "originallyAvailableAt": "2022-06-23",
+        "leafCount": 18,
+        "viewedLeafCount": 18,
+        "childCount": 2,
+        "addedAt": 1706201776,
+        "updatedAt": 1706201779,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/3561",
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Jeremy Allen White"
+          },
+          {
+            "tag": "Ebon Moss-Bachrach"
+          },
+          {
+            "tag": "Ayo Edebiri"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4333",
+        "key": "/library/metadata/4333/children",
+        "guid": "plex://show/650b343b2a9e278ee2d80050",
+        "studio": "Studio 99",
+        "type": "show",
+        "title": "Beckham",
+        "contentRating": "TV-MA",
+        "summary": "David Beckham is one of the most known names on the planet, yet few people know who he really is. From his humble working-class beginnings in east London, his drive and determination to win, and the battle to find balance between ambition, love and family, David's story is one of immense ups and downs.",
+        "index": 1,
+        "audienceRating": 8.0,
+        "viewCount": 1,
+        "lastViewedAt": 1706916444,
+        "year": 2023,
+        "thumb": "/library/metadata/4333/thumb/1706686054",
+        "art": "/library/metadata/4333/art/1706686054",
+        "duration": 17100000,
+        "originallyAvailableAt": "2023-10-04",
+        "leafCount": 4,
+        "viewedLeafCount": 1,
+        "childCount": 1,
+        "addedAt": 1706686053,
+        "updatedAt": 1706686054,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "Genre": [
+          {
+            "tag": "Documentary"
+          },
+          {
+            "tag": "Biography"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United Kingdom"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "David Beckham"
+          },
+          {
+            "tag": "Victoria Beckham"
+          },
+          {
+            "tag": "Alex Ferguson"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2668",
+        "key": "/library/metadata/2668/children",
+        "guid": "plex://show/5d9c08254eefaa001f5d6dcb",
+        "studio": "Sony Pictures Television Studios",
+        "type": "show",
+        "title": "Better Call Saul",
+        "contentRating": "TV-MA",
+        "summary": "Before Saul Goodman, he was Jimmy McGill. And if you're calling Jimmy, you're in real trouble. The prequel to \"Breaking Bad\" follows small-time attorney, Jimmy McGill, as he transforms into Walter White's morally challenged lawyer, Saul Goodman.",
+        "index": 1,
+        "audienceRating": 8.7,
+        "year": 2015,
+        "tagline": "Make the call",
+        "thumb": "/library/metadata/2668/thumb/1705739108",
+        "art": "/library/metadata/2668/art/1705739108",
+        "theme": "/library/metadata/2668/theme/1705739108",
+        "duration": 189240000,
+        "originallyAvailableAt": "2015-02-08",
+        "leafCount": 14,
+        "viewedLeafCount": 0,
+        "childCount": 2,
+        "addedAt": 1705739106,
+        "updatedAt": 1705739108,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/2694",
+        "Genre": [
+          {
+            "tag": "Crime"
+          },
+          {
+            "tag": "Drama"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Bob Odenkirk"
+          },
+          {
+            "tag": "Jonathan Banks"
+          },
+          {
+            "tag": "Rhea Seehorn"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4715",
+        "key": "/library/metadata/4715/children",
+        "guid": "plex://show/5d9c0863ef619b002047f234",
+        "studio": "House of Tomorrow",
+        "type": "show",
+        "title": "Black Mirror",
+        "contentRating": "TV-MA",
+        "summary": "Set in a world only minutes from our own, \"Black Mirror\", a UK and USA non-hosted anthology series; unveils how modern technologies can backfire and be used against their makers, every episode set in a slightly different reality with different characters combating different types of technologies. The series ran from 2011 until 2019.",
+        "index": 1,
+        "audienceRating": 8.3,
+        "viewCount": 1,
+        "lastViewedAt": 1707358609,
+        "year": 2011,
+        "tagline": ">> The future is bright./ (season 3)",
+        "thumb": "/library/metadata/4715/thumb/1707197124",
+        "art": "/library/metadata/4715/art/1707197124",
+        "theme": "/library/metadata/4715/theme/1707197124",
+        "duration": 3600000,
+        "originallyAvailableAt": "2011-12-04",
+        "leafCount": 6,
+        "viewedLeafCount": 1,
+        "childCount": 1,
+        "addedAt": 1707197118,
+        "updatedAt": 1707197124,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/4723",
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Science Fiction"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United Kingdom"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Monica Dolan"
+          },
+          {
+            "tag": "Joshua James"
+          },
+          {
+            "tag": "Daniel Lapaine"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2394",
+        "key": "/library/metadata/2394/children",
+        "guid": "plex://show/644847d67ce11fb88cac11a7",
+        "studio": "Blue Spirit",
+        "type": "show",
+        "title": "BLUE EYE SAMURAI",
+        "contentRating": "TV-MA",
+        "summary": "Driven by a dream of revenge against those who made her an outcast in Edo-period Japan, a young warrior cuts a bloody path toward her destiny.",
+        "index": 1,
+        "audienceRating": 8.6,
+        "userRating": 10.0,
+        "viewCount": 8,
+        "lastViewedAt": 1705872769,
+        "lastRatedAt": 1705867920,
+        "year": 2023,
+        "thumb": "/library/metadata/2394/thumb/1705739092",
+        "art": "/library/metadata/2394/art/1705739092",
+        "duration": 22620000,
+        "originallyAvailableAt": "2023-11-03",
+        "leafCount": 8,
+        "viewedLeafCount": 8,
+        "childCount": 1,
+        "addedAt": 1705739090,
+        "updatedAt": 1705739092,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/2425",
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Action"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Maya Erskine"
+          },
+          {
+            "tag": "George Takei"
+          },
+          {
+            "tag": "Masi Oka"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2451",
+        "key": "/library/metadata/2451/children",
+        "guid": "plex://show/64e85e840738cc8f64d9ac07",
+        "studio": "North One Television",
+        "type": "show",
+        "title": "Brawn: The Impossible Formula 1 Story",
+        "contentRating": "TV-MA",
+        "summary": "Keanu Reeves tells one of the greatest sagas in Formula 1 history. Through the insights of Ross Brawn and revered racing icons like Jenson Button and Rubens Barrichello, all is revealed in this gripping four-part series. From the formation of Brawn GP see their remarkable journey through strategic manoeuvres and financial trials during an exceptionally competitive era in the annals of the sport.",
+        "index": 1,
+        "audienceRating": 8.3,
+        "lastViewedAt": 1702352600,
+        "year": 2023,
+        "thumb": "/library/metadata/2451/thumb/1705739094",
+        "art": "/library/metadata/2451/art/1705739094",
+        "duration": 14100000,
+        "originallyAvailableAt": "2023-11-15",
+        "leafCount": 4,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1705739093,
+        "updatedAt": 1705739094,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/2479",
+        "Genre": [
+          {
+            "tag": "Documentary"
+          },
+          {
+            "tag": "Sport"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United Kingdom"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Keanu Reeves"
+          },
+          {
+            "tag": "Jenson Button"
+          },
+          {
+            "tag": "Ross Brawn"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2504",
+        "key": "/library/metadata/2504/children",
+        "guid": "plex://show/5d9c086e08fddd001f29a991",
+        "studio": "Dr. Goor Productions",
+        "type": "show",
+        "title": "Brooklyn Nine-Nine",
+        "contentRating": "TV-14",
+        "summary": "Comedy series following the exploits of Det. Jake Peralta and his diverse, lovable colleagues as they police the NYPD's 99th Precinct.",
+        "index": 1,
+        "audienceRating": 8.2,
+        "viewCount": 160,
+        "skipCount": 8,
+        "lastViewedAt": 1707097516,
+        "year": 2013,
+        "tagline": "The law. Without the order.",
+        "thumb": "/library/metadata/2504/thumb/1705739099",
+        "art": "/library/metadata/2504/art/1705739099",
+        "theme": "/library/metadata/2504/theme/1705739099",
+        "duration": 1260000,
+        "originallyAvailableAt": "2013-09-17",
+        "leafCount": 153,
+        "viewedLeafCount": 153,
+        "childCount": 8,
+        "addedAt": 1705739097,
+        "updatedAt": 1705739099,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/2570",
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Crime"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Andy Samberg"
+          },
+          {
+            "tag": "Melissa Fumero"
+          },
+          {
+            "tag": "Terry Crews"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4161",
+        "key": "/library/metadata/4161/children",
+        "guid": "plex://show/61fcfe79d3fc0d214376712b",
+        "studio": "Brad Falchuk Teley-vision",
+        "type": "show",
+        "title": "The Brothers Sun",
+        "titleSort": "Brothers Sun",
+        "contentRating": "TV-MA",
+        "summary": "Just when Taipei gangster Charles Sun has finally settled into his life as a ruthless killer, his father is shot by a mysterious assassin and he must prepare to journey back to L.A. to protect his mother and utterly-unaware younger brother Bruce.",
+        "index": 1,
+        "audienceRating": 8.0,
+        "year": 2024,
+        "tagline": "Blood Runs in the Family",
+        "thumb": "/library/metadata/4161/thumb/1706784906",
+        "art": "/library/metadata/4161/art/1706784906",
+        "duration": 4140000,
+        "originallyAvailableAt": "2024-01-04",
+        "leafCount": 8,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1706579009,
+        "updatedAt": 1706784906,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "Genre": [
+          {
+            "tag": "Action"
+          },
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Michelle Yeoh"
+          },
+          {
+            "tag": "Justin Chien"
+          },
+          {
+            "tag": "Sam Li"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3399",
+        "key": "/library/metadata/3399/children",
+        "guid": "plex://show/6389112212a6421b815073ce",
+        "studio": "HYBE",
+        "type": "show",
+        "title": "BTS Monuments: Beyond the Star",
+        "originalTitle": "BTS Monuments: Beyond The Star",
+        "contentRating": "TV-MA",
+        "summary": "Follows the growth of the band from their beginnings to what they are today.",
+        "index": 1,
+        "audienceRating": 8.5,
+        "year": 2023,
+        "tagline": "10 years of BTS and beyond",
+        "thumb": "/library/metadata/3399/thumb/1706159611",
+        "art": "/library/metadata/3399/art/1706159611",
+        "duration": 1800000,
+        "originallyAvailableAt": "2023-12-20",
+        "leafCount": 7,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1706159608,
+        "updatedAt": 1706159611,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/3402",
+        "subtitleMode": "0",
+        "Genre": [
+          {
+            "tag": "Documentary"
+          },
+          {
+            "tag": "Music"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "Republic of Korea"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Kim Nam-joon"
+          },
+          {
+            "tag": "Kim Seok-jin"
+          },
+          {
+            "tag": "Min Yoon-gi"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2316",
+        "key": "/library/metadata/2316/children",
+        "guid": "plex://show/60c78454616c2a002cdff57f",
+        "studio": "Bobbypills",
+        "type": "show",
+        "title": "Captain Laserhawk: A Blood Dragon Remix",
+        "contentRating": "TV-MA",
+        "summary": "Year 1992. The United States has been renamed Eden, a technocracy dominated by corruption. Super soldier Dolph Laserhawk is locked up in the Supermaxx maximum security prison. He leads a team of rebels under the orders of a shady director.",
+        "index": 1,
+        "audienceRating": 7.8,
+        "viewCount": 6,
+        "lastViewedAt": 1705525216,
+        "year": 2023,
+        "thumb": "/library/metadata/2316/thumb/1705739086",
+        "art": "/library/metadata/2316/art/1705739086",
+        "duration": 1320000,
+        "originallyAvailableAt": "2023-10-19",
+        "leafCount": 6,
+        "viewedLeafCount": 6,
+        "childCount": 1,
+        "addedAt": 1705739085,
+        "updatedAt": 1705739086,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/2344",
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Action"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Adi Shankar"
+          },
+          {
+            "tag": "Balak"
+          },
+          {
+            "tag": "Nathaniel Curtis"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2336",
+        "key": "/library/metadata/2336/children",
+        "guid": "plex://show/607c5f9192112d0035116c41",
+        "studio": "Project 51 Productions",
+        "type": "show",
+        "title": "Castlevania: Nocturne",
+        "contentRating": "TV-MA",
+        "summary": "In the thick of the French Revolution, members of the so-called lower classes are rising up to fight inequality. Meanwhile, Richter Belmont senses a far grimmer and greater danger. He's picked up his family's long-held tradition of vampire hunting, a vocation that goes back almost as long as a vampiric life span (in other words, forever) but he's never seen anything quite like what he's witnessing now.",
+        "index": 1,
+        "audienceRating": 8.0,
+        "userRating": 7.0,
+        "viewCount": 8,
+        "skipCount": 1,
+        "lastViewedAt": 1705041765,
+        "lastRatedAt": 1705041985,
+        "year": 2023,
+        "tagline": "I pray for you, Richter Belmont.",
+        "thumb": "/library/metadata/2336/thumb/1705739087",
+        "art": "/library/metadata/2336/art/1705739087",
+        "duration": 1800000,
+        "originallyAvailableAt": "2023-09-28",
+        "leafCount": 8,
+        "viewedLeafCount": 8,
+        "childCount": 1,
+        "addedAt": 1705739086,
+        "updatedAt": 1705739087,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/2368",
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Action"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Edward Bluemel"
+          },
+          {
+            "tag": "Pixie Davies"
+          },
+          {
+            "tag": "Thuso Mbedu"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2357",
+        "key": "/library/metadata/2357/children",
+        "guid": "plex://show/5d9c0816e264b7001fc3bb9e",
+        "studio": "Left Bank Pictures",
+        "type": "show",
+        "title": "The Crown",
+        "titleSort": "Crown",
+        "contentRating": "TV-MA",
+        "summary": "The gripping, decades-spanning inside story of Her Majesty Queen Elizabeth II and the Prime Ministers who shaped Britain's post-war destiny. \n\nThe Crown tells the inside story of two of the most famous addresses in the world – Buckingham Palace and 10 Downing Street – and the intrigues, love lives and machinations behind the great events that shaped the second half of the 20th century. Two houses, two courts, one Crown.",
+        "index": 1,
+        "audienceRating": 8.2,
+        "viewCount": 10,
+        "skipCount": 3,
+        "lastViewedAt": 1704612281,
+        "year": 2016,
+        "tagline": "Change Will Challenge Tradition",
+        "thumb": "/library/metadata/2357/thumb/1705739090",
+        "art": "/library/metadata/2357/art/1705739090",
+        "theme": "/library/metadata/2357/theme/1705739090",
+        "duration": 3480000,
+        "originallyAvailableAt": "2016-11-04",
+        "leafCount": 20,
+        "viewedLeafCount": 10,
+        "childCount": 2,
+        "addedAt": 1705739087,
+        "updatedAt": 1705739090,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/2404",
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Biography"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United Kingdom"
+          },
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Claire Foy"
+          },
+          {
+            "tag": "Olivia Colman"
+          },
+          {
+            "tag": "Vanessa Kirby"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3540",
+        "key": "/library/metadata/3540/children",
+        "guid": "plex://show/61e8273128a140ffa16e24eb",
+        "studio": "StudioMDHR",
+        "type": "show",
+        "title": "The Cuphead Show!",
+        "titleSort": "Cuphead Show!",
+        "contentRating": "TV-Y7",
+        "summary": "Following the unique misadventures of loveable, impulsive scamp Cuphead and his cautious but easily swayed brother Mugman. As the two scour their surreal homeworld of the Inkwell Isles in search of fun and adventure, they always have each other's back. Unless there's only one cookie left, in which case it's every cup for himself.",
+        "index": 1,
+        "audienceRating": 7.9,
+        "viewCount": 1,
+        "lastViewedAt": 1706688666,
+        "year": 2022,
+        "thumb": "/library/metadata/3540/thumb/1706201780",
+        "art": "/library/metadata/3540/art/1706201780",
+        "theme": "/library/metadata/3540/theme/1706201780",
+        "duration": 840000,
+        "originallyAvailableAt": "2022-02-18",
+        "leafCount": 36,
+        "viewedLeafCount": 1,
+        "childCount": 3,
+        "addedAt": 1706201778,
+        "updatedAt": 1706201780,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/3581",
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Frank Todaro"
+          },
+          {
+            "tag": "Tru Valentino"
+          },
+          {
+            "tag": "Dave Wasson"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2724",
+        "key": "/library/metadata/2724/children",
+        "guid": "plex://show/5ef5ee064e3e4f0041bd18c3",
+        "studio": "TRIGGER",
+        "type": "show",
+        "title": "Cyberpunk: Edgerunners",
+        "originalTitle": "サイバーパンク：エッジランナーズ",
+        "contentRating": "TV-MA",
+        "summary": "A Street Kid trying to survive in a technology and body modification-obsessed city of the future. Having everything to lose, he chooses to stay alive by becoming an Edgerunner, a Mercenary outlaw also known as a Cyberpunk.",
+        "index": 1,
+        "audienceRating": 8.6,
+        "viewCount": 1,
+        "lastViewedAt": 1707197648,
+        "year": 2022,
+        "thumb": "/library/metadata/2724/thumb/1705744471",
+        "art": "/library/metadata/2724/art/1705744471",
+        "theme": "/library/metadata/2724/theme/1705744471",
+        "duration": 1500000,
+        "originallyAvailableAt": "2022-09-13",
+        "leafCount": 10,
+        "viewedLeafCount": 1,
+        "childCount": 1,
+        "addedAt": 1705744468,
+        "updatedAt": 1705744471,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/2736",
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Action"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "Japan"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "KENN"
+          },
+          {
+            "tag": "Kento Shiraishi"
+          },
+          {
+            "tag": "Aoi Yuki"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3495",
+        "key": "/library/metadata/3495/children",
+        "guid": "plex://show/6213a4b59c88417a182bb3e3",
+        "studio": "Blink Industries",
+        "type": "show",
+        "title": "Dead End: Paranormal Park",
+        "contentRating": "TV-Y7",
+        "summary": "The series follows the story of a group of employees (Barney and Norma) who work at a theme-park haunted house during the summer which might be a portal to hell. Both are joined by Pugsley and Courtney as they face zombies, game show hosts, witches, and crushes.",
+        "index": 1,
+        "audienceRating": 8.6,
+        "year": 2022,
+        "thumb": "/library/metadata/3495/thumb/1706172995",
+        "art": "/library/metadata/3495/art/1706172995",
+        "duration": 1560000,
+        "originallyAvailableAt": "2022-06-16",
+        "leafCount": 20,
+        "viewedLeafCount": 0,
+        "childCount": 2,
+        "addedAt": 1706172992,
+        "updatedAt": 1706172995,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/3507",
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Adventure"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United Kingdom"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Zach Barack"
+          },
+          {
+            "tag": "Kody Kavitha"
+          },
+          {
+            "tag": "Alex Brightman"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4736",
+        "key": "/library/metadata/4736/children",
+        "guid": "plex://show/6151a5f218874911f7dfb84f",
+        "studio": "Black Lamb",
+        "type": "show",
+        "title": "Death and Other Details",
+        "contentRating": "TV-MA",
+        "summary": "How do you solve a murder in a post-fact world? Especially when sailing the Mediterranean on an ocean liner filled with the wealthy and powerful. Everyone on board is hiding something. but is one of them a killer? That's what the world's once greatest detective, Rufus Cotesworth, and his protégée aim to discover. The truth at all costs.",
+        "index": 1,
+        "audienceRating": 7.4,
+        "year": 2024,
+        "tagline": "All suspects aboard.",
+        "thumb": "/library/metadata/4736/thumb/1707390612",
+        "art": "/library/metadata/4736/art/1707390612",
+        "duration": 3600000,
+        "originallyAvailableAt": "2024-01-16",
+        "leafCount": 5,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1707290328,
+        "updatedAt": 1707390612,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/4741",
+        "Genre": [
+          {
+            "tag": "Crime"
+          },
+          {
+            "tag": "Drama"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Violett Beane"
+          },
+          {
+            "tag": "Lauren Patten"
+          },
+          {
+            "tag": "Rahul Kohli"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3127",
+        "key": "/library/metadata/3127/children",
+        "guid": "plex://show/6274f781093e999f383e7197",
+        "studio": "Let's Not Turn This Into a Whole Big Production",
+        "type": "show",
+        "title": "The Diplomat",
+        "titleSort": "Diplomat",
+        "contentRating": "TV-MA",
+        "summary": "In the midst of an international crisis, Kate Wyler, a career diplomat, lands in a high-profile job for which she is not suited, with tectonic implications for her marriage and her political future.",
+        "index": 1,
+        "audienceRating": 7.4,
+        "year": 2023,
+        "thumb": "/library/metadata/3127/thumb/1705807527",
+        "art": "/library/metadata/3127/art/1705807527",
+        "duration": 3000000,
+        "originallyAvailableAt": "2023-02-20",
+        "leafCount": 8,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1705807526,
+        "updatedAt": 1705807527,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/3148",
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Thriller"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Keri Russell"
+          },
+          {
+            "tag": "Rufus Sewell"
+          },
+          {
+            "tag": "David Gyasi"
+          }
+        ]
+      },
+      {
+        "ratingKey": "1597",
+        "key": "/library/metadata/1597/children",
+        "guid": "plex://show/6067dc2704d0f3002de87cf2",
+        "studio": "Marvel Studios",
+        "type": "show",
+        "title": "Echo",
+        "contentRating": "TV-MA",
+        "summary": "The origin story of Echo revisits Maya Lopez, whose ruthless behavior in New York City catches up with her in her hometown. She must face her past, reconnect with her Native American roots, and embrace the meaning of family and community if she ever hopes to move forward.",
+        "index": 1,
+        "audienceRating": 6.3,
+        "year": 2024,
+        "tagline": "No Bad Deed Goes Unpunished.",
+        "thumb": "/library/metadata/1597/thumb/1707301668",
+        "art": "/library/metadata/1597/art/1707301668",
+        "duration": 12480000,
+        "originallyAvailableAt": "2024-01-09",
+        "leafCount": 5,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1705524634,
+        "updatedAt": 1707301668,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/1604",
+        "Genre": [
+          {
+            "tag": "Action"
+          },
+          {
+            "tag": "Adventure"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Alaqua Cox"
+          },
+          {
+            "tag": "Chaske Spencer"
+          },
+          {
+            "tag": "Tantoo Cardinal"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3584",
+        "key": "/library/metadata/3584/children",
+        "guid": "plex://show/5f44cac9ea81c90042d5b0f4",
+        "studio": "See-Saw Films",
+        "type": "show",
+        "title": "The Essex Serpent",
+        "titleSort": "Essex Serpent",
+        "contentRating": "TV-14",
+        "summary": "Follows London widow Cora Seaborne who moves to Essex to investigate reports of a mythical serpent. She forms a bond of science and skepticism with the pastor, but when tragedy strikes, locals accuse her of attracting the creature.",
+        "index": 1,
+        "audienceRating": 6.9,
+        "lastViewedAt": 1707189136,
+        "year": 2022,
+        "thumb": "/library/metadata/3584/thumb/1706202454",
+        "art": "/library/metadata/3584/art/1706202454",
+        "theme": "/library/metadata/3584/theme/1706202454",
+        "duration": 3000000,
+        "originallyAvailableAt": "2022-05-13",
+        "leafCount": 6,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1706202453,
+        "updatedAt": 1706202454,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/3592",
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Fantasy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United Kingdom"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Claire Danes"
+          },
+          {
+            "tag": "Tom Hiddleston"
+          },
+          {
+            "tag": "Frank Dillane"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3138",
+        "key": "/library/metadata/3138/children",
+        "guid": "plex://show/5d9c0838ffd9ef001e98fd77",
+        "studio": "26 Keys Productions",
+        "type": "show",
+        "title": "Fargo",
+        "contentRating": "TV-MA",
+        "summary": "Various chronicles of deception, intrigue, and murder in and around frozen Minnesota. All of these tales mysteriously lead back one way or another to Fargo, North Dakota.",
+        "index": 1,
+        "audienceRating": 8.3,
+        "year": 2014,
+        "tagline": "Aw jeez, here we go again. (Season 1)",
+        "thumb": "/library/metadata/3138/thumb/1705834262",
+        "art": "/library/metadata/3138/art/1705834262",
+        "theme": "/library/metadata/3138/theme/1705834262",
+        "duration": 3180000,
+        "originallyAvailableAt": "2014-04-15",
+        "leafCount": 51,
+        "viewedLeafCount": 0,
+        "childCount": 5,
+        "addedAt": 1705807526,
+        "updatedAt": 1705834262,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/3161",
+        "Genre": [
+          {
+            "tag": "Crime"
+          },
+          {
+            "tag": "Drama"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Jason Schwartzman"
+          },
+          {
+            "tag": "Allison Tolman"
+          },
+          {
+            "tag": "Colin Hanks"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3957",
+        "key": "/library/metadata/3957/children",
+        "guid": "plex://show/5d9c08d9ba2e21001f19349a",
+        "studio": "New Form Digital",
+        "type": "show",
+        "title": "Final Space",
+        "contentRating": "TV-14",
+        "summary": "An astronaut named Gary and his planet-destroying sidekick called Mooncake embark on serialized journeys through space in order to unlock the mystery of where the universe actually ends and if it actually does exist.",
+        "index": 1,
+        "audienceRating": 8.4,
+        "year": 2018,
+        "tagline": "Survive. ( Season 3 )",
+        "thumb": "/library/metadata/3957/thumb/1706421041",
+        "art": "/library/metadata/3957/art/1706421041",
+        "theme": "/library/metadata/3957/theme/1706421041",
+        "duration": 1320000,
+        "originallyAvailableAt": "2018-02-26",
+        "leafCount": 34,
+        "viewedLeafCount": 0,
+        "childCount": 3,
+        "addedAt": 1706421039,
+        "updatedAt": 1706421041,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/3969",
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Science Fiction"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "India"
+          },
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Fred Armisen"
+          },
+          {
+            "tag": "Tom Kenny"
+          },
+          {
+            "tag": "Olan Rogers"
+          }
+        ]
+      },
+      {
+        "ratingKey": "1593",
+        "key": "/library/metadata/1593/children",
+        "guid": "plex://show/628518af5965af3419368010",
+        "studio": "Bento Box Entertainment",
+        "type": "show",
+        "title": "Grimsburg",
+        "contentRating": "TV-14",
+        "summary": "Marvin Flute, who might be the greatest detective ever, has one mystery he still can't crack: his family. He will follow every lead he's got to redeem himself with the ex-wife he never stopped loving.",
+        "index": 1,
+        "audienceRating": 8.6,
+        "viewCount": 1,
+        "lastViewedAt": 1706756555,
+        "year": 2024,
+        "thumb": "/library/metadata/1593/thumb/1706960097",
+        "art": "/library/metadata/1593/art/1706960097",
+        "duration": 1320000,
+        "originallyAvailableAt": "2024-01-07",
+        "leafCount": 1,
+        "viewedLeafCount": 1,
+        "childCount": 1,
+        "addedAt": 1705523110,
+        "updatedAt": 1706960097,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/1596",
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Jon Hamm"
+          },
+          {
+            "tag": "Erinn Hayes"
+          },
+          {
+            "tag": "Rachel Dratch"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4182",
+        "key": "/library/metadata/4182/children",
+        "guid": "plex://show/61b181fca1ab5315239c431d",
+        "studio": "Latin World Entertainment",
+        "type": "show",
+        "title": "Griselda",
+        "contentRating": "Not Rated",
+        "summary": "Griselda chronicles the real life of savvy and ambitious Colombian business woman, Griselda Blanco, who created one of the most profitable cartels in history. A devoted mother, Blanco's lethal blend of charm and unsuspecting savagery helped her expertly navigate between family and business leading her to become widely known as the \"Black Widow\".",
+        "index": 1,
+        "audienceRating": 7.6,
+        "year": 2024,
+        "tagline": "A Woman of Substance",
+        "thumb": "/library/metadata/4182/thumb/1707568377",
+        "art": "/library/metadata/4182/art/1707568377",
+        "duration": 19800000,
+        "originallyAvailableAt": "2024-01-25",
+        "leafCount": 6,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1706580545,
+        "updatedAt": 1707568377,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/4192",
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Crime"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Sofía Vergara"
+          },
+          {
+            "tag": "Alberto Guerra"
+          },
+          {
+            "tag": "Christian Tappán"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2382",
+        "key": "/library/metadata/2382/children",
+        "guid": "plex://show/6155e0a6633135738d542318",
+        "studio": "Story & Pictures Media",
+        "type": "show",
+        "title": "Gyeongseong Creature",
+        "originalTitle": "경성크리처",
+        "contentRating": "TV-MA",
+        "summary": "In Spring 1945 in Gyeongseong, during Japanese rule over Korea, two young adults confront a strange creature born of greed, and battle against it for survival.",
+        "index": 1,
+        "audienceRating": 8.2,
+        "viewCount": 1,
+        "skipCount": 1,
+        "lastViewedAt": 1706246942,
+        "year": 2023,
+        "tagline": "There were humans and creatures in a hospital of Gyeongseong",
+        "thumb": "/library/metadata/2382/thumb/1705739091",
+        "art": "/library/metadata/2382/art/1705739091",
+        "duration": 3900000,
+        "originallyAvailableAt": "2023-12-22",
+        "leafCount": 10,
+        "viewedLeafCount": 1,
+        "childCount": 1,
+        "addedAt": 1705739089,
+        "updatedAt": 1705739091,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/2418",
+        "Genre": [
+          {
+            "tag": "Action"
+          },
+          {
+            "tag": "Drama"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "Republic of Korea"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Park Seo-jun"
+          },
+          {
+            "tag": "Han So-hee"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3594",
+        "key": "/library/metadata/3594/children",
+        "guid": "plex://show/5e160ed3e68804001e87a7b5",
+        "studio": "HBO",
+        "type": "show",
+        "title": "House of the Dragon",
+        "contentRating": "TV-MA",
+        "summary": "An internal succession war within House Targaryen at the height of its power, 172 years before the birth of Daenerys Targaryen.",
+        "index": 1,
+        "audienceRating": 8.4,
+        "year": 2022,
+        "tagline": "Fire Will Reign",
+        "thumb": "/library/metadata/3594/thumb/1706208158",
+        "art": "/library/metadata/3594/art/1706208158",
+        "theme": "/library/metadata/3594/theme/1706208158",
+        "duration": 3000000,
+        "originallyAvailableAt": "2022-08-21",
+        "leafCount": 10,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1706208155,
+        "updatedAt": 1706208158,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/3631",
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Action"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Emma D'Arcy"
+          },
+          {
+            "tag": "Olivia Cooke"
+          },
+          {
+            "tag": "Paddy Considine"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4729",
+        "key": "/library/metadata/4729/children",
+        "guid": "plex://show/5e1622ea4f2292003e913277",
+        "studio": "Amazon Studios",
+        "type": "show",
+        "title": "Invincible (2021)",
+        "contentRating": "TV-MA",
+        "summary": "The son of Earth's most powerful superhero is about to become something greater than himself: something bold, something universal, something - Invincible. From the comics to the screen, Invincible follows Mark Grayson's journey of becoming Earth's next great defender after his father, Nolan Grayson: also known as Omni-Man.",
+        "index": 1,
+        "audienceRating": 8.7,
+        "skipCount": 1,
+        "year": 2021,
+        "thumb": "/library/metadata/4729/thumb/1707290151",
+        "art": "/library/metadata/4729/art/1707290151",
+        "theme": "/library/metadata/4729/theme/1707290151",
+        "duration": 2700000,
+        "originallyAvailableAt": "2021-03-25",
+        "leafCount": 4,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1707290149,
+        "updatedAt": 1707290151,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/4734",
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Drama"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Steven Yeun"
+          },
+          {
+            "tag": "Sandra Oh"
+          },
+          {
+            "tag": "J.K. Simmons"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4203",
+        "key": "/library/metadata/4203/children",
+        "guid": "plex://show/5e1622a5124ae9003e3ccd14",
+        "studio": "MAPPA",
+        "type": "show",
+        "title": "Jujutsu Kaisen",
+        "originalTitle": "呪術廻戦",
+        "contentRating": "TV-14",
+        "summary": "A boy swallows a cursed talisman - the finger of a demon - and becomes cursed himself. He enters a shaman's school to be able to locate the demon's other body parts and thus exorcise himself.",
+        "index": 1,
+        "audienceRating": 8.6,
+        "viewCount": 4,
+        "lastViewedAt": 1706768365,
+        "year": 2020,
+        "thumb": "/library/metadata/4203/thumb/1706601652",
+        "art": "/library/metadata/4203/art/1706601652",
+        "theme": "/library/metadata/4203/theme/1706601652",
+        "duration": 1440000,
+        "originallyAvailableAt": "2020-10-02",
+        "leafCount": 47,
+        "viewedLeafCount": 4,
+        "childCount": 2,
+        "addedAt": 1706601649,
+        "updatedAt": 1706601652,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/4206",
+        "subtitleMode": "0",
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Anime"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "Japan"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Junya Enoki"
+          },
+          {
+            "tag": "Yuichi Nakamura"
+          },
+          {
+            "tag": "Yuma Uchida"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2347",
+        "key": "/library/metadata/2347/children",
+        "guid": "plex://show/61b17e758f749b300c78357a",
+        "studio": "Aggregate Films",
+        "type": "show",
+        "title": "Lessons in Chemistry",
+        "contentRating": "TV-MA",
+        "summary": "In the 1950s, a woman's dream of being a scientist is challenged by a society that says women belong only in the domestic sphere. She accepts a job on a TV cooking show and sets out to teach a nation of overlooked housewives way more than recipes.",
+        "index": 1,
+        "audienceRating": 8.4,
+        "lastViewedAt": 1707615846,
+        "year": 2023,
+        "tagline": "Life rarely follows a formula.",
+        "thumb": "/library/metadata/2347/thumb/1705739088",
+        "art": "/library/metadata/2347/art/1705739088",
+        "duration": 2700000,
+        "originallyAvailableAt": "2023-10-12",
+        "leafCount": 8,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1705739086,
+        "updatedAt": 1705739088,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/2375",
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Mini-Series"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Brie Larson"
+          },
+          {
+            "tag": "Lewis Pullman"
+          },
+          {
+            "tag": "Aja Naomi King"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2482",
+        "key": "/library/metadata/2482/children",
+        "guid": "plex://show/5d9c090effd9ef001e99ed55",
+        "studio": "Marvel Studios",
+        "type": "show",
+        "title": "Loki",
+        "contentRating": "TV-14",
+        "summary": "After stealing the Tesseract during the events of “Avengers: Endgame,” an alternate version of Loki is brought to the mysterious Time Variance Authority, a bureaucratic organization that exists outside of time and space and monitors the timeline. They give Loki a choice: face being erased from existence due to being a “time variant” or help fix the timeline and stop a greater threat.",
+        "index": 1,
+        "audienceRating": 8.2,
+        "skipCount": 1,
+        "year": 2021,
+        "tagline": "I'm working on myself.",
+        "thumb": "/library/metadata/2482/thumb/1705739095",
+        "art": "/library/metadata/2482/art/1705739095",
+        "theme": "/library/metadata/2482/theme/1705739095",
+        "duration": 3120000,
+        "originallyAvailableAt": "2021-06-09",
+        "leafCount": 12,
+        "viewedLeafCount": 0,
+        "childCount": 2,
+        "addedAt": 1705739094,
+        "updatedAt": 1705739095,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/2489",
+        "Genre": [
+          {
+            "tag": "Action"
+          },
+          {
+            "tag": "Adventure"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Tom Hiddleston"
+          },
+          {
+            "tag": "Sophia Di Martino"
+          },
+          {
+            "tag": "Wunmi Mosaku"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2432",
+        "key": "/library/metadata/2432/children",
+        "guid": "plex://show/60917bce3d1b44002dbca0fd",
+        "studio": "Lionsgate Television",
+        "type": "show",
+        "title": "Love & Death",
+        "contentRating": "TV-MA",
+        "summary": "Candy Montgomery and Betty Gore had a lot in common: They sang together in the Methodist church choir, their daughters were best friends, and their husbands had good jobs working for technology companies in the north Dallas suburbs known as Silicon Prairie. But beneath the placid surface of their seemingly perfect lives, both women simmered with unspoken frustrations and unanswered desires.",
+        "index": 1,
+        "audienceRating": 8.2,
+        "viewCount": 8,
+        "skipCount": 1,
+        "lastViewedAt": 1706910275,
+        "year": 2023,
+        "tagline": "Not Every Perfect Dream Has a Perfect Ending",
+        "thumb": "/library/metadata/2432/thumb/1705739093",
+        "art": "/library/metadata/2432/art/1705739093",
+        "theme": "/library/metadata/2432/theme/1705739093",
+        "duration": 22680000,
+        "originallyAvailableAt": "2023-04-27",
+        "leafCount": 7,
+        "viewedLeafCount": 7,
+        "childCount": 1,
+        "addedAt": 1705739092,
+        "updatedAt": 1705739093,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/2454",
+        "Genre": [
+          {
+            "tag": "Crime"
+          },
+          {
+            "tag": "Drama"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Elizabeth Olsen"
+          },
+          {
+            "tag": "Jesse Plemons"
+          },
+          {
+            "tag": "Lily Rabe"
+          }
+        ]
+      },
+      {
+        "ratingKey": "5004",
+        "key": "/library/metadata/5004/children",
+        "guid": "plex://show/625d3b03e012eca41c668d3e",
+        "studio": "Amblin Television",
+        "type": "show",
+        "title": "Masters of the Air",
+        "contentRating": "TV-MA",
+        "summary": "An Apple Original Series from Steven Spielberg, Tom Hanks, and Gary Goetzman - the producers of Band of Brothers and The Pacific. During World War II, airmen risk their lives with the 100th Bomb Group, a brotherhood forged by courage, loss, and triumph.",
+        "index": 1,
+        "audienceRating": 7.6,
+        "viewCount": 2,
+        "lastViewedAt": 1707553438,
+        "year": 2024,
+        "thumb": "/library/metadata/5004/thumb/1707551585",
+        "art": "/library/metadata/5004/art/1707551585",
+        "duration": 3240000,
+        "originallyAvailableAt": "2024-01-25",
+        "leafCount": 4,
+        "viewedLeafCount": 1,
+        "childCount": 1,
+        "addedAt": 1707551584,
+        "updatedAt": 1707551585,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/5007",
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Action"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Austin Butler"
+          },
+          {
+            "tag": "Callum Turner"
+          },
+          {
+            "tag": "Anthony Boyle"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2302",
+        "key": "/library/metadata/2302/children",
+        "guid": "plex://show/629239d5227b9116a93569f0",
+        "studio": "Legendary Television",
+        "type": "show",
+        "title": "Monarch: Legacy of Monsters",
+        "contentRating": "TV-14",
+        "summary": "After surviving Godzilla's attack on San Francisco, Cate is shaken yet again by a shocking secret. Amid monstrous threats, she embarks on a globetrotting adventure to learn the truth about her family—and the mysterious organization known as Monarch.",
+        "index": 1,
+        "audienceRating": 8.1,
+        "viewCount": 5,
+        "skipCount": 1,
+        "lastViewedAt": 1705873846,
+        "year": 2023,
+        "tagline": "Some secrets cannot be contained.",
+        "thumb": "/library/metadata/2302/thumb/1705739086",
+        "art": "/library/metadata/2302/art/1705739086",
+        "duration": 2700000,
+        "originallyAvailableAt": "2023-11-17",
+        "leafCount": 10,
+        "viewedLeafCount": 5,
+        "childCount": 1,
+        "addedAt": 1705739084,
+        "updatedAt": 1705739086,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/2334",
+        "Genre": [
+          {
+            "tag": "Action"
+          },
+          {
+            "tag": "Adventure"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Anna Sawai"
+          },
+          {
+            "tag": "Kiersey Clemons"
+          },
+          {
+            "tag": "Ren Watabe"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4620",
+        "key": "/library/metadata/4620/children",
+        "guid": "plex://show/602a73ff6f5f22002d9e6bd2",
+        "studio": "New Regency Pictures",
+        "type": "show",
+        "title": "Mr. & Mrs. Smith (2024)",
+        "contentRating": "TV-MA",
+        "summary": "Two strangers land jobs with a spy agency that offers them a life of espionage, wealth, and travel. The catch: new identities in an arranged marriage.",
+        "index": 1,
+        "audienceRating": 6.1,
+        "year": 2024,
+        "thumb": "/library/metadata/4620/thumb/1707568379",
+        "art": "/library/metadata/4620/art/1707568379",
+        "duration": 2700000,
+        "originallyAvailableAt": "2024-02-01",
+        "leafCount": 8,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1707028265,
+        "updatedAt": 1707568379,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "Genre": [
+          {
+            "tag": "Action"
+          },
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Donald Glover"
+          },
+          {
+            "tag": "Maya Erskine"
+          },
+          {
+            "tag": "Paul Dano"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3105",
+        "key": "/library/metadata/3105/children",
+        "guid": "plex://show/5d9c07f94eefaa001f5d253f",
+        "studio": "Universal Television",
+        "type": "show",
+        "title": "Parks and Recreation",
+        "contentRating": "TV-14",
+        "summary": "In an attempt to beautify her town — and advance her career — Leslie Knope, a mid-level bureaucrat in the Parks and Recreation Department of Pawnee, Indiana, takes on bureaucrats, cranky neighbors, and single-issue fanatics whose weapons are lawsuits, the jumble of city codes, and the democratic process she loves so much.",
+        "index": 1,
+        "audienceRating": 8.0,
+        "viewCount": 4,
+        "skipCount": 1,
+        "lastViewedAt": 1707527472,
+        "year": 2009,
+        "tagline": "Because parks don't grow on trees.",
+        "thumb": "/library/metadata/3105/thumb/1705807527",
+        "art": "/library/metadata/3105/art/1705807527",
+        "theme": "/library/metadata/3105/theme/1705807527",
+        "duration": 1320000,
+        "originallyAvailableAt": "2009-04-09",
+        "leafCount": 125,
+        "viewedLeafCount": 4,
+        "childCount": 7,
+        "addedAt": 1705807524,
+        "updatedAt": 1705807527,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "subtitleMode": "2",
+        "Genre": [
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Amy Poehler"
+          },
+          {
+            "tag": "Aziz Ansari"
+          },
+          {
+            "tag": "Nick Offerman"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3676",
+        "key": "/library/metadata/3676/children",
+        "guid": "plex://show/5f6e1529eef82a0042dbcc9d",
+        "studio": "Warner Bros. Television",
+        "type": "show",
+        "title": "Peacemaker",
+        "contentRating": "Not Rated",
+        "summary": "The continuing story of Peacemaker – a compellingly vainglorious man who believes in peace at any cost, no matter how many people he has to kill to get it – in the aftermath of the events of “The Suicide Squad.”",
+        "index": 1,
+        "audienceRating": 8.3,
+        "viewCount": 10,
+        "lastViewedAt": 1706431952,
+        "year": 2022,
+        "tagline": "Give Peace a F#cking Chance",
+        "thumb": "/library/metadata/3676/thumb/1706247357",
+        "art": "/library/metadata/3676/art/1706247357",
+        "theme": "/library/metadata/3676/theme/1706247357",
+        "duration": 2400000,
+        "originallyAvailableAt": "2022-01-12",
+        "leafCount": 8,
+        "viewedLeafCount": 8,
+        "childCount": 1,
+        "addedAt": 1706247353,
+        "updatedAt": 1706247357,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/3726",
+        "subtitleMode": "0",
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Action"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "John Cena"
+          },
+          {
+            "tag": "Danielle Brooks"
+          },
+          {
+            "tag": "Freddie Stroma"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4835",
+        "key": "/library/metadata/4835/children",
+        "guid": "plex://show/5ec75ff2f190410042db1b15",
+        "studio": "20th Television",
+        "type": "show",
+        "title": "Percy Jackson and the Olympians",
+        "contentRating": "TV-PG",
+        "summary": "Percy Jackson is on a dangerous quest. Outrunning monsters and outwitting gods, he must journey across America to return Zeus' master bolt and stop an all-out war. With the help of his quest mates Annabeth and Grover, Percy's journey will lead him closer to the answers he seeks: how to fit into a world where he feels out of place, and find out who he's destined to be.",
+        "index": 1,
+        "audienceRating": 7.5,
+        "year": 2023,
+        "thumb": "/library/metadata/4835/thumb/1707367771",
+        "art": "/library/metadata/4835/art/1707367771",
+        "duration": 2700000,
+        "originallyAvailableAt": "2023-12-19",
+        "leafCount": 8,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1707367769,
+        "updatedAt": 1707367771,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/4838",
+        "Genre": [
+          {
+            "tag": "Fantasy"
+          },
+          {
+            "tag": "Action"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Walker Scobell"
+          },
+          {
+            "tag": "Leah Sava Jeffries"
+          },
+          {
+            "tag": "Aryan Simhadri"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4504",
+        "key": "/library/metadata/4504/children",
+        "guid": "plex://show/6389112490bca33f3be0a23d",
+        "studio": "STUDIO4℃",
+        "type": "show",
+        "title": "Phoenix: Eden17",
+        "originalTitle": "火の鳥 エデンの宙",
+        "contentRating": "TV-MA",
+        "summary": "Follows a woman named Romi and her partner as they depart from the devastated Earth and head for a new life on the planet Eden17. However, life has already been made extinct on the new world, so Romi finds herself eking out an even harsher life there.",
+        "index": 1,
+        "audienceRating": 6.6,
+        "viewCount": 1,
+        "skipCount": 1,
+        "lastViewedAt": 1707119458,
+        "year": 2023,
+        "thumb": "/library/metadata/4504/thumb/1706993023",
+        "art": "/library/metadata/4504/art/1706993023",
+        "duration": 5760000,
+        "originallyAvailableAt": "2023-08-13",
+        "leafCount": 4,
+        "viewedLeafCount": 1,
+        "childCount": 1,
+        "addedAt": 1706993022,
+        "updatedAt": 1706993023,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Adventure"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "Japan"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Rie Miyazawa"
+          },
+          {
+            "tag": "Honoka Yoshida"
+          },
+          {
+            "tag": "Yosuke Kubozuka"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4494",
+        "key": "/library/metadata/4494/children",
+        "guid": "plex://show/5f5c9d6495748100408aa595",
+        "studio": "BBC Studios Natural History Unit",
+        "type": "show",
+        "title": "Planet Earth III",
+        "contentRating": "TV-G",
+        "summary": "Journeying to the far reaches of our planet, this eight part series follows some of the world's most amazing species, telling extraordinary stories that are dramatic, thrilling, funny and sometimes heart-breaking, but always full of hope.",
+        "index": 1,
+        "audienceRating": 9.4,
+        "viewCount": 3,
+        "lastViewedAt": 1707604575,
+        "year": 2023,
+        "tagline": "Our Home, Our Future.",
+        "thumb": "/library/metadata/4494/thumb/1706990956",
+        "art": "/library/metadata/4494/art/1706990956",
+        "duration": 31260000,
+        "originallyAvailableAt": "2023-10-22",
+        "leafCount": 8,
+        "viewedLeafCount": 3,
+        "childCount": 1,
+        "addedAt": 1706990954,
+        "updatedAt": 1706990956,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "Genre": [
+          {
+            "tag": "Documentary"
+          },
+          {
+            "tag": "Mini-Series"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United Kingdom"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "David Attenborough"
+          },
+          {
+            "tag": "Luke Nelson"
+          },
+          {
+            "tag": "Keron Murray"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2324",
+        "key": "/library/metadata/2324/children",
+        "guid": "plex://show/5e1618ea03a303003f824478",
+        "studio": "GENCO",
+        "type": "show",
+        "title": "Pluto",
+        "originalTitle": "PLUTO",
+        "contentRating": "TV-14",
+        "summary": "In a distant future where sentient humanoid robots pass for human, someone or something is out to destroy the seven great robots of the world. Europol's top detective Gesicht is assigned to investigate these mysterious robot serial murders the only catch is that he himself is one of the seven targets.",
+        "index": 1,
+        "audienceRating": 8.0,
+        "year": 2023,
+        "tagline": "Somebody, stop this hatred.",
+        "thumb": "/library/metadata/2324/thumb/1705739087",
+        "art": "/library/metadata/2324/art/1705739087",
+        "duration": 3600000,
+        "originallyAvailableAt": "2023-10-26",
+        "leafCount": 8,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1705739085,
+        "updatedAt": 1705739087,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Action"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "Japan"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Shinshu Fuji"
+          },
+          {
+            "tag": "Toshio Furukawa"
+          },
+          {
+            "tag": "Yoko Hikasa"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3036",
+        "key": "/library/metadata/3036/children",
+        "guid": "plex://show/63fe8f0b97977ff17b27e350",
+        "studio": "dwarf studios",
+        "type": "show",
+        "title": "Pokémon Concierge",
+        "titleSort": "Pokemon Concierge",
+        "originalTitle": "ポケモンコンシェルジュ",
+        "contentRating": "TV-PG",
+        "summary": "Follow the adventures of Haru, a concierge at the Pokémon Resort as she interacts with the Pokémon and their visiting owners.",
+        "index": 1,
+        "audienceRating": 7.7,
+        "lastViewedAt": 1707441292,
+        "year": 2023,
+        "tagline": "I'm happy when you're happy",
+        "thumb": "/library/metadata/3036/thumb/1706010619",
+        "art": "/library/metadata/3036/art/1706010619",
+        "duration": 1200000,
+        "originallyAvailableAt": "2023-12-28",
+        "leafCount": 4,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1705795868,
+        "updatedAt": 1706010619,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/3053",
+        "Genre": [
+          {
+            "tag": "Adventure"
+          },
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "Japan"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Non"
+          },
+          {
+            "tag": "Fairouz Ai"
+          },
+          {
+            "tag": "Eita Okuno"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2267",
+        "key": "/library/metadata/2267/children",
+        "guid": "plex://show/605229962b92cd002c585be9",
+        "studio": "Animal Pictures",
+        "type": "show",
+        "title": "Poker Face",
+        "contentRating": "TV-MA",
+        "summary": "Charlie has an extraordinary ability to determine when someone is lying. She hits the road with her Plymouth Barracuda and with every stop encounters a new cast of characters and strange crimes she can't help but investigate and solve.",
+        "index": 1,
+        "audienceRating": 7.8,
+        "year": 2023,
+        "thumb": "/library/metadata/2267/thumb/1705739084",
+        "art": "/library/metadata/2267/art/1705739084",
+        "theme": "/library/metadata/2267/theme/1705739084",
+        "duration": 3480000,
+        "originallyAvailableAt": "2023-01-26",
+        "leafCount": 10,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1705739081,
+        "updatedAt": 1705739084,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/2300",
+        "Genre": [
+          {
+            "tag": "Mystery"
+          },
+          {
+            "tag": "Crime"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Natasha Lyonne"
+          },
+          {
+            "tag": "Benjamin Bratt"
+          },
+          {
+            "tag": "Pedro Hollywood"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4823",
+        "key": "/library/metadata/4823/children",
+        "guid": "plex://show/5d9c092402391c001f596108",
+        "studio": "Studio La Cachette",
+        "type": "show",
+        "title": "Primal",
+        "contentRating": "TV-14",
+        "summary": "A caveman and a dinosaur bond over shared tragedy and work together to survive in a perilous prehistoric world.",
+        "index": 1,
+        "audienceRating": 8.6,
+        "skipCount": 1,
+        "year": 2019,
+        "thumb": "/library/metadata/4823/thumb/1707366366",
+        "art": "/library/metadata/4823/art/1707366366",
+        "theme": "/library/metadata/4823/theme/1707366366",
+        "duration": 1380000,
+        "originallyAvailableAt": "2019-10-07",
+        "leafCount": 20,
+        "viewedLeafCount": 0,
+        "childCount": 2,
+        "addedAt": 1707366359,
+        "updatedAt": 1707366366,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Drama"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Aaron LaPlante"
+          },
+          {
+            "tag": "Laëtitia Eïdo"
+          },
+          {
+            "tag": "Sebastian Vázquez"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4174",
+        "key": "/library/metadata/4174/children",
+        "guid": "plex://show/5ff4b25af44049002d18328b",
+        "studio": "National Geographic",
+        "type": "show",
+        "title": "A Real Bug's Life",
+        "titleSort": "Real Bug's Life",
+        "contentRating": "TV-PG",
+        "summary": "An incredible adventure into nine different micro bug worlds around the globe, where the forces of nature play out on a miniature scale and where tiny creatures rely on amazing powers and extraordinary alliances to make it through each day. The stakes are high... even if the critters are extraordinarily small.",
+        "index": 1,
+        "audienceRating": 9.5,
+        "viewCount": 3,
+        "lastViewedAt": 1706666795,
+        "year": 2024,
+        "tagline": "Epic tale, miniature scale.",
+        "thumb": "/library/metadata/4174/thumb/1707476861",
+        "art": "/library/metadata/4174/art/1707476861",
+        "duration": 1920000,
+        "originallyAvailableAt": "2024-01-24",
+        "leafCount": 5,
+        "viewedLeafCount": 3,
+        "childCount": 1,
+        "addedAt": 1706579368,
+        "updatedAt": 1707476861,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "Genre": [
+          {
+            "tag": "Documentary"
+          },
+          {
+            "tag": "Adventure"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Awkwafina"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2472",
+        "key": "/library/metadata/2472/children",
+        "guid": "plex://show/5d9c08382192ba001f30a9c7",
+        "studio": "Williams Street",
+        "type": "show",
+        "title": "Rick and Morty",
+        "contentRating": "TV-MA",
+        "summary": "An animated series on adult-swim about the infinite adventures of Rick, a genius alcoholic and careless scientist, with his grandson Morty, a 14 year-old anxious boy who is not so smart. Together, they explore the infinite universes; causing mayhem and running into trouble.",
+        "index": 1,
+        "audienceRating": 8.7,
+        "viewCount": 6,
+        "skipCount": 4,
+        "lastViewedAt": 1704617075,
+        "year": 2013,
+        "tagline": "Science makes sense, family doesn't.",
+        "thumb": "/library/metadata/2472/thumb/1705739095",
+        "art": "/library/metadata/2472/art/1705739095",
+        "theme": "/library/metadata/2472/theme/1705739095",
+        "duration": 1320000,
+        "originallyAvailableAt": "2013-12-02",
+        "leafCount": 7,
+        "viewedLeafCount": 7,
+        "childCount": 1,
+        "addedAt": 1705739094,
+        "updatedAt": 1705739095,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/2487",
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Justin Roiland"
+          },
+          {
+            "tag": "Spencer Grammer"
+          },
+          {
+            "tag": "Chris Parnell"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4680",
+        "key": "/library/metadata/4680/children",
+        "guid": "plex://show/606ee73989b0ad002df701da",
+        "studio": "Blossom Films",
+        "type": "show",
+        "title": "Roar (2022)",
+        "contentRating": "TV-MA",
+        "summary": "Based on a book of short stories by Cecelia Ahern, this genre-bending anthology series weaves together eight darkly comedic feminist fables that take unexpected approaches to subjects like gender roles, autonomy and identity.",
+        "index": 1,
+        "audienceRating": 6.0,
+        "viewCount": 1,
+        "lastViewedAt": 1707194909,
+        "year": 2022,
+        "thumb": "/library/metadata/4680/thumb/1707096999",
+        "art": "/library/metadata/4680/art/1707096999",
+        "duration": 1920000,
+        "originallyAvailableAt": "2022-04-14",
+        "leafCount": 8,
+        "viewedLeafCount": 1,
+        "childCount": 1,
+        "addedAt": 1707096997,
+        "updatedAt": 1707096999,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/4690",
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Nicole Kidman"
+          },
+          {
+            "tag": "Betty Gilpin"
+          },
+          {
+            "tag": "Judy Davis"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3113",
+        "key": "/library/metadata/3113/children",
+        "guid": "plex://show/62ab5394fcdf1a6e5c8d84c2",
+        "studio": "Titmouse",
+        "type": "show",
+        "title": "Scavengers Reign",
+        "contentRating": "TV-MA",
+        "summary": "Created by Joseph Bennett and Charles Huettner, the remaining crew of a damaged interstellar freighter ship find themselves stranded on a beautiful, yet unforgiving alien planet where they must survive long enough to escape or be rescued. As the survivors struggle to locate their downed ship and missing crewmates, their new home reveals a hostile world allowed to thrive without human interference.",
+        "index": 1,
+        "audienceRating": 8.4,
+        "viewCount": 12,
+        "skipCount": 1,
+        "lastViewedAt": 1706235889,
+        "year": 2023,
+        "tagline": "Don't Go Alone",
+        "thumb": "/library/metadata/3113/thumb/1705877740",
+        "art": "/library/metadata/3113/art/1705877740",
+        "duration": 1440000,
+        "originallyAvailableAt": "2023-10-19",
+        "leafCount": 12,
+        "viewedLeafCount": 12,
+        "childCount": 1,
+        "addedAt": 1705807525,
+        "updatedAt": 1705877740,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/3145",
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Drama"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Sunita Mani"
+          },
+          {
+            "tag": "Wunmi Mosaku"
+          },
+          {
+            "tag": "Alia Shawkat"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3012",
+        "key": "/library/metadata/3012/children",
+        "guid": "plex://show/5e1622d34f2292003e91314a",
+        "studio": "Endeavor Content",
+        "type": "show",
+        "title": "Severance",
+        "contentRating": "TV-MA",
+        "summary": "Mark leads a team of office workers whose memories have been surgically divided between their work and personal lives. When a mysterious colleague appears outside of work, it begins a journey to discover the truth about their jobs.",
+        "index": 1,
+        "audienceRating": 8.4,
+        "year": 2022,
+        "thumb": "/library/metadata/3012/thumb/1705795868",
+        "art": "/library/metadata/3012/art/1705795868",
+        "theme": "/library/metadata/3012/theme/1705795868",
+        "duration": 3300000,
+        "originallyAvailableAt": "2022-02-18",
+        "leafCount": 9,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1705795867,
+        "updatedAt": 1705795868,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/3041",
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Science Fiction"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Adam Scott"
+          },
+          {
+            "tag": "Britt Lower"
+          },
+          {
+            "tag": "Zach Cherry"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4171",
+        "key": "/library/metadata/4171/children",
+        "guid": "plex://show/61a4e7e9816b07cef5e7404d",
+        "studio": "Shijak Company",
+        "type": "show",
+        "title": "Single's Inferno",
+        "originalTitle": "솔로지옥",
+        "contentRating": "TV-PG",
+        "summary": "Nine people who co-live on an island and try to find the love of their life.",
+        "index": 1,
+        "audienceRating": 7.8,
+        "year": 2021,
+        "thumb": "/library/metadata/4171/thumb/1706579191",
+        "art": "/library/metadata/4171/art/1706579191",
+        "duration": 3600000,
+        "originallyAvailableAt": "2021-12-18",
+        "leafCount": 11,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1706579188,
+        "updatedAt": 1706579191,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "Genre": [
+          {
+            "tag": "Reality"
+          },
+          {
+            "tag": "Romance"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "Republic of Korea"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Lee Da-hee"
+          },
+          {
+            "tag": "Cho Kyu-hyun"
+          },
+          {
+            "tag": "Hong Jin-kyung"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4301",
+        "key": "/library/metadata/4301/children",
+        "guid": "plex://show/601431ecea81fe002bdaa72f",
+        "studio": "Powerhouse Animation Studios",
+        "type": "show",
+        "title": "Skull Island",
+        "contentRating": "TV-14",
+        "summary": "A group of kind-hearted explorers rescues Annie from the ocean, unaware that their act of heroism will lead them to the treacherous Skull Island. This enigmatic place is home to bizarre creatures and terrifying monsters, including the mighty titan himself, Kong.",
+        "index": 1,
+        "audienceRating": 7.3,
+        "lastViewedAt": 1707112559,
+        "year": 2023,
+        "tagline": "Many Monsters, One King",
+        "thumb": "/library/metadata/4301/thumb/1706678763",
+        "art": "/library/metadata/4301/art/1706678763",
+        "duration": 1200000,
+        "originallyAvailableAt": "2023-06-22",
+        "leafCount": 8,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1706678762,
+        "updatedAt": 1706678763,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/4311",
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Action"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Mae Whitman"
+          },
+          {
+            "tag": "Nicolas Cantu"
+          },
+          {
+            "tag": "Darren Barnet"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2405",
+        "key": "/library/metadata/2405/children",
+        "guid": "plex://show/5e1622a54f2292003e912fcf",
+        "studio": "See-Saw Films",
+        "type": "show",
+        "title": "Slow Horses",
+        "contentRating": "TV-MA",
+        "summary": "This quick-witted spy drama follows a dysfunctional team of MI5 agents—and their obnoxious boss, the notorious Jackson Lamb—as they navigate the espionage world’s smoke and mirrors to defend England from sinister forces.",
+        "index": 1,
+        "audienceRating": 7.8,
+        "viewCount": 18,
+        "skipCount": 2,
+        "lastViewedAt": 1705528576,
+        "year": 2022,
+        "thumb": "/library/metadata/2405/thumb/1705739092",
+        "art": "/library/metadata/2405/art/1705739092",
+        "theme": "/library/metadata/2405/theme/1705739092",
+        "duration": 2700000,
+        "originallyAvailableAt": "2022-04-01",
+        "leafCount": 18,
+        "viewedLeafCount": 18,
+        "childCount": 3,
+        "addedAt": 1705739090,
+        "updatedAt": 1705739092,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/2423",
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Thriller"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United Kingdom"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Gary Oldman"
+          },
+          {
+            "tag": "Jack Lowden"
+          },
+          {
+            "tag": "Kristin Scott Thomas"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3061",
+        "key": "/library/metadata/3061/children",
+        "guid": "plex://show/5d9c09152192ba001f31b6c8",
+        "studio": "Justin Roiland's Solo Vanity Card Productions",
+        "type": "show",
+        "title": "Solar Opposites",
+        "contentRating": "TV-MA",
+        "summary": "Escaping Planet Shlorp before the Asteroid hit, Terry, Korvo and their two Replicants crash land on Earth stranding them on a world that they must terraform: with their mysterious 'pet' Pupa. These aliens become a dysfunctional family stuck in suburban America and can't agree whether living on Earth is an awesome or horrible prospect.",
+        "index": 1,
+        "audienceRating": 7.8,
+        "lastViewedAt": 1706346577,
+        "year": 2020,
+        "thumb": "/library/metadata/3061/thumb/1705807524",
+        "art": "/library/metadata/3061/art/1705807524",
+        "theme": "/library/metadata/3061/theme/1705807524",
+        "duration": 1500000,
+        "originallyAvailableAt": "2020-05-08",
+        "leafCount": 38,
+        "viewedLeafCount": 0,
+        "childCount": 4,
+        "addedAt": 1705807522,
+        "updatedAt": 1705807524,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/3087",
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Sean Giambrone"
+          },
+          {
+            "tag": "Thomas Middleditch"
+          },
+          {
+            "tag": "Mary Mack"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4074",
+        "key": "/library/metadata/4074/children",
+        "guid": "plex://show/648193408b30ab8fd86b654d",
+        "studio": "John Downer Productions Ltd.",
+        "type": "show",
+        "title": "Spy in the Ocean",
+        "contentRating": "Not Rated",
+        "summary": "Go deep beneath the waves - on a spy mission to the depths of the ocean.",
+        "index": 1,
+        "lastViewedAt": 1707110457,
+        "year": 2023,
+        "thumb": "/library/metadata/4074/thumb/1706473484",
+        "art": "/library/metadata/4074/art/1706473484",
+        "duration": 3540000,
+        "originallyAvailableAt": "2023-06-04",
+        "leafCount": 4,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1706473482,
+        "updatedAt": 1706473484,
+        "Genre": [
+          {
+            "tag": "Documentary"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United Kingdom"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "David Tennant"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3316",
+        "key": "/library/metadata/3316/children",
+        "guid": "plex://show/5d9c08ed46115600200ade5e",
+        "studio": "Gary Sanchez Productions",
+        "type": "show",
+        "title": "Succession",
+        "contentRating": "TV-MA",
+        "summary": "The Roy family controls the biggest media and entertainment company in the world. As they fight for control of the company, and each other, their lack of morals is exposed at every turn. This family has no redeeming character values, and neither does any person attached to them. Watch them as they fight for the front seat on the bus to hell.",
+        "index": 1,
+        "audienceRating": 8.3,
+        "year": 2018,
+        "tagline": "Take what's yours.",
+        "thumb": "/library/metadata/3316/thumb/1706156525",
+        "art": "/library/metadata/3316/art/1706156525",
+        "theme": "/library/metadata/3316/theme/1706156525",
+        "duration": 144540000,
+        "originallyAvailableAt": "2018-05-06",
+        "leafCount": 39,
+        "viewedLeafCount": 0,
+        "childCount": 4,
+        "addedAt": 1706156518,
+        "updatedAt": 1706156525,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Jeremy Strong"
+          },
+          {
+            "tag": "Kieran Culkin"
+          },
+          {
+            "tag": "Sarah Snook"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3096",
+        "key": "/library/metadata/3096/children",
+        "guid": "plex://show/60ad299761a7d4002d44e055",
+        "studio": "Best Available!",
+        "type": "show",
+        "title": "Super Pumped",
+        "contentRating": "TV-MA",
+        "summary": "Each season of this anthology series explores a story that rocked the business world to its core and changed culture. The first season tells the story of Uber, one of Silicon Valley’s most successful and most destructive unicorns.",
+        "index": 1,
+        "audienceRating": 7.1,
+        "year": 2022,
+        "tagline": "Every surge has a price.",
+        "thumb": "/library/metadata/3096/thumb/1705807526",
+        "art": "/library/metadata/3096/art/1705807526",
+        "theme": "/library/metadata/3096/theme/1705807526",
+        "duration": 3360000,
+        "originallyAvailableAt": "2022-02-27",
+        "leafCount": 7,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1705807524,
+        "updatedAt": 1705807526,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Biography"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Joseph Gordon-Levitt"
+          },
+          {
+            "tag": "Kyle Chandler"
+          },
+          {
+            "tag": "Kerry Bishé"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2799",
+        "key": "/library/metadata/2799/children",
+        "guid": "plex://show/5e204251072b9e003ca5c140",
+        "studio": "Doozer",
+        "type": "show",
+        "title": "Ted Lasso",
+        "contentRating": "TV-MA",
+        "summary": "In a shock development struggling English Premier League team AFC Richmond hires American football coach Ted Lasso as its new manager. Lasso knows nothing about soccer/football. With unshakable enthusiasm and positivity he rises to the challenge but little known to him there are forces within the club that don't want him to succeed.",
+        "index": 1,
+        "audienceRating": 8.5,
+        "viewCount": 1,
+        "lastViewedAt": 1706953877,
+        "year": 2020,
+        "tagline": "Out of His League",
+        "thumb": "/library/metadata/2799/thumb/1706254245",
+        "art": "/library/metadata/2799/art/1706254245",
+        "theme": "/library/metadata/2799/theme/1706254245",
+        "duration": 87180000,
+        "originallyAvailableAt": "2020-08-14",
+        "leafCount": 34,
+        "viewedLeafCount": 1,
+        "childCount": 3,
+        "addedAt": 1705795856,
+        "updatedAt": 1706254245,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/2834",
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Drama"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Jason Sudeikis"
+          },
+          {
+            "tag": "Hannah Waddingham"
+          },
+          {
+            "tag": "Jeremy Swift"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2461",
+        "key": "/library/metadata/2461/children",
+        "guid": "plex://show/6234df7b6d688edf1a035f54",
+        "studio": "Studio Airlift",
+        "type": "show",
+        "title": "Transatlantic",
+        "contentRating": "TV-14",
+        "summary": "An American journalist who spent 13 months in France 1940-41 managed to arrange safe passage to the US for over 2,000 refugees; who were in danger of losing their lives.",
+        "index": 1,
+        "audienceRating": 6.7,
+        "year": 2023,
+        "thumb": "/library/metadata/2461/thumb/1705739095",
+        "art": "/library/metadata/2461/art/1705739095",
+        "duration": 21180000,
+        "originallyAvailableAt": "2023-04-07",
+        "leafCount": 7,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1705739093,
+        "updatedAt": 1705739095,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/2485",
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "History"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "Germany"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Gillian Jacobs"
+          },
+          {
+            "tag": "Cory Michael Smith"
+          },
+          {
+            "tag": "Lucas Englander"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3023",
+        "key": "/library/metadata/3023/children",
+        "guid": "plex://show/62ade886c0a0709d7434f8d7",
+        "studio": "Orange",
+        "type": "show",
+        "title": "Trigun Stampede",
+        "originalTitle": "TRIGUN STAMPEDE",
+        "contentRating": "TV-14",
+        "summary": "Vash the Stampede's a joyful gunslinging pacifist, so why does he have a $$6 million bounty on his head? That's what's puzzling rookie reporter Meryl Stryfe and her jaded veteran partner when looking into the vigilante only to find someone who hates blood. But their investigation turns out to uncover something heinous his evil twin brother, Millions Knives.",
+        "index": 1,
+        "audienceRating": 7.5,
+        "lastViewedAt": 1707604208,
+        "year": 2023,
+        "tagline": "Ready, Steady, Roll!!",
+        "thumb": "/library/metadata/3023/thumb/1705795870",
+        "art": "/library/metadata/3023/art/1705795870",
+        "theme": "/library/metadata/3023/theme/1705795870",
+        "duration": 1440000,
+        "originallyAvailableAt": "2023-01-07",
+        "leafCount": 11,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1705795868,
+        "updatedAt": 1705795870,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Action"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "Japan"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Yoshitsugu Matsuoka"
+          },
+          {
+            "tag": "Sakura Ando"
+          },
+          {
+            "tag": "Kenji Matsuda"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3928",
+        "key": "/library/metadata/3928/children",
+        "guid": "plex://show/5d9c086acb3ffa001f1b49d1",
+        "studio": "Passenger",
+        "type": "show",
+        "title": "True Detective",
+        "contentRating": "TV-MA",
+        "summary": "Anthology series in which police investigations unearth the personal and professional secrets of those involved, both within and outside the law.",
+        "index": 1,
+        "audienceRating": 8.3,
+        "year": 2014,
+        "tagline": "Man is the cruelest animal. (Season 1)",
+        "thumb": "/library/metadata/3928/thumb/1707476857",
+        "art": "/library/metadata/3928/art/1707476857",
+        "theme": "/library/metadata/3928/theme/1707476857",
+        "duration": 3600000,
+        "originallyAvailableAt": "2014-01-12",
+        "leafCount": 29,
+        "viewedLeafCount": 0,
+        "childCount": 4,
+        "addedAt": 1706417707,
+        "updatedAt": 1707476857,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/3932",
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Crime"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Matthew McConaughey"
+          },
+          {
+            "tag": "Colin Farrell"
+          },
+          {
+            "tag": "Mahershala Ali"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4696",
+        "key": "/library/metadata/4696/children",
+        "guid": "plex://show/5d9c0900705e7a001e6e81c3",
+        "studio": "White Rabbit",
+        "type": "show",
+        "title": "Watchmen",
+        "contentRating": "TV-MA",
+        "summary": "Set in an alternate history where masked vigilantes are treated as outlaws, Watchmen embraces the nostalgia of the original groundbreaking graphic novel of the same name, while attempting to break new ground of its own.",
+        "index": 1,
+        "audienceRating": 7.7,
+        "year": 2019,
+        "tagline": "Nothing Ever Ends...",
+        "thumb": "/library/metadata/4696/thumb/1707114676",
+        "art": "/library/metadata/4696/art/1707114676",
+        "theme": "/library/metadata/4696/theme/1707114676",
+        "duration": 31620000,
+        "originallyAvailableAt": "2019-10-20",
+        "leafCount": 9,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1707114674,
+        "updatedAt": 1707114676,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/4708",
+        "Genre": [
+          {
+            "tag": "Crime"
+          },
+          {
+            "tag": "Drama"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Regina King"
+          },
+          {
+            "tag": "Yahya Abdul-Mateen II"
+          },
+          {
+            "tag": "Jeremy Irons"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2279",
+        "key": "/library/metadata/2279/children",
+        "guid": "plex://show/5ea63f0b020425003defeb70",
+        "studio": "Marvel Studios Animation",
+        "type": "show",
+        "title": "What If…?",
+        "contentRating": "TV-14",
+        "summary": "Exploring pivotal moments from the Marvel Cinematic Universe and turning them on their head, leading the audience into uncharted territory.",
+        "index": 1,
+        "audienceRating": 8.2,
+        "viewCount": 9,
+        "lastViewedAt": 1706483005,
+        "year": 2021,
+        "tagline": "Enter the Multiverse of infinite possibilities",
+        "thumb": "/library/metadata/2279/thumb/1705739084",
+        "art": "/library/metadata/2279/art/1705739084",
+        "theme": "/library/metadata/2279/theme/1705739084",
+        "duration": 2040000,
+        "originallyAvailableAt": "2021-08-11",
+        "leafCount": 18,
+        "viewedLeafCount": 9,
+        "childCount": 2,
+        "addedAt": 1705739082,
+        "updatedAt": 1705739084,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/2314",
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Action"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Jeffrey Wright"
+          },
+          {
+            "tag": "Terri Douglas"
+          },
+          {
+            "tag": "Matthew Wood"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2260",
+        "key": "/library/metadata/2260/children",
+        "guid": "plex://show/5e1625a4acedb3003f136cbd",
+        "studio": "HBO",
+        "type": "show",
+        "title": "White House Plumbers",
+        "contentRating": "TV-MA",
+        "summary": "A five-part series that tells the true story of how Nixon's own political saboteurs and Watergate masterminds, E. Howard Hunt and G. Gordon Liddy, accidentally toppled the presidency they were trying to protect.",
+        "index": 1,
+        "audienceRating": 6.2,
+        "year": 2023,
+        "thumb": "/library/metadata/2260/thumb/1705739083",
+        "art": "/library/metadata/2260/art/1705739083",
+        "theme": "/library/metadata/2260/theme/1705739083",
+        "duration": 3300000,
+        "originallyAvailableAt": "2023-05-01",
+        "leafCount": 5,
+        "viewedLeafCount": 0,
+        "childCount": 1,
+        "addedAt": 1705739081,
+        "updatedAt": 1705739083,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Biography"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Woody Harrelson"
+          },
+          {
+            "tag": "Justin Theroux"
+          },
+          {
+            "tag": "Lena Headey"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4137",
+        "key": "/library/metadata/4137/children",
+        "guid": "plex://show/5f9075bb583581002d739d91",
+        "studio": "Rip Cord Productions",
+        "type": "show",
+        "title": "The White Lotus",
+        "titleSort": "White Lotus",
+        "contentRating": "TV-MA",
+        "summary": "Follow the exploits of various guests and employees at an exclusive tropical resort over the span of a week as with each passing day, a darker complexity emerges in these picture-perfect travelers, the hotel’s cheerful employees and the idyllic locale itself.",
+        "index": 1,
+        "audienceRating": 7.6,
+        "year": 2021,
+        "tagline": "La dolce vita isn't so sweet.",
+        "thumb": "/library/metadata/4137/thumb/1706515527",
+        "art": "/library/metadata/4137/art/1706515527",
+        "theme": "/library/metadata/4137/theme/1706515527",
+        "duration": 21180000,
+        "originallyAvailableAt": "2021-07-11",
+        "leafCount": 13,
+        "viewedLeafCount": 0,
+        "childCount": 2,
+        "addedAt": 1706515525,
+        "updatedAt": 1706515527,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "primaryExtraKey": "/library/metadata/4145",
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Drama"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Jennifer Coolidge"
+          },
+          {
+            "tag": "Jon Gries"
+          },
+          {
+            "tag": "F. Murray Abraham"
+          }
+        ]
+      }
+    ]
+  }
+}

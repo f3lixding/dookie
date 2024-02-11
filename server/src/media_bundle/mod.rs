@@ -31,8 +31,9 @@ impl BundleResponse for reqwest::Response {
 
 #[async_trait]
 pub(in crate::media_bundle) trait IBundleClient: Send + Sync {
-    fn from_scratch(port: u16) -> Self;
-    fn clone_with_port(&self, port: u16) -> Self;
+    fn from_port(port: u16) -> Self;
+    fn set_port(&mut self, port: u16);
+    fn set_token(&mut self, token: (impl AsRef<str>, impl AsRef<str>));
     async fn get(&self, url: &str) -> Result<impl BundleResponse, Box<dyn Error + Send + Sync>>;
     async fn post(
         &self,
@@ -47,28 +48,39 @@ pub(in crate::media_bundle) trait IBundleClient: Send + Sync {
 #[derive(Debug, Clone)]
 pub(in crate::media_bundle) struct BundleClient {
     client: reqwest::Client,
+    token_name: String,
+    token_value: String,
     port: u16,
 }
 
 #[async_trait]
 impl IBundleClient for BundleClient {
-    fn from_scratch(port: u16) -> Self {
+    fn from_port(port: u16) -> Self {
         BundleClient {
             client: reqwest::Client::new(),
+            token_name: String::default(),
+            token_value: String::default(),
             port,
         }
     }
 
-    fn clone_with_port(&self, port: u16) -> Self {
-        BundleClient {
-            client: self.client.clone(),
-            port,
-        }
+    fn set_port(&mut self, port: u16) {
+        self.port = port;
+    }
+
+    fn set_token(&mut self, token: (impl AsRef<str>, impl AsRef<str>)) {
+        self.token_name = token.0.as_ref().to_string();
+        self.token_name = token.1.as_ref().to_string();
     }
 
     async fn get(&self, url: &str) -> Result<reqwest::Response, Box<dyn Error + Send + Sync>> {
         let url = format!("http://localhost:{}/{}", self.port, url);
-        Ok(self.client.get(&url).send().await?)
+        Ok(self
+            .client
+            .get(&url)
+            .header(&self.token_name, &self.token_value)
+            .send()
+            .await?)
     }
 
     async fn post(
@@ -82,6 +94,7 @@ impl IBundleClient for BundleClient {
         Ok(self
             .client
             .post(&url)
+            .header(&self.token_name, &self.token_value)
             .body::<reqwest::Body>(msg_body)
             .send()
             .await?)
