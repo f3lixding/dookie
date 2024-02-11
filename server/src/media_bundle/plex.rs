@@ -161,9 +161,13 @@ mod tests {
 
     #[test]
     fn test_deserialize() {
-        let json_as_bytes = std::fs::read("/Users/felixding/temp/movies_metadata.txt").unwrap();
+        let json_as_bytes = std::fs::read("test_data/movies_metadata.txt").unwrap();
         let media_container =
             serde_json::from_slice::<OuterMediaContainer>(&json_as_bytes).unwrap();
         println!("{:#?}", media_container);
+        println!(
+            "length is: {}",
+            media_container.media_container.metadata.len()
+        );
     }
 }

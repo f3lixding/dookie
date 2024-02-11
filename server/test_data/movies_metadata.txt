@@ -1,0 +1,5467 @@
+{
+  "MediaContainer": {
+    "size": 60,
+    "allowSync": true,
+    "art": "/:/resources/movie-fanart.jpg",
+    "identifier": "com.plexapp.plugins.library",
+    "librarySectionID": 1,
+    "librarySectionTitle": "Movies",
+    "librarySectionUUID": "5a703f9f-269e-4ba2-b9a7-eab771f33969",
+    "mediaTagPrefix": "/system/bundle/media/flags/",
+    "mediaTagVersion": 1698860282,
+    "thumb": "/:/resources/movie.png",
+    "title1": "Movies",
+    "title2": "All Movies",
+    "viewGroup": "movie",
+    "viewMode": 65592,
+    "Metadata": [
+      {
+        "ratingKey": "5051",
+        "key": "/library/metadata/5051",
+        "guid": "plex://movie/5d77705edd931c001e38bde2",
+        "studio": "DreamWorks Pictures",
+        "type": "movie",
+        "title": "1917",
+        "contentRating": "R",
+        "summary": "April 6th, 1917. As an infantry battalion assembles to wage war deep in enemy territory, two soldiers are assigned to race against time and deliver a message that will stop 1,600 men from walking straight into a deadly trap.",
+        "rating": 8.9,
+        "audienceRating": 8.8,
+        "viewOffset": 530947,
+        "lastViewedAt": 1707585174,
+        "year": 2020,
+        "tagline": "Time is the enemy",
+        "thumb": "/library/metadata/5051/thumb/1707562486",
+        "art": "/library/metadata/5051/art/1707562486",
+        "duration": 7139488,
+        "originallyAvailableAt": "2020-01-02",
+        "addedAt": 1707562485,
+        "updatedAt": 1707562486,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "chapterSource": "media",
+        "primaryExtraKey": "/library/metadata/5052",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 7814,
+            "duration": 7139488,
+            "bitrate": 19861,
+            "width": 3840,
+            "height": 1600,
+            "aspectRatio": 2.35,
+            "audioChannels": 8,
+            "audioCodec": "truehd",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 8070,
+                "key": "/library/parts/8070/1707562417/file.mkv",
+                "duration": 7139488,
+                "file": "/Users/felixding/.plex/movies/1917 (2019)/1917.2019.UHD.BluRay.2160p.HDR.TrueHD.Atmos.7.1.HEVC-DDR[EtHD].mkv",
+                "size": 17725004595,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "War"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "India"
+          },
+          {
+            "tag": "Spain"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Sam Mendes"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Sam Mendes"
+          },
+          {
+            "tag": "Krysty Wilson-Cairns"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "George MacKay"
+          },
+          {
+            "tag": "Dean-Charles Chapman"
+          },
+          {
+            "tag": "Mark Strong"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4753",
+        "key": "/library/metadata/4753",
+        "guid": "plex://movie/636ff7029cfc5f11985d7e6c",
+        "studio": "MRC",
+        "type": "movie",
+        "title": "American Fiction",
+        "contentRating": "R",
+        "summary": "A novelist who's fed up with the establishment profiting from \"Black\" entertainment uses a pen name to write a book that propels him into the heart of hypocrisy and the madness he claims to disdain.",
+        "rating": 9.4,
+        "audienceRating": 9.5,
+        "year": 2023,
+        "thumb": "/library/metadata/4753/thumb/1707290597",
+        "art": "/library/metadata/4753/art/1707290597",
+        "duration": 7001452,
+        "originallyAvailableAt": "2023-12-15",
+        "addedAt": 1707290591,
+        "updatedAt": 1707290597,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/4754",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 7299,
+            "duration": 7001452,
+            "bitrate": 21313,
+            "width": 3840,
+            "height": 1628,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 7555,
+                "key": "/library/parts/7555/1707290543/file.mkv",
+                "duration": 7001452,
+                "file": "/Users/felixding/.plex/movies/American Fiction (2023)/American Fiction 2023 2160p WEB DL DDP5 1 SDR H265 AOC.mkv",
+                "size": 18654889919,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Drama"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Cord Jefferson"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Cord Jefferson"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Jeffrey Wright"
+          },
+          {
+            "tag": "Leslie Uggams"
+          },
+          {
+            "tag": "Erika Alexander"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4969",
+        "key": "/library/metadata/4969",
+        "guid": "plex://movie/63c1de1d977f24b2a7a3b914",
+        "studio": "Olive Bridge Entertainment",
+        "type": "movie",
+        "title": "Anyone But You",
+        "contentRating": "R",
+        "summary": "After an amazing first date, Bea and Ben's fiery attraction turns ice-cold--until they find themselves unexpectedly reunited at a destination wedding in Australia. So they do what any two mature adults would do: pretend to be a couple.",
+        "rating": 5.2,
+        "audienceRating": 8.7,
+        "viewCount": 1,
+        "lastViewedAt": 1707526362,
+        "year": 2023,
+        "tagline": "They only look like the perfect couple.",
+        "thumb": "/library/metadata/4969/thumb/1707501772",
+        "art": "/library/metadata/4969/art/1707501772",
+        "duration": 6209077,
+        "originallyAvailableAt": "2023-12-15",
+        "addedAt": 1707501771,
+        "updatedAt": 1707501772,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/4970",
+        "ratingImage": "rottentomatoes://image.rating.rotten",
+        "Media": [
+          {
+            "id": 7636,
+            "duration": 6209077,
+            "bitrate": 23538,
+            "width": 3840,
+            "height": 1608,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "ac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 7892,
+                "key": "/library/parts/7892/1707501680/file.mkv",
+                "duration": 6209077,
+                "file": "/Users/felixding/.plex/movies/Anyone But You (2023)/Anyone But You 2023 REPACK 2160p UPSCALE BluRay HEVC 10Bit DD5 1-R&amp;H mkv.mkv",
+                "size": 18271774125,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Romance"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "Australia"
+          },
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Will Gluck"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "William Shakespeare"
+          },
+          {
+            "tag": "Will Gluck"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Sydney Sweeney"
+          },
+          {
+            "tag": "Glen Powell"
+          },
+          {
+            "tag": "Alexandra Shipp"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3988",
+        "key": "/library/metadata/3988",
+        "guid": "plex://movie/5d777058b2739400200e71d2",
+        "studio": "Armian Pictures",
+        "type": "movie",
+        "title": "Aporia",
+        "contentRating": "R",
+        "summary": "Since losing her husband, Sophie has struggled to manage grief, a full-time job, and parenting her devastated daughter, but when a former physicist reveals a secret time-bending machine, Sophie will be faced with an impossible choice.",
+        "rating": 8.9,
+        "audienceRating": 6.6,
+        "year": 2023,
+        "tagline": "Reality is a continuum.",
+        "thumb": "/library/metadata/3988/thumb/1706436219",
+        "art": "/library/metadata/3988/art/1706436219",
+        "duration": 6227433,
+        "originallyAvailableAt": "2023-09-12",
+        "addedAt": 1706430154,
+        "updatedAt": 1706436219,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "chapterSource": "media",
+        "primaryExtraKey": "/library/metadata/3989",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 6138,
+            "duration": 6227433,
+            "bitrate": 22930,
+            "width": 1920,
+            "height": 1080,
+            "aspectRatio": 1.78,
+            "audioChannels": 6,
+            "audioCodec": "dca-ma",
+            "videoCodec": "h264",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "audioProfile": "ma",
+            "videoProfile": "high",
+            "Part": [
+              {
+                "id": 6394,
+                "key": "/library/parts/6394/1706430141/file.mkv",
+                "duration": 6227433,
+                "file": "/Users/felixding/.plex/movies/Aporia (2023)/Aporia 2023 1080p BluRay REMUX AVC DTS HD MA 5 1 TRiToN.mkv",
+                "size": 17851919907,
+                "audioProfile": "ma",
+                "container": "mkv",
+                "videoProfile": "high"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Science Fiction"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Jared Moshé"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Jared Moshé"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Judy Greer"
+          },
+          {
+            "tag": "Edi Gathegi"
+          },
+          {
+            "tag": "Payman Maadi"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4256",
+        "key": "/library/metadata/4256",
+        "guid": "plex://movie/5d7770b2594b2b001e74fb7e",
+        "studio": "Warner Bros. Pictures",
+        "type": "movie",
+        "title": "Aquaman and the Lost Kingdom",
+        "contentRating": "PG-13",
+        "summary": "Black Manta seeks revenge on Aquaman for his father's death. Wielding the Black Trident's power, he becomes a formidable foe. To defend Atlantis, Aquaman forges an alliance with his imprisoned brother. They must protect the kingdom.",
+        "rating": 3.4,
+        "audienceRating": 8.2,
+        "viewOffset": 278506,
+        "viewCount": 1,
+        "skipCount": 2,
+        "lastViewedAt": 1706829698,
+        "year": 2023,
+        "tagline": "The tide is turning.",
+        "thumb": "/library/metadata/4256/thumb/1707301668",
+        "art": "/library/metadata/4256/art/1707301668",
+        "duration": 7447231,
+        "originallyAvailableAt": "2023-12-20",
+        "addedAt": 1706649127,
+        "updatedAt": 1707301668,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "chapterSource": "media",
+        "primaryExtraKey": "/library/metadata/4257",
+        "ratingImage": "rottentomatoes://image.rating.rotten",
+        "Media": [
+          {
+            "id": 6530,
+            "duration": 7447231,
+            "bitrate": 24953,
+            "width": 3840,
+            "height": 2160,
+            "aspectRatio": 1.78,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 6786,
+                "key": "/library/parts/6786/1706388800/file.mkv",
+                "duration": 7447231,
+                "file": "/Users/felixding/.plex/movies/Aquaman and the Lost Kingdom (2023)/Aquaman and the Lost Kingdom 2023 2160p WEB DL DDP5 1 Atmos DV HDR H 265 FLUX TGx.mkv",
+                "size": 23231433773,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Action"
+          },
+          {
+            "tag": "Adventure"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "James Wan"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "James Wan"
+          },
+          {
+            "tag": "Jason Momoa"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Jason Momoa"
+          },
+          {
+            "tag": "Patrick Wilson"
+          },
+          {
+            "tag": "Yahya Abdul-Mateen II"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2089",
+        "key": "/library/metadata/2089",
+        "guid": "plex://movie/5f720d677e59a4003f62e62f",
+        "studio": "American Empirical Pictures",
+        "type": "movie",
+        "title": "Asteroid City",
+        "contentRating": "PG-13",
+        "summary": "Following a writer on his world famous fictional play about a grieving father who travels with his tech-obsessed family to small rural Asteroid City to compete in a junior stargazing event, only to have his world view disrupted forever.",
+        "rating": 7.5,
+        "audienceRating": 6.2,
+        "viewCount": 1,
+        "lastViewedAt": 1705391126,
+        "year": 2023,
+        "tagline": "A PLAY, A TOWN AND A ASTEROID.",
+        "thumb": "/library/metadata/2089/thumb/1705739079",
+        "art": "/library/metadata/2089/art/1705739079",
+        "duration": 6323766,
+        "originallyAvailableAt": "2023-06-08",
+        "addedAt": 1705739078,
+        "updatedAt": 1705739079,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/2140",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 3487,
+            "duration": 6323766,
+            "bitrate": 27424,
+            "width": 3840,
+            "height": 2160,
+            "aspectRatio": 1.78,
+            "audioChannels": 8,
+            "audioCodec": "flac",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 3743,
+                "key": "/library/parts/3743/1702341522/file.mkv",
+                "duration": 6323766,
+                "file": "/Users/felixding/.plex/movies/Asteroid City (2023)/Asteroid City 2023 4K HDR DV 2160p WEBDL Ita Eng x265 NAHOM.mkv",
+                "size": 21680323268,
+                "container": "mkv",
+                "hasThumbnail": "1",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Romance"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Wes Anderson"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Wes Anderson"
+          },
+          {
+            "tag": "Roman Coppola"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Jason Schwartzman"
+          },
+          {
+            "tag": "Scarlett Johansson"
+          },
+          {
+            "tag": "Tom Hanks"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2748",
+        "key": "/library/metadata/2748",
+        "guid": "plex://movie/5d77686e0ab244002006db93",
+        "studio": "Columbia Pictures",
+        "type": "movie",
+        "title": "Bad Boys for Life",
+        "contentRating": "R",
+        "summary": "Marcus and Mike have to confront new issues (career changes and midlife crises), as they join the newly created elite team AMMO of the Miami police department to take down the ruthless Armando Armas, the vicious leader of a Miami drug cartel.",
+        "rating": 7.6,
+        "audienceRating": 9.6,
+        "viewCount": 1,
+        "lastViewedAt": 1705994384,
+        "year": 2020,
+        "tagline": "Ride together. Die together.",
+        "thumb": "/library/metadata/2748/thumb/1707386625",
+        "art": "/library/metadata/2748/art/1707386625",
+        "duration": 7370539,
+        "originallyAvailableAt": "2020-01-15",
+        "addedAt": 1705792293,
+        "updatedAt": 1707386625,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 4503,
+            "duration": 7370539,
+            "bitrate": 4165,
+            "width": 1920,
+            "height": 800,
+            "aspectRatio": 2.35,
+            "audioChannels": 2,
+            "audioCodec": "ac3",
+            "videoCodec": "h264",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "NTSC",
+            "videoProfile": "high",
+            "Part": [
+              {
+                "id": 4759,
+                "key": "/library/parts/4759/1585249437/file.mkv",
+                "duration": 7370539,
+                "file": "/Users/felixding/.plex/movies/Bad Boys for Life.2020.1080p.HDRip.X264.AC3-EVO.mkv",
+                "size": 3839570100,
+                "container": "mkv",
+                "videoProfile": "high"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Thriller"
+          },
+          {
+            "tag": "Action"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Adil El Arbi"
+          },
+          {
+            "tag": "Bilall Fallah"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "George Gallo"
+          },
+          {
+            "tag": "Joe Carnahan"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Will Smith"
+          },
+          {
+            "tag": "Martin Lawrence"
+          },
+          {
+            "tag": "Paola Nuñez"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2784",
+        "key": "/library/metadata/2784",
+        "guid": "plex://movie/5d776bb6ad5437001f7a7b68",
+        "studio": "LuckyChap Entertainment",
+        "type": "movie",
+        "title": "Barbie",
+        "contentRating": "PG-13",
+        "summary": "Barbie and Ken are having the time of their lives in the colorful and seemingly perfect world of Barbie Land. However, when they get a chance to go to the real world, they soon discover the joys and perils of living among humans.",
+        "rating": 8.8,
+        "audienceRating": 8.3,
+        "viewOffset": 457127,
+        "lastViewedAt": 1705794026,
+        "year": 2023,
+        "tagline": "She's everything. He's just Ken.",
+        "thumb": "/library/metadata/2784/thumb/1705792295",
+        "art": "/library/metadata/2784/art/1705792295",
+        "duration": 6905398,
+        "originallyAvailableAt": "2023-07-19",
+        "addedAt": 1705792294,
+        "updatedAt": 1705792295,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/2789",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 4603,
+            "duration": 6905398,
+            "bitrate": 3389,
+            "width": 1920,
+            "height": 960,
+            "aspectRatio": 1.85,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 4859,
+                "key": "/library/parts/4859/1694516073/file.mkv",
+                "duration": 6905398,
+                "file": "/Users/felixding/.plex/movies/Barbie.2023.REPACK.1080p.AMZN.WEBRip.DDP5.1.x265.10bit-LAMA265.1/Barbie.2023.REPACK.1080p.AMZN.WEBRip.DDP5.1.x265.10bit-LAMA265.mkv",
+                "size": 2930022806,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Fantasy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United Kingdom"
+          },
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Greta Gerwig"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Noah Baumbach"
+          },
+          {
+            "tag": "Greta Gerwig"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Margot Robbie"
+          },
+          {
+            "tag": "Ryan Gosling"
+          },
+          {
+            "tag": "America Ferrera"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4352",
+        "key": "/library/metadata/4352",
+        "guid": "plex://movie/613c7a5b1fe69c7d644a8e0a",
+        "studio": "Miramax",
+        "type": "movie",
+        "title": "The Beekeeper",
+        "titleSort": "Beekeeper",
+        "contentRating": "R",
+        "summary": "One man's brutal campaign for vengeance takes on national stakes after he is revealed to be a former operative of a powerful and clandestine organization known as \"Beekeepers\".",
+        "rating": 7.1,
+        "audienceRating": 9.3,
+        "year": 2024,
+        "tagline": "Expose the corruption. Protect the hive.",
+        "thumb": "/library/metadata/4352/thumb/1706751583",
+        "art": "/library/metadata/4352/art/1706751583",
+        "duration": 6334702,
+        "originallyAvailableAt": "2024-01-08",
+        "addedAt": 1706751582,
+        "updatedAt": 1706751583,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/4353",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 6644,
+            "duration": 6334702,
+            "bitrate": 25084,
+            "width": 3832,
+            "height": 1600,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 6900,
+                "key": "/library/parts/6900/1706751556/file.mkv",
+                "duration": 6334702,
+                "file": "/Users/felixding/.plex/movies/The Beekeeper (2024)/The Beekeeper 2024 HDR 2160p WEB H265 LilKim TGx.mkv",
+                "size": 19864028678,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Action"
+          },
+          {
+            "tag": "Thriller"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United Kingdom"
+          },
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "David Ayer"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Kurt Wimmer"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Jason Statham"
+          },
+          {
+            "tag": "Emmy Raver-Lampman"
+          },
+          {
+            "tag": "Josh Hutcherson"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2031",
+        "key": "/library/metadata/2031",
+        "guid": "plex://movie/6309f715039fb88ac14e0a1a",
+        "studio": "Zapruder Films",
+        "type": "movie",
+        "title": "BlackBerry",
+        "contentRating": "R",
+        "summary": "A company that toppled global giants before succumbing to the ruthlessly competitive forces of Silicon Valley. This is not a conventional tale of modern business failure by fraud and greed. The rise and fall of BlackBerry reveals the dangerous speed at which innovators race along the information superhighway.",
+        "rating": 9.8,
+        "audienceRating": 9.4,
+        "viewOffset": 99541,
+        "skipCount": 1,
+        "lastViewedAt": 1705357429,
+        "year": 2023,
+        "tagline": "Work hard. Fail hard.",
+        "thumb": "/library/metadata/2031/thumb/1705739077",
+        "art": "/library/metadata/2031/art/1705739077",
+        "duration": 7185300,
+        "originallyAvailableAt": "2023-05-11",
+        "addedAt": 1705739076,
+        "updatedAt": 1705739077,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/2049",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 3327,
+            "duration": 7185300,
+            "bitrate": 6379,
+            "width": 3836,
+            "height": 1912,
+            "aspectRatio": 1.85,
+            "audioChannels": 6,
+            "audioCodec": "aac",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "audioProfile": "lc",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 3583,
+                "key": "/library/parts/3583/1704344570/file.mkv",
+                "duration": 7185300,
+                "file": "/Users/felixding/.plex/movies/BlackBerry (2023)/BlackBerry (2023) 2160p 4K BluRay 5.1-LAMA.mkv",
+                "size": 5732794514,
+                "audioProfile": "lc",
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Biography"
+          },
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "Canada"
+          },
+          {
+            "tag": "Finland"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Matt Johnson"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Matt Johnson"
+          },
+          {
+            "tag": "Matthew Miller"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Jay Baruchel"
+          },
+          {
+            "tag": "Glenn Howerton"
+          },
+          {
+            "tag": "Matt Johnson"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4347",
+        "key": "/library/metadata/4347",
+        "guid": "plex://movie/620540bb3a866670a3989e41",
+        "studio": "Brownstone Productions",
+        "type": "movie",
+        "title": "Bottoms",
+        "contentRating": "R",
+        "summary": "Unpopular best friends PJ and Josie start a high school self-defense club to meet girls and lose their virginity. They soon find themselves in over their heads when the most popular students start beating each other up in the name of self-defense.",
+        "rating": 9.0,
+        "audienceRating": 8.9,
+        "year": 2023,
+        "tagline": "A movie about empowering women (the hot ones)",
+        "thumb": "/library/metadata/4347/thumb/1706747141",
+        "art": "/library/metadata/4347/art/1706747141",
+        "duration": 5472544,
+        "originallyAvailableAt": "2023-11-03",
+        "addedAt": 1706747140,
+        "updatedAt": 1706747141,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/4348",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 6633,
+            "duration": 5472544,
+            "bitrate": 2197,
+            "width": 1920,
+            "height": 800,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "ac3",
+            "videoCodec": "h264",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "high",
+            "Part": [
+              {
+                "id": 6889,
+                "key": "/library/parts/6889/1706747073/file.mkv",
+                "duration": 5472544,
+                "file": "/Users/felixding/.plex/movies/Bottoms (2023)/Bottoms 2023 1080p WEBRip 1400MB DD5 1 x264 GalaxyRG.mkv",
+                "size": 1505519044,
+                "container": "mkv",
+                "videoProfile": "high"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Emma Seligman"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Emma Seligman"
+          },
+          {
+            "tag": "Rachel Sennott"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Rachel Sennott"
+          },
+          {
+            "tag": "Ayo Edebiri"
+          },
+          {
+            "tag": "Ruby Cruz"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3776",
+        "key": "/library/metadata/3776",
+        "guid": "plex://movie/5f646bb0b0268300400e1532",
+        "studio": "Lotte Entertainment",
+        "type": "movie",
+        "title": "Concrete Utopia",
+        "originalTitle": "콘크리트 유토피아",
+        "contentRating": "Not Rated",
+        "summary": "Survivors from a massive earthquake struggle for a new life in Seoul.",
+        "rating": 10.0,
+        "audienceRating": 7.6,
+        "year": 2023,
+        "tagline": "We believe we are chosen.",
+        "thumb": "/library/metadata/3776/thumb/1706384470",
+        "art": "/library/metadata/3776/art/1706384470",
+        "duration": 7806798,
+        "originallyAvailableAt": "2023-08-09",
+        "addedAt": 1706384469,
+        "updatedAt": 1706384470,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 5849,
+            "duration": 7806798,
+            "bitrate": 3172,
+            "width": 1920,
+            "height": 1032,
+            "aspectRatio": 1.85,
+            "audioChannels": 2,
+            "audioCodec": "aac",
+            "videoCodec": "h264",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "audioProfile": "lc",
+            "videoProfile": "high",
+            "Part": [
+              {
+                "id": 6105,
+                "key": "/library/parts/6105/1706384382/file.mkv",
+                "duration": 7806798,
+                "file": "/Users/felixding/.plex/movies/Concrete Utopia (2023)/Concrete Utopia 2023 1080p WEB DL x264 AAC2 0 ENG YG.mkv",
+                "size": 3097493745,
+                "audioProfile": "lc",
+                "container": "mkv",
+                "videoProfile": "high"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Thriller"
+          },
+          {
+            "tag": "Science Fiction"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "Republic of Korea"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Um Tae-hwa"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Lee Shin-ji"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Lee Byung-hun"
+          },
+          {
+            "tag": "Park Seo-jun"
+          },
+          {
+            "tag": "Park Bo-young"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2139",
+        "key": "/library/metadata/2139",
+        "guid": "plex://movie/5d776b99ad5437001f7a47db",
+        "studio": "Walt Disney Pictures",
+        "type": "movie",
+        "title": "Cruella",
+        "contentRating": "PG-13",
+        "summary": "A live-action prequel feature film following a young Cruella de Vil.",
+        "rating": 7.5,
+        "audienceRating": 9.7,
+        "viewOffset": 430341,
+        "viewCount": 1,
+        "skipCount": 1,
+        "lastViewedAt": 1706774932,
+        "year": 2021,
+        "tagline": "Hello Cruel World",
+        "thumb": "/library/metadata/2139/thumb/1705739079",
+        "art": "/library/metadata/2139/art/1705739079",
+        "duration": 8035744,
+        "originallyAvailableAt": "2021-05-26",
+        "addedAt": 1705739079,
+        "updatedAt": 1705739079,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "chapterSource": "media",
+        "primaryExtraKey": "/library/metadata/2168",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 3631,
+            "duration": 8035744,
+            "bitrate": 16995,
+            "width": 3840,
+            "height": 2160,
+            "aspectRatio": 1.78,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 3887,
+                "key": "/library/parts/3887/1627167281/file.mkv",
+                "duration": 8035744,
+                "file": "/Users/felixding/.plex/movies/Cruella.2021.WEBRip.2160p.UHD.HDR.Eng.DDP.DD5.1.gerald99/Movie and Sample/Cruella.mkv",
+                "size": 17074365421,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Crime"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Craig Gillespie"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Aline Brosh McKenna"
+          },
+          {
+            "tag": "Steve Zissis"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Emma Stone"
+          },
+          {
+            "tag": "Emma Thompson"
+          },
+          {
+            "tag": "Joel Fry"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4972",
+        "key": "/library/metadata/4972",
+        "guid": "plex://movie/6310ea4493df84910ae108a2",
+        "studio": "A24",
+        "type": "movie",
+        "title": "Dream Scenario",
+        "contentRating": "R",
+        "summary": "A hapless family man finds his life turned upside down when millions of strangers suddenly start seeing him in their dreams. When his nighttime appearances take a nightmarish turn, Paul is forced to navigate his newfound stardom.",
+        "rating": 9.1,
+        "audienceRating": 6.8,
+        "year": 2023,
+        "tagline": "Meet the man of your dreams.",
+        "thumb": "/library/metadata/4972/thumb/1707523631",
+        "art": "/library/metadata/4972/art/1707523631",
+        "duration": 6107488,
+        "originallyAvailableAt": "2023-11-10",
+        "addedAt": 1707523630,
+        "updatedAt": 1707523631,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/4973",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 7641,
+            "duration": 6107488,
+            "bitrate": 15434,
+            "width": 3840,
+            "height": 2080,
+            "aspectRatio": 1.85,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main",
+            "Part": [
+              {
+                "id": 7897,
+                "key": "/library/parts/7897/1707466511/file.mkv",
+                "duration": 6107488,
+                "file": "/Users/felixding/.plex/movies/Dream.Scenario.2023.2160p.WEB.H265-HotJumpingBoarFromPluto[TGx]/dream.scenario.2023.2160p.web.h265-hotjumpingboarfrompluto.mkv",
+                "size": 11784655048,
+                "container": "mkv",
+                "videoProfile": "main"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Fantasy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Kristoffer Borgli"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Kristoffer Borgli"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Nicolas Cage"
+          },
+          {
+            "tag": "Julianne Nicholson"
+          },
+          {
+            "tag": "Lily Bird"
+          }
+        ]
+      },
+      {
+        "ratingKey": "5038",
+        "key": "/library/metadata/5038",
+        "guid": "plex://movie/5d776cac47dd6e001f6ee059",
+        "studio": "Legendary Pictures",
+        "type": "movie",
+        "title": "Dune: Part One",
+        "contentRating": "PG-13",
+        "summary": "Paul Atreides, a brilliant and gifted young man born into a great destiny beyond his understanding, must travel to the most dangerous planet in the universe to ensure the future of his family and his people. As malevolent forces explode into conflict over the planet's exclusive supply of the most precious resource in existence-a commodity capable of unlocking humanity's greatest potential-only those who can conquer their fear will survive.",
+        "rating": 8.3,
+        "audienceRating": 9.0,
+        "viewOffset": 211503,
+        "lastViewedAt": 1707497742,
+        "year": 2021,
+        "tagline": "It begins.",
+        "thumb": "/library/metadata/5038/thumb/1707560678",
+        "art": "/library/metadata/5038/art/1707560678",
+        "duration": 9326612,
+        "originallyAvailableAt": "2021-09-15",
+        "addedAt": 1707560678,
+        "updatedAt": 1707560678,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "chapterSource": "media",
+        "primaryExtraKey": "/library/metadata/5039",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 7779,
+            "duration": 9326612,
+            "bitrate": 20623,
+            "width": 3840,
+            "height": 1608,
+            "aspectRatio": 2.35,
+            "audioChannels": 8,
+            "audioCodec": "aac",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "audioProfile": "lc",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 8035,
+                "key": "/library/parts/8035/1707560641/file.mkv",
+                "duration": 9326612,
+                "file": "/Users/felixding/.plex/movies/Dune (2021)/Dune 2021 2160p BluRay x265 HEVC 10bit HDR AAC 7 1 Tigole QxR.mkv",
+                "size": 24043351406,
+                "audioProfile": "lc",
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Science Fiction"
+          },
+          {
+            "tag": "Action"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Denis Villeneuve"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Eric Roth"
+          },
+          {
+            "tag": "Frank Herbert"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Timothée Chalamet"
+          },
+          {
+            "tag": "Rebecca Ferguson"
+          },
+          {
+            "tag": "Oscar Isaac"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3417",
+        "key": "/library/metadata/3417",
+        "guid": "plex://movie/632cb7506cb099217bfbd231",
+        "studio": "Khalabo Ink Society",
+        "type": "movie",
+        "title": "Entergalactic",
+        "contentRating": "R",
+        "summary": "Jabari, a charming, streetwear-clad artist on the cusp of real success. After a chance run-in with his cool new photographer neighbor, Meadow, Jabari has to figure out whether he can make space for love in his life.",
+        "rating": 9.7,
+        "audienceRating": 9.4,
+        "viewOffset": 772916,
+        "lastViewedAt": 1706167493,
+        "year": 2022,
+        "tagline": "Love will find us all.",
+        "thumb": "/library/metadata/3417/thumb/1706160384",
+        "art": "/library/metadata/3417/art/1706160384",
+        "duration": 5678698,
+        "originallyAvailableAt": "2022-09-30",
+        "addedAt": 1706160383,
+        "updatedAt": 1706160384,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/3418",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 5281,
+            "duration": 5678698,
+            "bitrate": 2633,
+            "width": 1920,
+            "height": 1080,
+            "aspectRatio": 1.78,
+            "audioChannels": 6,
+            "audioCodec": "aac",
+            "videoCodec": "h264",
+            "videoResolution": "1080",
+            "container": "mp4",
+            "videoFrameRate": "24p",
+            "optimizedForStreaming": 1,
+            "audioProfile": "lc",
+            "has64bitOffsets": false,
+            "videoProfile": "high",
+            "Part": [
+              {
+                "id": 5537,
+                "key": "/library/parts/5537/1706160352/file.mp4",
+                "duration": 5678698,
+                "file": "/Users/felixding/.plex/movies/Entergalactic (2022)/Entergalactic 2022 1080p web YTS.mp4",
+                "size": 1872766632,
+                "audioProfile": "lc",
+                "container": "mp4",
+                "has64bitOffsets": false,
+                "optimizedForStreaming": true,
+                "videoProfile": "high"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Music"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United Kingdom"
+          },
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Fletcher Moules"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Ian Edelman"
+          },
+          {
+            "tag": "Esa Lewis"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Kid Cudi"
+          },
+          {
+            "tag": "Jessica Williams"
+          },
+          {
+            "tag": "Laura Harrier"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2138",
+        "key": "/library/metadata/2138",
+        "guid": "plex://movie/5d77704efb0d55001f5ed3a0",
+        "studio": "Marvel Studios",
+        "type": "movie",
+        "title": "Eternals",
+        "contentRating": "PG-13",
+        "summary": "Following the events of Avengers: Endgame (2019), an unexpected tragedy forces the Eternals, ancient aliens who have been living on Earth in secret for thousands of years, out of the shadows to reunite against mankind's most ancient enemy, the Deviants.",
+        "rating": 4.7,
+        "audienceRating": 7.7,
+        "viewCount": 1,
+        "lastViewedAt": 1705565775,
+        "year": 2021,
+        "tagline": "In the beginning...",
+        "thumb": "/library/metadata/2138/thumb/1705739079",
+        "art": "/library/metadata/2138/art/1705739079",
+        "duration": 9348426,
+        "originallyAvailableAt": "2021-11-03",
+        "addedAt": 1705739079,
+        "updatedAt": 1705739079,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/2157",
+        "ratingImage": "rottentomatoes://image.rating.rotten",
+        "Media": [
+          {
+            "id": 3630,
+            "duration": 9348426,
+            "bitrate": 2634,
+            "width": 1920,
+            "height": 800,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "aac",
+            "videoCodec": "h264",
+            "videoResolution": "1080",
+            "container": "mp4",
+            "videoFrameRate": "24p",
+            "optimizedForStreaming": 1,
+            "audioProfile": "lc",
+            "has64bitOffsets": false,
+            "videoProfile": "high",
+            "Part": [
+              {
+                "id": 3886,
+                "key": "/library/parts/3886/1642453915/file.mp4",
+                "duration": 9348426,
+                "file": "/Users/felixding/.plex/movies/Eternals (2021) [1080p] [WEBRip] [5.1] [YTS.MX]/Eternals.2021.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4",
+                "size": 3083799095,
+                "audioProfile": "lc",
+                "container": "mp4",
+                "has64bitOffsets": false,
+                "optimizedForStreaming": true,
+                "videoProfile": "high"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Fantasy"
+          },
+          {
+            "tag": "Science Fiction"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "Canada"
+          },
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Chloé Zhao"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Jack Kirby"
+          },
+          {
+            "tag": "Patrick Burleigh"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Gemma Chan"
+          },
+          {
+            "tag": "Richard Madden"
+          },
+          {
+            "tag": "Angelina Jolie"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3307",
+        "key": "/library/metadata/3307",
+        "guid": "plex://movie/5d77707c6afb3d002061b643",
+        "studio": "A24",
+        "type": "movie",
+        "title": "Everything Everywhere All at Once",
+        "contentRating": "R",
+        "summary": "A middle-aged Chinese immigrant is swept up into an insane adventure in which she alone can save existence by exploring other universes and connecting with the lives she could have led.",
+        "rating": 9.4,
+        "audienceRating": 8.6,
+        "viewOffset": 1291042,
+        "lastViewedAt": 1707446238,
+        "year": 2022,
+        "tagline": "The universe is so much bigger than you realize.",
+        "thumb": "/library/metadata/3307/thumb/1706073785",
+        "art": "/library/metadata/3307/art/1706073785",
+        "duration": 8434047,
+        "originallyAvailableAt": "2022-03-24",
+        "addedAt": 1706073782,
+        "updatedAt": 1706073785,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/3308",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 5163,
+            "duration": 8434047,
+            "bitrate": 5210,
+            "width": 3840,
+            "height": 2076,
+            "aspectRatio": 1.85,
+            "audioChannels": 6,
+            "audioCodec": "ac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 5419,
+                "key": "/library/parts/5419/1705735133/file.mkv",
+                "duration": 8434047,
+                "file": "/Users/felixding/.plex/movies/Everything Everywhere All at Once (2022) 2160p H265 10 bit Dolby Vision ita eng AC3 5.1 sub ita eng Licdom.mkv",
+                "size": 5494957097,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Science Fiction"
+          },
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Daniel Scheinert"
+          },
+          {
+            "tag": "Daniel Kwan"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Daniel Scheinert"
+          },
+          {
+            "tag": "Daniel Kwan"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Michelle Yeoh"
+          },
+          {
+            "tag": "Stephanie Hsu"
+          },
+          {
+            "tag": "Ke Huy Quan"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4561",
+        "key": "/library/metadata/4561",
+        "guid": "plex://movie/61ac763a232659537154b74a",
+        "studio": "Star Thrower Entertainment",
+        "type": "movie",
+        "title": "Fair Play",
+        "contentRating": "R",
+        "summary": "Hot off the heels of their new engagement, thriving New York couple Emily and Luke can't get enough of each other. When a coveted promotion at a cutthroat financial firm arises, supportive exchanges between the lovers begin to sour into something more sinister. As the power dynamics irrevocably shift in their relationship, Luke and Emily must face the true price of success and the unnerving limits of ambition.",
+        "rating": 8.5,
+        "audienceRating": 5.4,
+        "viewOffset": 128489,
+        "lastViewedAt": 1707018379,
+        "year": 2023,
+        "tagline": "Competition is close.",
+        "thumb": "/library/metadata/4561/thumb/1707041021",
+        "art": "/library/metadata/4561/art/1707041021",
+        "duration": 6794944,
+        "originallyAvailableAt": "2023-09-28",
+        "addedAt": 1706999049,
+        "updatedAt": 1707041021,
+        "audienceRatingImage": "rottentomatoes://image.rating.spilled",
+        "chapterSource": "media",
+        "primaryExtraKey": "/library/metadata/4562",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 7012,
+            "duration": 6794944,
+            "bitrate": 12253,
+            "width": 3840,
+            "height": 2160,
+            "aspectRatio": 1.78,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 7268,
+                "key": "/library/parts/7268/1706998952/file.mkv",
+                "duration": 6794944,
+                "file": "/Users/felixding/.plex/movies/Fair Play (2023)/Fair Play 2023 2160p NF WEB DL DDP5 1 Atmos DV HDR H 265 FLUX.mkv",
+                "size": 10410809936,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Mystery"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Chloe Domont"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Chloe Domont"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Phoebe Dynevor"
+          },
+          {
+            "tag": "Alden Ehrenreich"
+          },
+          {
+            "tag": "Eddie Marsan"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4082",
+        "key": "/library/metadata/4082",
+        "guid": "plex://movie/61bd9c2dbbaecd52f2fc609f",
+        "studio": "Municipal Pictures",
+        "type": "movie",
+        "title": "The Family Plan",
+        "titleSort": "Family Plan",
+        "contentRating": "PG-13",
+        "summary": "Dan Morgan is many things: a devoted husband, a loving father, a celebrated car salesman. He's also a former assassin. And when his past catches up to his present, he's forced to take his unsuspecting family on a road trip unlike any other.",
+        "rating": 2.5,
+        "audienceRating": 6.1,
+        "year": 2023,
+        "thumb": "/library/metadata/4082/thumb/1706481131",
+        "art": "/library/metadata/4082/art/1706481131",
+        "duration": 7124492,
+        "originallyAvailableAt": "2023-12-15",
+        "addedAt": 1706481130,
+        "updatedAt": 1706481131,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/4083",
+        "ratingImage": "rottentomatoes://image.rating.rotten",
+        "Media": [
+          {
+            "id": 6282,
+            "duration": 7124492,
+            "bitrate": 20907,
+            "width": 3840,
+            "height": 1608,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 6538,
+                "key": "/library/parts/6538/1706481110/file.mkv",
+                "duration": 7124492,
+                "file": "/Users/felixding/.plex/movies/The Family Plan (2023)/The Family Plan 2023 2160p WEB H265 AcceleratedTrickyAkitaOfEnergy TGx.mkv",
+                "size": 18623711591,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Action"
+          },
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Simon Cellan Jones"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "David Coggeshall"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Mark Wahlberg"
+          },
+          {
+            "tag": "Michelle Monaghan"
+          },
+          {
+            "tag": "Maggie Q"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2751",
+        "key": "/library/metadata/2751",
+        "guid": "plex://movie/5d7770a59ab5440021536ad1",
+        "studio": "Big Beach",
+        "type": "movie",
+        "title": "The Farewell",
+        "titleSort": "Farewell",
+        "contentRating": "PG",
+        "summary": "Billi's (Awkwafina) family returns to China under the guise of a fake wedding to stealthily say goodbye to their beloved matriarch.",
+        "rating": 9.7,
+        "audienceRating": 8.7,
+        "viewCount": 1,
+        "lastViewedAt": 1705565775,
+        "year": 2019,
+        "tagline": "Based on an actual lie.",
+        "thumb": "/library/metadata/2751/thumb/1705792294",
+        "art": "/library/metadata/2751/art/1705792294",
+        "duration": 6015040,
+        "originallyAvailableAt": "2019-08-09",
+        "addedAt": 1705792294,
+        "updatedAt": 1705792294,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 4506,
+            "duration": 6015040,
+            "bitrate": 4194,
+            "width": 1920,
+            "height": 804,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "ac3",
+            "videoCodec": "h264",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main",
+            "Part": [
+              {
+                "id": 4762,
+                "key": "/library/parts/4762/1705344274/file.mkv",
+                "duration": 6015040,
+                "file": "/Users/felixding/.plex/movies/The Farewell (2019)/The Farewell-Una bugia buona (2019) ITA-ENG Ac3 5.1 BDRip 1080p H264 [ArMor].mkv",
+                "size": 3157102260,
+                "container": "mkv",
+                "videoProfile": "main"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Drama"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "China"
+          },
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Lulu Wang"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Lulu Wang"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Awkwafina"
+          },
+          {
+            "tag": "Zhao Shuzhen"
+          },
+          {
+            "tag": "Tzi Ma"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4262",
+        "key": "/library/metadata/4262",
+        "guid": "plex://movie/6011ad1882349f002b825e44",
+        "studio": "Dirty Films",
+        "type": "movie",
+        "title": "Fingernails",
+        "contentRating": "R",
+        "summary": "Anna and Ryan have found true love, and it's proven by a controversial new technology. There's just one problem, as Anna still isn't sure. Then she takes a position at a love testing institute and meets Amir.",
+        "rating": 6.0,
+        "audienceRating": 4.2,
+        "viewOffset": 87104,
+        "lastViewedAt": 1706395340,
+        "year": 2023,
+        "tagline": "Love is a test. Results may vary.",
+        "thumb": "/library/metadata/4262/thumb/1706653645",
+        "art": "/library/metadata/4262/art/1706653645",
+        "duration": 6761880,
+        "originallyAvailableAt": "2023-11-03",
+        "addedAt": 1706653641,
+        "updatedAt": 1706653645,
+        "audienceRatingImage": "rottentomatoes://image.rating.spilled",
+        "primaryExtraKey": "/library/metadata/4263",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 6546,
+            "duration": 6761880,
+            "bitrate": 25250,
+            "width": 3840,
+            "height": 1920,
+            "aspectRatio": 1.85,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 6802,
+                "key": "/library/parts/6802/1706392779/file.mkv",
+                "duration": 6761880,
+                "file": "/Users/felixding/.plex/movies/Fingernails (2023)/Fingernails 2023 HDR 2160p WEB H265 HUZZAH TGx.mkv",
+                "size": 21346214783,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Romance"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United Kingdom"
+          },
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Christos Nikou"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Christos Nikou"
+          },
+          {
+            "tag": "Stavros Raptis"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Jessie Buckley"
+          },
+          {
+            "tag": "Riz Ahmed"
+          },
+          {
+            "tag": "Jeremy Allen White"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2088",
+        "key": "/library/metadata/2088",
+        "guid": "plex://movie/5d77707581ba41001faf0df4",
+        "studio": "Searchlight Pictures",
+        "type": "movie",
+        "title": "The French Dispatch",
+        "titleSort": "French Dispatch",
+        "contentRating": "R",
+        "summary": "A love letter to journalists set in an outpost of an American newspaper in a fictional twentieth century French city that brings to life a collection of stories published in \"The French Dispatch Magazine\".",
+        "rating": 7.5,
+        "audienceRating": 7.6,
+        "viewCount": 1,
+        "lastViewedAt": 1707452915,
+        "year": 2021,
+        "tagline": "... of the Liberty, Kansas Evening Sun.",
+        "thumb": "/library/metadata/2088/thumb/1705739079",
+        "art": "/library/metadata/2088/art/1705739079",
+        "duration": 6458773,
+        "originallyAvailableAt": "2021-10-21",
+        "addedAt": 1705739078,
+        "updatedAt": 1705739079,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/2128",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 3486,
+            "duration": 6458773,
+            "bitrate": 6387,
+            "width": 3840,
+            "height": 2064,
+            "aspectRatio": 1.85,
+            "audioChannels": 6,
+            "audioCodec": "aac",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "audioProfile": "lc",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 3742,
+                "key": "/library/parts/3742/1702342342/file.mkv",
+                "duration": 6458773,
+                "file": "/Users/felixding/.plex/movies/The French Dispatch (2021)/The French Dispatch 2021 2160p web YTS.mkv",
+                "size": 5159661266,
+                "audioProfile": "lc",
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Drama"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Wes Anderson"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Wes Anderson"
+          },
+          {
+            "tag": "Jason Schwartzman"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Benicio del Toro"
+          },
+          {
+            "tag": "Adrien Brody"
+          },
+          {
+            "tag": "Tilda Swinton"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4340",
+        "key": "/library/metadata/4340",
+        "guid": "plex://movie/627b6fe6fd5a7f44bc006859",
+        "studio": "Not a Real Production Company",
+        "type": "movie",
+        "title": "Good Grief",
+        "contentRating": "R",
+        "summary": "Marc chose to distract himself from the pain of his mother's death by diving headfirst into a comfortable marriage with a charming, wealthy, older man. But when his husband also dies, unexpectedly, Marc's world is cracked wide open, forcing him and his two best friends to embark on a cathartic, life-affirming adventure to make peace with all the grief he'd been evading.",
+        "rating": 7.5,
+        "audienceRating": 7.1,
+        "year": 2024,
+        "tagline": "Love lost is love found.",
+        "thumb": "/library/metadata/4340/thumb/1706714452",
+        "art": "/library/metadata/4340/art/1706714452",
+        "duration": 6058708,
+        "originallyAvailableAt": "2024-01-05",
+        "addedAt": 1706714445,
+        "updatedAt": 1706714452,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/4341",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 6622,
+            "duration": 6058708,
+            "bitrate": 12938,
+            "width": 3840,
+            "height": 2160,
+            "aspectRatio": 1.78,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 6878,
+                "key": "/library/parts/6878/1706714388/file.mkv",
+                "duration": 6058708,
+                "file": "/Users/felixding/.plex/movies/Good Grief (2023)/Good.Grief.2023.2160p.NF.WEB-DL.DDP5.1.Atmos.H.265-FLUX[TGx].mkv",
+                "size": 9802035095,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Drama"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United Kingdom"
+          },
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Dan Levy"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Dan Levy"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Dan Levy"
+          },
+          {
+            "tag": "Ruth Negga"
+          },
+          {
+            "tag": "Himesh Patel"
+          }
+        ]
+      },
+      {
+        "ratingKey": "5087",
+        "key": "/library/metadata/5087",
+        "guid": "plex://movie/5d776974f617c9002015fda3",
+        "studio": "Fox Searchlight Pictures",
+        "type": "movie",
+        "title": "The Grand Budapest Hotel",
+        "titleSort": "Grand Budapest Hotel",
+        "contentRating": "R",
+        "summary": "This movie recounts the adventures of M. Gustave, a legendary concierge at a famous European hotel between the wars, and Zero Moustafa, the lobby boy who becomes his most trusted friend. The story involves the theft and recovery of a priceless Renaissance painting and the battle for an enormous family fortune - all against the backdrop of a suddenly and dramatically changing continent.",
+        "rating": 9.2,
+        "audienceRating": 8.6,
+        "year": 2014,
+        "tagline": "A murder case of Madam D. with enormous wealth and the most outrageous events surrounding her sudden death!",
+        "thumb": "/library/metadata/5087/thumb/1707594827",
+        "art": "/library/metadata/5087/art/1707594827",
+        "duration": 5995646,
+        "originallyAvailableAt": "2014-02-26",
+        "addedAt": 1707594825,
+        "updatedAt": 1707594827,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "chapterSource": "media",
+        "primaryExtraKey": "/library/metadata/5088",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 7892,
+            "duration": 5995646,
+            "bitrate": 6256,
+            "width": 1920,
+            "height": 1036,
+            "aspectRatio": 1.85,
+            "audioChannels": 6,
+            "audioCodec": "aac",
+            "videoCodec": "hevc",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "audioProfile": "lc",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 8148,
+                "key": "/library/parts/8148/1707594770/file.mkv",
+                "duration": 5995646,
+                "file": "/Users/felixding/.plex/movies/The Grand Budapest Hotel (2014)/The Grand Budapest Hotel (2014) Criterion (1080p BluRay x265 HEVC 10bit AAC 5.1 Tigole) [QxR].mkv",
+                "size": 4688642100,
+                "audioProfile": "lc",
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Drama"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "Germany"
+          },
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Wes Anderson"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Wes Anderson"
+          },
+          {
+            "tag": "Stefan Zweig"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Ralph Fiennes"
+          },
+          {
+            "tag": "F. Murray Abraham"
+          },
+          {
+            "tag": "Tony Revolori"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4767",
+        "key": "/library/metadata/4767",
+        "guid": "plex://movie/60cefe587025b1002c33bbf4",
+        "studio": "Miramax",
+        "type": "movie",
+        "title": "The Holdovers",
+        "titleSort": "Holdovers",
+        "contentRating": "R",
+        "summary": "A curmudgeonly instructor at a New England prep school is forced to remain on campus during Christmas break to babysit the handful of students with nowhere to go. Eventually, he forms an unlikely bond with one of them — a damaged, brainy troublemaker — and with the school’s head cook, who has just lost a son in Vietnam.",
+        "rating": 9.7,
+        "audienceRating": 9.1,
+        "year": 2023,
+        "tagline": "Discomfort and joy.",
+        "thumb": "/library/metadata/4767/thumb/1707292152",
+        "art": "/library/metadata/4767/art/1707292152",
+        "duration": 8005914,
+        "originallyAvailableAt": "2023-11-10",
+        "addedAt": 1707292152,
+        "updatedAt": 1707292152,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/4768",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 7335,
+            "duration": 8005914,
+            "bitrate": 25118,
+            "width": 3590,
+            "height": 2160,
+            "aspectRatio": 1.66,
+            "audioChannels": 6,
+            "audioCodec": "ac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 7591,
+                "key": "/library/parts/7591/1707292112/file.mkv",
+                "duration": 8005914,
+                "file": "/Users/felixding/.plex/movies/The Holdovers (2023)/The.Holdovers.2023.HDR.2160p.WEB.H265-MauveSkunkOfStereotypedAptitude[TGx].mkv",
+                "size": 25138850136,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Drama"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Alexander Payne"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "David Hemingson"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Paul Giamatti"
+          },
+          {
+            "tag": "Dominic Sessa"
+          },
+          {
+            "tag": "Da'Vine Joy Randolph"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3877",
+        "key": "/library/metadata/3877",
+        "guid": "plex://movie/5ff7948787a1f0002de271ab",
+        "studio": "Depth of Field",
+        "type": "movie",
+        "title": "If You Were the Last",
+        "contentRating": "R",
+        "summary": "Adrift in their broken-down space shuttle with little hope of rescue, two astronauts argue over whether they're better off spending their remaining days as friends or something more.",
+        "rating": 8.6,
+        "audienceRating": 8.1,
+        "year": 2023,
+        "thumb": "/library/metadata/3877/thumb/1706415420",
+        "art": "/library/metadata/3877/art/1706415420",
+        "duration": 5555808,
+        "originallyAvailableAt": "2023-10-20",
+        "addedAt": 1706415419,
+        "updatedAt": 1706415420,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/3878",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 6003,
+            "duration": 5555808,
+            "bitrate": 15163,
+            "width": 3840,
+            "height": 2160,
+            "aspectRatio": 1.78,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main",
+            "Part": [
+              {
+                "id": 6259,
+                "key": "/library/parts/6259/1706415351/file.mkv",
+                "duration": 5555808,
+                "file": "/Users/felixding/.plex/movies/If You Were the Last (2024)/If You Were the Last 2023 2160p WEB h265 EDITH TGx.mkv",
+                "size": 10531786317,
+                "container": "mkv",
+                "videoProfile": "main"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Romance"
+          },
+          {
+            "tag": "Science Fiction"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Kristian Mercado Figueroa"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Angela Bourassa"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Anthony Mackie"
+          },
+          {
+            "tag": "Zoë Chao"
+          },
+          {
+            "tag": "Natalie Morales"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2056",
+        "key": "/library/metadata/2056",
+        "guid": "plex://movie/5d777037f617c9002019c63b",
+        "studio": "Fox Searchlight Pictures",
+        "type": "movie",
+        "title": "Jojo Rabbit",
+        "contentRating": "PG-13",
+        "summary": "A World War II satire that follows a lonely German boy named Jojo (Roman Griffin Davis) whose world view is turned upside down when he discovers his single mother (Scarlett Johansson) is hiding a young Jewish girl (Thomasin McKenzie) in their attic. Aided only by his idiotic imaginary friend, Adolf Hitler (Taika Waititi), Jojo must confront his blind nationalism.",
+        "rating": 8.0,
+        "audienceRating": 9.4,
+        "year": 2019,
+        "tagline": "An anti-hate satire.",
+        "thumb": "/library/metadata/2056/thumb/1705739078",
+        "art": "/library/metadata/2056/art/1705739078",
+        "duration": 6529442,
+        "originallyAvailableAt": "2019-10-24",
+        "addedAt": 1705739077,
+        "updatedAt": 1705739078,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/2114",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 3392,
+            "duration": 6529442,
+            "bitrate": 24964,
+            "width": 3840,
+            "height": 2076,
+            "aspectRatio": 1.85,
+            "audioChannels": 6,
+            "audioCodec": "ac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 3648,
+                "key": "/library/parts/3648/1702353864/file.mkv",
+                "duration": 6529442,
+                "file": "/Users/felixding/.plex/movies/Jojo Rabbit (2019)/Jojo Rabbit (2019) [BluRay Rip 2160p HEVC 10bit-HDR ITA-ENG DTS-AC3-SUBS] [M@HD].mkv",
+                "size": 20379172591,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Drama"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "Czech Republic"
+          },
+          {
+            "tag": "New Zealand"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Taika Waititi"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Taika Waititi"
+          },
+          {
+            "tag": "Christine Leunens"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Roman Griffin Davis"
+          },
+          {
+            "tag": "Thomasin McKenzie"
+          },
+          {
+            "tag": "Scarlett Johansson"
+          }
+        ]
+      },
+      {
+        "ratingKey": "5021",
+        "key": "/library/metadata/5021",
+        "guid": "plex://movie/5d776d3dad5437001f7d0d50",
+        "studio": "Apple Studios",
+        "type": "movie",
+        "title": "Killers of the Flower Moon",
+        "contentRating": "R",
+        "summary": "The story takes place in the 1920s around the Osage Indian tribe living in Oklahoma. Native Americans are being killed one by one after the tribe becomes rich by discovering oil. The Osage massacre attracts the attention of the FBI, which begins an investigation.",
+        "rating": 9.3,
+        "audienceRating": 8.4,
+        "viewOffset": 825083,
+        "lastViewedAt": 1707557005,
+        "year": 2023,
+        "tagline": "Greed is an animal that hungers for blood.",
+        "thumb": "/library/metadata/5021/thumb/1707559323",
+        "art": "/library/metadata/5021/art/1707559323",
+        "duration": 12347374,
+        "originallyAvailableAt": "2023-10-18",
+        "addedAt": 1707556898,
+        "updatedAt": 1707559323,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "chapterSource": "media",
+        "primaryExtraKey": "/library/metadata/5022",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 7732,
+            "duration": 12347374,
+            "bitrate": 16913,
+            "width": 3840,
+            "height": 1608,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 7988,
+                "key": "/library/parts/7988/1707556805/file.mkv",
+                "duration": 12347374,
+                "file": "/Users/felixding/.plex/movies/Killers of the Flower Moon (2023)/Killers of the Flower Moon 2023 Hybrid 2160p UHD BluRay DV HDR10 DDP 5 1 x265 BiTOR.mkv",
+                "size": 26044761533,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "History"
+          },
+          {
+            "tag": "Crime"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Martin Scorsese"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Eric Roth"
+          },
+          {
+            "tag": "Martin Scorsese"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Leonardo DiCaprio"
+          },
+          {
+            "tag": "Lily Gladstone"
+          },
+          {
+            "tag": "Robert De Niro"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4844",
+        "key": "/library/metadata/4844",
+        "guid": "plex://movie/5d7770b431d95e001f1a7e1b",
+        "studio": "Focus Features",
+        "type": "movie",
+        "title": "Last Night in Soho",
+        "contentRating": "R",
+        "summary": "Aspiring fashion designer Eloise is mysteriously able to enter the 1960s, where she encounters dazzling wannabe singer Sandie. But the glamour is not as it seems, and the dreams of the past crack and splinter into something darker.",
+        "rating": 7.5,
+        "audienceRating": 9.0,
+        "viewOffset": 646312,
+        "lastViewedAt": 1707446260,
+        "year": 2021,
+        "tagline": "When the past lets you in, the truth will come out.",
+        "thumb": "/library/metadata/4844/thumb/1707367880",
+        "art": "/library/metadata/4844/art/1707367880",
+        "duration": 7023520,
+        "originallyAvailableAt": "2021-10-22",
+        "addedAt": 1707367879,
+        "updatedAt": 1707367880,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/4845",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 7448,
+            "duration": 7023520,
+            "bitrate": 15198,
+            "width": 3836,
+            "height": 1602,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 7704,
+                "key": "/library/parts/7704/1707367320/file.mkv",
+                "duration": 7023520,
+                "file": "/Users/felixding/.plex/movies/Last.Night.in.Soho.2021.2160p.WEB-DL.x265.10bit.HDR.DDP5.1.Atmos-NOGRP/Last.Night.in.Soho.2021.2160p.WEB-DL.x265.10bit.HDR.DDP5.1.Atmos-NOGRP.mkv",
+                "size": 13344663892,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Horror"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "China"
+          },
+          {
+            "tag": "United Kingdom"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Edgar Wright"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Edgar Wright"
+          },
+          {
+            "tag": "Krysty Wilson-Cairns"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Thomasin McKenzie"
+          },
+          {
+            "tag": "Anya Taylor-Joy"
+          },
+          {
+            "tag": "Matt Smith"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2211",
+        "key": "/library/metadata/2211",
+        "guid": "plex://movie/5d777093ad5437001f825d23",
+        "studio": "Pixar",
+        "type": "movie",
+        "title": "Luca",
+        "contentRating": "PG",
+        "summary": "A young boy experiences an unforgettable seaside summer on the Italian Riviera filled with gelato, pasta and endless scooter rides. Luca shares these adventures with his newfound best friend, but all the fun is threatened by a deeply-held secret: he is a sea monster from another world just below the ocean's surface.",
+        "rating": 9.1,
+        "audienceRating": 8.5,
+        "viewOffset": 3987066,
+        "viewCount": 1,
+        "lastViewedAt": 1707550851,
+        "year": 2021,
+        "tagline": "Prepare for an unforgettable trip.",
+        "thumb": "/library/metadata/2211/thumb/1705739080",
+        "art": "/library/metadata/2211/art/1705739080",
+        "duration": 5715084,
+        "originallyAvailableAt": "2021-06-17",
+        "addedAt": 1705739080,
+        "updatedAt": 1705739080,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/2242",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 3839,
+            "duration": 5715084,
+            "bitrate": 17438,
+            "width": 3840,
+            "height": 2160,
+            "aspectRatio": 1.78,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 4095,
+                "key": "/library/parts/4095/1626992286/file.mkv",
+                "duration": 5715084,
+                "file": "/Users/felixding/.plex/movies/Luca.2021.2160p.DSNP.WEB-DL.x265.10bit.HDR.DDP5.1.Atmos-CM/Luca.2021.2160p.DSNP.WEB-DL.DDP5.1.Atmos.HDR.HEVC-CMRG.mkv",
+                "size": 12459782730,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Adventure"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Enrico Casarosa"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Julie Lynn"
+          },
+          {
+            "tag": "Enrico Casarosa"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Jacob Tremblay"
+          },
+          {
+            "tag": "Jack Dylan Grazer"
+          },
+          {
+            "tag": "Emma Berman"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4117",
+        "key": "/library/metadata/4117",
+        "guid": "plex://movie/5e1632dcbc1372003ea67158",
+        "studio": "Marvel Studios",
+        "type": "movie",
+        "title": "The Marvels",
+        "titleSort": "Marvels",
+        "contentRating": "PG-13",
+        "summary": "Carol Danvers gets her powers entangled with those of Kamala Khan and Monica Rambeau, forcing them to work together to save the universe.",
+        "rating": 6.2,
+        "audienceRating": 8.2,
+        "viewOffset": 756601,
+        "lastViewedAt": 1707369289,
+        "year": 2023,
+        "tagline": "Higher. Further. Faster. Together.",
+        "thumb": "/library/metadata/4117/thumb/1707223780",
+        "art": "/library/metadata/4117/art/1707223780",
+        "duration": 6278048,
+        "originallyAvailableAt": "2023-11-08",
+        "addedAt": 1706505918,
+        "updatedAt": 1707223780,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "chapterSource": "media",
+        "primaryExtraKey": "/library/metadata/4118",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 6373,
+            "duration": 6278048,
+            "bitrate": 17603,
+            "width": 3840,
+            "height": 1600,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "60p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 6629,
+                "key": "/library/parts/6629/1706246336/file.mkv",
+                "duration": 6278048,
+                "file": "/Users/felixding/.plex/movies/The Marvels (2023)/The Marvels 2023 2160p WEB DL DDP5 1 Atmos HDR10Plus H265 DirtyHippie rife4 14v2 60fps.mkv",
+                "size": 13817533406,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Action"
+          },
+          {
+            "tag": "Adventure"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Nia DaCosta"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Nia DaCosta"
+          },
+          {
+            "tag": "Megan McDonnell"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Brie Larson"
+          },
+          {
+            "tag": "Teyonah Parris"
+          },
+          {
+            "tag": "Iman Vellani"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3777",
+        "key": "/library/metadata/3777",
+        "guid": "plex://movie/5f40cc9e02101b00400fb6f0",
+        "studio": "Universal Pictures",
+        "type": "movie",
+        "title": "Migration",
+        "contentRating": "PG",
+        "summary": "Mack is an adventure-loathing duck who does not intend to leave his New England pond anytime soon. However, he is convinced by his more adventurous wife, Pam, to head south for the winter. The two ducks, along with their two kids Dax and Gwen and Mack's Uncle Dan, do just that. However, things do not go as planned, but that doesn't stop them from having the time of their lives.",
+        "rating": 7.2,
+        "audienceRating": 8.8,
+        "viewCount": 1,
+        "skipCount": 1,
+        "lastViewedAt": 1707023362,
+        "year": 2023,
+        "tagline": "Odd ducks welcome.",
+        "thumb": "/library/metadata/3777/thumb/1707476855",
+        "art": "/library/metadata/3777/art/1707476855",
+        "duration": 4973300,
+        "originallyAvailableAt": "2023-12-06",
+        "addedAt": 1706384830,
+        "updatedAt": 1707476855,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/3778",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 5850,
+            "duration": 4973300,
+            "bitrate": 21192,
+            "width": 3840,
+            "height": 1602,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 6106,
+                "key": "/library/parts/6106/1706384755/file.mkv",
+                "duration": 4973300,
+                "file": "/Users/felixding/.plex/movies/Migration (2023)/Migration 2023 2160p WEB h265 ETHEL TGx.mkv",
+                "size": 13175963863,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Action"
+          },
+          {
+            "tag": "Adventure"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          },
+          {
+            "tag": "Canada"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Benjamin Renner"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Mike White"
+          },
+          {
+            "tag": "Benjamin Renner"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Kumail Nanjiani"
+          },
+          {
+            "tag": "Elizabeth Banks"
+          },
+          {
+            "tag": "Caspar Jennings"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4423",
+        "key": "/library/metadata/4423",
+        "guid": "plex://movie/6310ea418c818cc0b48ee7a6",
+        "studio": "Select Films",
+        "type": "movie",
+        "title": "A Million Miles Away",
+        "titleSort": "Million Miles Away",
+        "contentRating": "PG",
+        "summary": "A biopic about Jose Hernandez and his path from a farm worker to becoming an engineer and an astronaut. A tale of perseverance, community and sacrifice to accomplish a seemingly impossible dream.",
+        "rating": 8.9,
+        "audienceRating": 9.5,
+        "viewOffset": 73147,
+        "lastViewedAt": 1706848647,
+        "year": 2023,
+        "tagline": "It takes more than a dream to reach the stars.",
+        "thumb": "/library/metadata/4423/thumb/1706844270",
+        "art": "/library/metadata/4423/art/1706844270",
+        "duration": 7327360,
+        "originallyAvailableAt": "2023-09-15",
+        "addedAt": 1706844269,
+        "updatedAt": 1706844270,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "chapterSource": "media",
+        "primaryExtraKey": "/library/metadata/4424",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 6818,
+            "duration": 7327360,
+            "bitrate": 15635,
+            "width": 3840,
+            "height": 2080,
+            "aspectRatio": 1.85,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 7074,
+                "key": "/library/parts/7074/1706844238/file.mkv",
+                "duration": 7327360,
+                "file": "/Users/felixding/.plex/movies/A Million Miles Away (2023)/A Million Miles Away 2023 2160p AMZN WEB DL DUAL DD 5 1 Atmos HDR H 265 TheBiscuitMan.mkv",
+                "size": 14324864053,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "History"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "Mexico"
+          },
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Alejandra Márquez Abella"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Bettina Gilois"
+          },
+          {
+            "tag": "Alejandra Márquez Abella"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Michael Peña"
+          },
+          {
+            "tag": "Rosa Salazar"
+          },
+          {
+            "tag": "Julio Cesar Cedillo"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2048",
+        "key": "/library/metadata/2048",
+        "guid": "plex://movie/5e16255bbc1372003ea5c790",
+        "studio": "Plan B Entertainment",
+        "type": "movie",
+        "title": "Minari",
+        "contentRating": "PG-13",
+        "summary": "A Korean-American family moves to a farm in search of their own American Dream, finding hope and a new home.",
+        "rating": 9.8,
+        "audienceRating": 8.7,
+        "viewCount": 1,
+        "lastViewedAt": 1705304911,
+        "year": 2021,
+        "tagline": "A timeless story of what roots us.",
+        "thumb": "/library/metadata/2048/thumb/1705739078",
+        "art": "/library/metadata/2048/art/1705739078",
+        "duration": 6912858,
+        "originallyAvailableAt": "2021-02-12",
+        "addedAt": 1705739077,
+        "updatedAt": 1705739078,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "chapterSource": "media",
+        "primaryExtraKey": "/library/metadata/2082",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 3372,
+            "duration": 6912858,
+            "bitrate": 14927,
+            "width": 1920,
+            "height": 804,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "ac3",
+            "videoCodec": "h264",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "high",
+            "Part": [
+              {
+                "id": 3628,
+                "key": "/library/parts/3628/1704341826/file.mkv",
+                "duration": 6912858,
+                "file": "/Users/felixding/.plex/movies/Minari (2021)/Minari.2021.1080p.Bluray.DTS-HD.MA.5.1.X264-EVO[TGx].mkv",
+                "size": 12905951017,
+                "container": "mkv",
+                "videoProfile": "high"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Family"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Lee Isaac Chung"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Lee Isaac Chung"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Steven Yeun"
+          },
+          {
+            "tag": "Han Yeri"
+          },
+          {
+            "tag": "Youn Yuh-jung"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3864",
+        "key": "/library/metadata/3864",
+        "guid": "plex://movie/62665a4113a47880dae821b4",
+        "studio": "Annapurna Pictures",
+        "type": "movie",
+        "title": "Nimona",
+        "contentRating": "PG",
+        "summary": "When a knight in a futuristic medieval world is framed for a crime he didn't commit, the only one who can help him prove his innocence is Nimona -- a mischievous teen who happens to be a shapeshifting creature he's sworn to destroy.",
+        "rating": 9.4,
+        "audienceRating": 9.1,
+        "viewOffset": 2545800,
+        "viewCount": 1,
+        "lastViewedAt": 1707370861,
+        "year": 2023,
+        "tagline": "A new hero takes shape.",
+        "thumb": "/library/metadata/3864/thumb/1706392295",
+        "art": "/library/metadata/3864/art/1706392295",
+        "duration": 6165600,
+        "originallyAvailableAt": "2023-06-23",
+        "addedAt": 1706392294,
+        "updatedAt": 1706392295,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/3865",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 5978,
+            "duration": 6165600,
+            "bitrate": 6549,
+            "width": 3840,
+            "height": 1608,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 6234,
+                "key": "/library/parts/6234/1706392294/file.mkv",
+                "duration": 6165600,
+                "file": "/Users/felixding/.plex/movies/Nimona (2023) 2160P AI EAC3 5.1/Nimona (2023) 2160P AI EAC3 5.1.mkv",
+                "size": 5051918719,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Fantasy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United Kingdom"
+          },
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Troy Quane"
+          },
+          {
+            "tag": "Nick Bruno"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Robert L. Baird"
+          },
+          {
+            "tag": "Lloyd Taylor"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Chloë Grace Moretz"
+          },
+          {
+            "tag": "Riz Ahmed"
+          },
+          {
+            "tag": "Eugene Lee Yang"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2113",
+        "key": "/library/metadata/2113",
+        "guid": "plex://movie/616829561c627ddb697e5382",
+        "studio": "Excellent Cadaver",
+        "type": "movie",
+        "title": "No Hard Feelings",
+        "contentRating": "R",
+        "summary": "On the brink of losing her home, Maddie finds an intriguing job listing: helicopter parents looking for someone to bring their introverted 19-year-old son out of his shell before college. She has one summer to make him a man or die trying.",
+        "rating": 7.0,
+        "audienceRating": 8.7,
+        "viewOffset": 275484,
+        "viewCount": 2,
+        "lastViewedAt": 1707446564,
+        "year": 2023,
+        "tagline": "Pretty. Awkward.",
+        "thumb": "/library/metadata/2113/thumb/1705739079",
+        "art": "/library/metadata/2113/art/1705739079",
+        "duration": 6202880,
+        "originallyAvailableAt": "2023-06-15",
+        "addedAt": 1705739078,
+        "updatedAt": 1705739079,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "chapterSource": "media",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 3557,
+            "duration": 6202880,
+            "bitrate": 24895,
+            "width": 3836,
+            "height": 2072,
+            "aspectRatio": 1.85,
+            "audioChannels": 6,
+            "audioCodec": "ac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 3813,
+                "key": "/library/parts/3813/1702269780/file.mkv",
+                "duration": 6202880,
+                "file": "/Users/felixding/.plex/movies/No Hard Feelings (2023)/No.Hard.Feelings.2023.2160p.WEB-DL.DD5.1.DV.HDR10.H.265-CMRG[TGx].mkv",
+                "size": 19306249745,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Romance"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Gene Stupnitsky"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Gene Stupnitsky"
+          },
+          {
+            "tag": "John Phillips"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Jennifer Lawrence"
+          },
+          {
+            "tag": "Andrew Barth Feldman"
+          },
+          {
+            "tag": "Laura Benanti"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2156",
+        "key": "/library/metadata/2156",
+        "guid": "plex://movie/5d7770b847dd6e001f70bef2",
+        "studio": "Cor Cordium Productions",
+        "type": "movie",
+        "title": "Nomadland",
+        "contentRating": "R",
+        "summary": "Following the economic collapse of a company town in rural Nevada, Fern (Frances McDormand) packs her van and sets off on the road exploring a life outside of conventional society as a modern-day nomad. The third feature film from director Chloé Zhao, NOMADLAND features real nomads Linda May, Swankie and Bob Wells as Fern's mentors and comrades in her exploration through the vast landscape of the American West.",
+        "rating": 9.3,
+        "audienceRating": 8.2,
+        "year": 2021,
+        "tagline": "See you down the road.",
+        "thumb": "/library/metadata/2156/thumb/1705739080",
+        "art": "/library/metadata/2156/art/1705739080",
+        "duration": 6457856,
+        "originallyAvailableAt": "2021-01-29",
+        "addedAt": 1705739079,
+        "updatedAt": 1705739080,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/2212",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 3678,
+            "duration": 6457856,
+            "bitrate": 16012,
+            "width": 3840,
+            "height": 2160,
+            "aspectRatio": 1.78,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 3934,
+                "key": "/library/parts/3934/1627530964/file.mkv",
+                "duration": 6457856,
+                "file": "/Users/felixding/.plex/movies/Nomadland.2020.2160p.DSNP.WEBRip.x265.10bit.HDR.DDP5.1-MZABI/Nomadland.2020.2160p.DSNP.WEB-DL.DDP5.1.HDR.H.265-MZABI.mkv",
+                "size": 12927244473,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Drama"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Chloé Zhao"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Chloé Zhao"
+          },
+          {
+            "tag": "Jessica Bruder"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Frances McDormand"
+          },
+          {
+            "tag": "David Strathairn"
+          },
+          {
+            "tag": "Linda May"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2032",
+        "key": "/library/metadata/2032",
+        "guid": "plex://movie/5f86722f2556d100412f614d",
+        "studio": "A24",
+        "type": "movie",
+        "title": "Past Lives",
+        "contentRating": "PG-13",
+        "summary": "Nora and Hae Sung, two deeply connected childhood friends, are wrested apart after Nora's family emigrates from South Korea. Twenty years later, they are reunited for one fateful week as they confront notions of love and destiny.",
+        "rating": 9.6,
+        "audienceRating": 8.4,
+        "viewCount": 1,
+        "lastViewedAt": 1705107460,
+        "year": 2023,
+        "tagline": "What a good story this is.",
+        "thumb": "/library/metadata/2032/thumb/1705739077",
+        "art": "/library/metadata/2032/art/1705739077",
+        "duration": 6343520,
+        "originallyAvailableAt": "2023-06-16",
+        "addedAt": 1705739077,
+        "updatedAt": 1705739077,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/2052",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 3328,
+            "duration": 6343520,
+            "bitrate": 15234,
+            "width": 3840,
+            "height": 2080,
+            "aspectRatio": 1.85,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 3584,
+                "key": "/library/parts/3584/1704342874/file.mkv",
+                "duration": 6343520,
+                "file": "/Users/felixding/.plex/movies/Past Lives (2023)/Past.Lives.2023.HDR.2160p.WEB.H265-HUZZAH[TGx].mkv",
+                "size": 12081238172,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Romance"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "Republic of Korea"
+          },
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Celine Song"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Celine Song"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Greta Lee"
+          },
+          {
+            "tag": "Teo Yoo"
+          },
+          {
+            "tag": "John Magaro"
+          }
+        ]
+      },
+      {
+        "ratingKey": "5078",
+        "key": "/library/metadata/5078",
+        "guid": "plex://movie/623990832ebd1125218c3d4a",
+        "studio": "A24",
+        "type": "movie",
+        "title": "Pearl",
+        "contentRating": "R",
+        "summary": "Trapped on her family's isolated farm, Pearl must tend to her ailing father under the bitter and overbearing watch of her devout mother. Lusting for a glamorous life like she's seen in the movies, Pearl finds her ambitions, temptations, and repressions all colliding in this origin story of X's iconic villain.",
+        "rating": 9.3,
+        "audienceRating": 8.2,
+        "viewOffset": 765555,
+        "skipCount": 1,
+        "lastViewedAt": 1707343408,
+        "year": 2022,
+        "tagline": "The X-traordinary origin story.",
+        "thumb": "/library/metadata/5078/thumb/1707586181",
+        "art": "/library/metadata/5078/art/1707586181",
+        "duration": 6150206,
+        "originallyAvailableAt": "2022-09-16",
+        "addedAt": 1707586178,
+        "updatedAt": 1707586181,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "chapterSource": "media",
+        "primaryExtraKey": "/library/metadata/5079",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 7879,
+            "duration": 6150206,
+            "bitrate": 17874,
+            "width": 3840,
+            "height": 1608,
+            "aspectRatio": 2.35,
+            "audioChannels": 8,
+            "audioCodec": "aac",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "audioProfile": "lc",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 8135,
+                "key": "/library/parts/8135/1707557532/file.mkv",
+                "duration": 6150206,
+                "file": "/Users/felixding/.plex/movies/Pearl (2022)/Pearl 2022 2160p BluRay x265 HEVC 10bit HDR AAC 7 1 Tigole QxR.mkv",
+                "size": 13740864399,
+                "audioProfile": "lc",
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          },
+          {
+            "id": 7886,
+            "duration": 6150206,
+            "bitrate": 17874,
+            "width": 3840,
+            "height": 1608,
+            "aspectRatio": 2.35,
+            "audioChannels": 8,
+            "audioCodec": "aac",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "audioProfile": "lc",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 8142,
+                "key": "/library/parts/8142/1707586381/file.mkv",
+                "duration": 6150206,
+                "file": "/Users/felixding/.plex/movies/Pearl (2022) (2160p BluRay x265 HEVC 10bit HDR AAC 7.1 Tigole)/Pearl (2022) (2160p BluRay x265 10bit HDR Tigole).mkv",
+                "size": 13740864399,
+                "audioProfile": "lc",
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Horror"
+          },
+          {
+            "tag": "Drama"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Ti West"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Mia Goth"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Mia Goth"
+          },
+          {
+            "tag": "David Corenswet"
+          },
+          {
+            "tag": "Tandi Wright"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3790",
+        "key": "/library/metadata/3790",
+        "guid": "plex://movie/617bebe6aa77303543d35b3d",
+        "studio": "Quad Productions",
+        "type": "movie",
+        "title": "The Pod Generation",
+        "titleSort": "Pod Generation",
+        "contentRating": "PG-13",
+        "summary": "In a not-so-distant future, tech giant Pegazus offers couples the opportunity to share their pregnancies via detachable artificial wombs or pods. And so begins Rachel and Alvy's wild ride to parenthood in this brave new world.",
+        "rating": 4.2,
+        "audienceRating": 5.5,
+        "year": 2023,
+        "tagline": "Discover the new natural.",
+        "thumb": "/library/metadata/3790/thumb/1706387231",
+        "art": "/library/metadata/3790/art/1706387231",
+        "duration": 6585440,
+        "originallyAvailableAt": "2023-09-21",
+        "addedAt": 1706387230,
+        "updatedAt": 1706387231,
+        "audienceRatingImage": "rottentomatoes://image.rating.spilled",
+        "primaryExtraKey": "/library/metadata/3791",
+        "ratingImage": "rottentomatoes://image.rating.rotten",
+        "Media": [
+          {
+            "id": 5887,
+            "duration": 6585440,
+            "bitrate": 2871,
+            "width": 1920,
+            "height": 800,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 6143,
+                "key": "/library/parts/6143/1706387173/file.mkv",
+                "duration": 6585440,
+                "file": "/Users/felixding/.plex/movies/The Pod Generation (2023)/The Pod Generation 2023 1080p WEB DL x265 Protozoan.mkv",
+                "size": 2365699291,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Romance"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "Belgium"
+          },
+          {
+            "tag": "France"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Sophie Barthes"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Sophie Barthes"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Emilia Clarke"
+          },
+          {
+            "tag": "Chiwetel Ejiofor"
+          },
+          {
+            "tag": "Rosalie Craig"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4063",
+        "key": "/library/metadata/4063",
+        "guid": "plex://movie/64f7cffd60807ddb71523bf3",
+        "studio": "American Empirical Pictures",
+        "type": "movie",
+        "title": "Poison",
+        "contentRating": "PG",
+        "summary": "When a poisonous snake slithers onto an Englishman's stomach in India, his associate and a doctor race to save him.",
+        "audienceRating": 6.8,
+        "skipCount": 1,
+        "year": 2023,
+        "thumb": "/library/metadata/4063/thumb/1706522697",
+        "art": "/library/metadata/4063/art/1706522697",
+        "duration": 1071008,
+        "originallyAvailableAt": "2023-09-30",
+        "addedAt": 1706471135,
+        "updatedAt": 1706522697,
+        "audienceRatingImage": "imdb://image.rating",
+        "chapterSource": "media",
+        "Media": [
+          {
+            "id": 6265,
+            "duration": 1071008,
+            "bitrate": 7649,
+            "width": 1920,
+            "height": 1080,
+            "aspectRatio": 1.78,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "h264",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "high",
+            "Part": [
+              {
+                "id": 6521,
+                "key": "/library/parts/6521/1706471089/file.mkv",
+                "duration": 1071008,
+                "file": "/Users/felixding/.plex/movies/Poison (2023)/Poison.2023.1080p.NF.WEB-DL.DDP5.1.H.264-AceMovies[TGx].mkv",
+                "size": 1024885425,
+                "container": "mkv",
+                "videoProfile": "high"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Thriller"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Wes Anderson"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Wes Anderson"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Benedict Cumberbatch"
+          },
+          {
+            "tag": "Dev Patel"
+          },
+          {
+            "tag": "Ben Kingsley"
+          }
+        ]
+      },
+      {
+        "ratingKey": "5049",
+        "key": "/library/metadata/5049",
+        "guid": "plex://movie/644591e072c0df0a8e6b8ff7",
+        "studio": "Campfire Studios",
+        "type": "movie",
+        "title": "Poisoned: The Dirty Truth About Your Food",
+        "contentRating": "R",
+        "summary": "A call to action for the officials who have the power to mitigate the danger caused by foodborne pathogens that kill thousands of people in the U.S. every year.",
+        "rating": 10.0,
+        "audienceRating": 6.8,
+        "year": 2023,
+        "thumb": "/library/metadata/5049/thumb/1707562396",
+        "art": "/library/metadata/5049/art/1707562396",
+        "duration": 5047712,
+        "originallyAvailableAt": "2023-08-02",
+        "addedAt": 1707562395,
+        "updatedAt": 1707562396,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/5050",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 7810,
+            "duration": 5047712,
+            "bitrate": 5523,
+            "width": 1920,
+            "height": 1080,
+            "aspectRatio": 1.78,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "h264",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main",
+            "Part": [
+              {
+                "id": 8066,
+                "key": "/library/parts/8066/1707562356/file.mkv",
+                "duration": 5047712,
+                "file": "/Users/felixding/.plex/movies/Poisoned The Dirty Truth About Your Food (2023)/Poisoned The Dirty Truth About Your Food 2023 1080p NF WEB DL DDP5 1 H 264 FLUX TGx.mkv",
+                "size": 3484765649,
+                "container": "mkv",
+                "videoProfile": "main"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Documentary"
+          },
+          {
+            "tag": "Crime"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Stephanie Soechtig"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Jeff Benedict"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Bill Marler"
+          },
+          {
+            "tag": "Al Gore"
+          },
+          {
+            "tag": "Mike Huckabee"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4040",
+        "key": "/library/metadata/4040",
+        "guid": "plex://movie/5d776b5df617c900201752a7",
+        "studio": "DreamWorks Animation",
+        "type": "movie",
+        "title": "Puss in Boots: The Last Wish",
+        "contentRating": "PG",
+        "summary": "When Puss in Boots discovers that his passion for adventure has taken its toll and he has burned through eight of his nine lives, he launches an epic journey to restore them by finding the mythical Last Wish.",
+        "rating": 9.5,
+        "audienceRating": 9.4,
+        "viewOffset": 4137901,
+        "viewCount": 1,
+        "skipCount": 2,
+        "lastViewedAt": 1707445793,
+        "year": 2022,
+        "tagline": "Live each adventure like it's your last.",
+        "thumb": "/library/metadata/4040/thumb/1706522699",
+        "art": "/library/metadata/4040/art/1706522699",
+        "duration": 6141193,
+        "originallyAvailableAt": "2022-12-07",
+        "addedAt": 1706468648,
+        "updatedAt": 1706522699,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "chapterSource": "media",
+        "primaryExtraKey": "/library/metadata/4041",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 6190,
+            "duration": 6141193,
+            "bitrate": 13913,
+            "width": 3840,
+            "height": 1608,
+            "aspectRatio": 2.35,
+            "audioChannels": 8,
+            "audioCodec": "truehd",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 6446,
+                "key": "/library/parts/6446/1706423279/file.mkv",
+                "duration": 6141193,
+                "file": "/Users/felixding/.plex/movies/Puss.in.Boots.The.Last.Wish.2022.2160p.UHD.BluRay.x265-STRiKES/Puss.in.Boots.The.Last.Wish.2022.2160p.UHD.BluRay.x265-STRiKES.mkv",
+                "size": 10686772714,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Animation"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Joel Crawford"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Cody Cameron"
+          },
+          {
+            "tag": "Tommy Swerdlow"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Antonio Banderas"
+          },
+          {
+            "tag": "Salma Hayek Pinault"
+          },
+          {
+            "tag": "Harvey Guillén"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4094",
+        "key": "/library/metadata/4094",
+        "guid": "plex://movie/5fa6557503e8d9002dd22f28",
+        "studio": "20th Century Studios",
+        "type": "movie",
+        "title": "Quiz Lady",
+        "contentRating": "R",
+        "summary": "Tightly-wound, game-show-obsessed Anne must team up with her chaotic sister Jenny to help pay off their mother's gambling debts. When Anne's beloved dog is kidnapped, they set off on a cross-country journey to get the money they need. To do so, they must tap into Anne's skill set by turning her into the game-show champion she was always meant to be.",
+        "audienceRating": 6.7,
+        "skipCount": 1,
+        "year": 2023,
+        "tagline": "Two sisters. One destiny.",
+        "thumb": "/library/metadata/4094/thumb/1706522695",
+        "art": "/library/metadata/4094/art/1706522695",
+        "duration": 5985248,
+        "originallyAvailableAt": "2023-11-03",
+        "addedAt": 1706483471,
+        "updatedAt": 1706522695,
+        "audienceRatingImage": "imdb://image.rating",
+        "chapterSource": "media",
+        "primaryExtraKey": "/library/metadata/4095",
+        "Media": [
+          {
+            "id": 6316,
+            "duration": 5985248,
+            "bitrate": 16700,
+            "width": 3840,
+            "height": 2160,
+            "aspectRatio": 1.78,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 6572,
+                "key": "/library/parts/6572/1706483458/file.mkv",
+                "duration": 5985248,
+                "file": "/Users/felixding/.plex/movies/Quiz Lady (2023)/Quiz Lady 2023 2160p WEB DL DDP5 1 Atmos H 265 FLUX TGx.mkv",
+                "size": 12497565323,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Jessica Yu"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Jen D'Angelo"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Awkwafina"
+          },
+          {
+            "tag": "Sandra Oh"
+          },
+          {
+            "tag": "Will Ferrell"
+          }
+        ]
+      },
+      {
+        "ratingKey": "5013",
+        "key": "/library/metadata/5013",
+        "guid": "plex://movie/5d77682a8718ba001e3125c2",
+        "studio": "Pixar",
+        "type": "movie",
+        "title": "Ratatouille",
+        "contentRating": "G",
+        "summary": "Remy, a resident of Paris, appreciates good food and has quite a sophisticated palate. He would love to become a chef so he can create and enjoy culinary masterpieces to his heart's delight. The only problem is, Remy is a rat. When he winds up in the sewer beneath one of Paris' finest restaurants, the rodent gourmet finds himself ideally placed to realize his dream.",
+        "rating": 9.6,
+        "audienceRating": 8.7,
+        "viewOffset": 731564,
+        "lastViewedAt": 1707553573,
+        "year": 2007,
+        "tagline": "He's dying to become a chef.",
+        "thumb": "/library/metadata/5013/thumb/1707553206",
+        "art": "/library/metadata/5013/art/1707553206",
+        "duration": 6665633,
+        "originallyAvailableAt": "2007-06-27",
+        "addedAt": 1707553205,
+        "updatedAt": 1707553206,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/5014",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 7720,
+            "duration": 6665633,
+            "bitrate": 6499,
+            "width": 3840,
+            "height": 1606,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "aac",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "audioProfile": "lc",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 7976,
+                "key": "/library/parts/7976/1707553189/file.mkv",
+                "duration": 6665633,
+                "file": "/Users/felixding/.plex/movies/Ratatouille (2007)/Ratatouille 2007 2160p bluray YTS.mkv",
+                "size": 5418526649,
+                "audioProfile": "lc",
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Brad Bird"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Nathan Stanton"
+          },
+          {
+            "tag": "Jan Pinkava"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Patton Oswalt"
+          },
+          {
+            "tag": "Lou Romano"
+          },
+          {
+            "tag": "Ian Holm"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4872",
+        "key": "/library/metadata/4872",
+        "guid": "plex://movie/63c1de257e9ac4f7992c5e6d",
+        "studio": "The Lonely Island",
+        "type": "movie",
+        "title": "Self Reliance",
+        "contentRating": "R",
+        "summary": "When a man is offered a million dollars to play a game in which hunters try to kill him, he thinks he has found the perfect loophole: they can only attack when he's alone. His only problem is that none of his friends or family believe the game is real.",
+        "rating": 7.3,
+        "audienceRating": 6.2,
+        "year": 2024,
+        "tagline": "Surviving is all about the company you keep.",
+        "thumb": "/library/metadata/4872/thumb/1707369307",
+        "art": "/library/metadata/4872/art/1707369307",
+        "duration": 5468416,
+        "originallyAvailableAt": "2024-01-12",
+        "addedAt": 1707369306,
+        "updatedAt": 1707369307,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 7510,
+            "duration": 5468416,
+            "bitrate": 15430,
+            "width": 3840,
+            "height": 1600,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 7766,
+                "key": "/library/parts/7766/1707369223/file.mkv",
+                "duration": 5468416,
+                "file": "/Users/felixding/.plex/movies/Self Reliance (2024)/Self Reliance 2023 HDR 2160p WEB H265 HystericalCapableMackerelOfDemocracy TGx.mkv",
+                "size": 10548491774,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Thriller"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Jake Johnson"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Jake Johnson"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Jake Johnson"
+          },
+          {
+            "tag": "Anna Kendrick"
+          },
+          {
+            "tag": "Natalie Morales"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4452",
+        "key": "/library/metadata/4452",
+        "guid": "plex://movie/5ef1547620f3a9003f6dac92",
+        "studio": "A24",
+        "type": "movie",
+        "title": "Sharper",
+        "contentRating": "R",
+        "summary": "Tom owns an antiquarian bookstore in New York. One day, when he finds the courage to ask out Sandra, a student who asked about a book for her professor, he is refused. But when the hero of the film closes the doors in the evening, Sandra suddenly appears in front of him again - before, she simply would not have dared to say \"yes.\"",
+        "rating": 6.9,
+        "audienceRating": 7.2,
+        "year": 2023,
+        "tagline": "Read between the lies.",
+        "thumb": "/library/metadata/4452/thumb/1706921276",
+        "art": "/library/metadata/4452/art/1706921276",
+        "duration": 6977706,
+        "originallyAvailableAt": "2023-02-17",
+        "addedAt": 1706921270,
+        "updatedAt": 1706921276,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/4453",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 6887,
+            "duration": 6977706,
+            "bitrate": 6385,
+            "width": 3840,
+            "height": 1608,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "aac",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "audioProfile": "lc",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 7143,
+                "key": "/library/parts/7143/1706921262/file.mkv",
+                "duration": 6977706,
+                "file": "/Users/felixding/.plex/movies/Sharper (2023)/Sharper 2023 2160p web YTS.mkv",
+                "size": 5574940362,
+                "audioProfile": "lc",
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Crime"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Benjamin Caron"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Brian Gatewood"
+          },
+          {
+            "tag": "Alessandro Tanaka"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Julianne Moore"
+          },
+          {
+            "tag": "Sebastian Stan"
+          },
+          {
+            "tag": "Justice Smith"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3420",
+        "key": "/library/metadata/3420",
+        "guid": "plex://movie/617d7cb1aa77303543e5c6ef",
+        "studio": "Thunder Road",
+        "type": "movie",
+        "title": "Silent Night",
+        "contentRating": "R",
+        "summary": "A tormented father witnesses his young son die when caught in a gang's crossfire on Christmas Eve. While recovering from a wound that costs him his voice, he makes vengeance his life's mission and embarks on a punishing training regimen in order to avenge his son's death.",
+        "rating": 5.8,
+        "audienceRating": 5.1,
+        "viewCount": 1,
+        "lastViewedAt": 1706986121,
+        "year": 2023,
+        "tagline": "Action speaks louder than words.",
+        "thumb": "/library/metadata/3420/thumb/1707223774",
+        "art": "/library/metadata/3420/art/1707223774",
+        "duration": 6254581,
+        "originallyAvailableAt": "2023-11-29",
+        "addedAt": 1706160623,
+        "updatedAt": 1707223774,
+        "audienceRatingImage": "rottentomatoes://image.rating.spilled",
+        "chapterSource": "media",
+        "ratingImage": "rottentomatoes://image.rating.rotten",
+        "Media": [
+          {
+            "id": 5288,
+            "duration": 6254581,
+            "bitrate": 15754,
+            "width": 3840,
+            "height": 1920,
+            "aspectRatio": 1.85,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main",
+            "Part": [
+              {
+                "id": 5544,
+                "key": "/library/parts/5544/1706160540/file.mkv",
+                "duration": 6254581,
+                "file": "/Users/felixding/.plex/movies/Silent Night (2023)/Silent Night 2023 2160p AMZN WEB DL DDP5 1 H 265 FLUX TGx.mkv",
+                "size": 12318754903,
+                "container": "mkv",
+                "videoProfile": "main"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Action"
+          },
+          {
+            "tag": "Adventure"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "John Woo"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Robert Archer Lynn"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Joel Kinnaman"
+          },
+          {
+            "tag": "Kid Cudi"
+          },
+          {
+            "tag": "Harold Torres"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2167",
+        "key": "/library/metadata/2167",
+        "guid": "plex://movie/5d77702d594b2b001e746263",
+        "studio": "Walt Disney Pictures",
+        "type": "movie",
+        "title": "Soul",
+        "contentRating": "PG",
+        "summary": "Joe is a middle-school band teacher whose life hasn't quite gone the way he expected. His true passion is jazz and he's good. But when he travels to another realm to help someone find their passion, he soon discovers what it means to have soul.",
+        "audienceRating": 9.8,
+        "viewCount": 1,
+        "lastViewedAt": 1705565775,
+        "year": 2020,
+        "tagline": "Everybody has a soul. Joe Gardner is about to find his.",
+        "thumb": "/library/metadata/2167/thumb/1705739080",
+        "art": "/library/metadata/2167/art/1705739080",
+        "duration": 6034569,
+        "originallyAvailableAt": "2020-12-24",
+        "addedAt": 1705739079,
+        "updatedAt": 1705739080,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/2231",
+        "Media": [
+          {
+            "id": 3709,
+            "duration": 6034569,
+            "bitrate": 23021,
+            "width": 3840,
+            "height": 2160,
+            "aspectRatio": 1.78,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 3965,
+                "key": "/library/parts/3965/1627532249/file.mkv",
+                "duration": 6034569,
+                "file": "/Users/felixding/.plex/movies/Soul.2020.2160p.DSNP.WEBRip.x265.10bit.HDR.DDP5.1.Atmos-CM/Soul.2020.2160p.WEB-DL.DDP5.1.Atmos.HDR.x265-CMRG.mkv",
+                "size": 17367784578,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Family"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Pete Docter"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Pete Docter"
+          },
+          {
+            "tag": "Michael Yates"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Jamie Foxx"
+          },
+          {
+            "tag": "Tina Fey"
+          },
+          {
+            "tag": "Graham Norton"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4795",
+        "key": "/library/metadata/4795",
+        "guid": "plex://movie/610bbe5fefc2ea002c4cdfea",
+        "studio": "Universal Pictures",
+        "type": "movie",
+        "title": "Strays",
+        "contentRating": "R",
+        "summary": "Young dog Reggie lives in the home of Doug, an angry and vile man who hates his pet and does everything he can to get rid of him. When Reggie becomes homeless, he meets Bug, an experienced street dog who is ready to become his new friend's guide through the world of dogs surviving without human support.",
+        "rating": 5.3,
+        "audienceRating": 6.9,
+        "year": 2023,
+        "tagline": "Go fetch yourself.",
+        "thumb": "/library/metadata/4795/thumb/1707354123",
+        "art": "/library/metadata/4795/art/1707354123",
+        "duration": 5586705,
+        "originallyAvailableAt": "2023-08-17",
+        "addedAt": 1707354120,
+        "updatedAt": 1707354123,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "chapterSource": "media",
+        "primaryExtraKey": "/library/metadata/4796",
+        "ratingImage": "rottentomatoes://image.rating.rotten",
+        "Media": [
+          {
+            "id": 7377,
+            "duration": 5586705,
+            "bitrate": 25472,
+            "width": 3840,
+            "height": 2160,
+            "aspectRatio": 1.78,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 7633,
+                "key": "/library/parts/7633/1707354053/file.mkv",
+                "duration": 5586705,
+                "file": "/Users/felixding/.plex/movies/Strays (2023)/Strays.2023.2160p.MA.WEB-DL.DDP5.1.Atmos.DV.HDR.H.265-FLUX[TGx].mkv",
+                "size": 17789867667,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Adventure"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Josh Greenbaum"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Dan Perrault"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Will Ferrell"
+          },
+          {
+            "tag": "Jamie Foxx"
+          },
+          {
+            "tag": "Will Forte"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2150",
+        "key": "/library/metadata/2150",
+        "guid": "plex://movie/5d776ca8fb0d55001f58eb2b",
+        "studio": "DC Films",
+        "type": "movie",
+        "title": "The Suicide Squad",
+        "titleSort": "Suicide Squad",
+        "contentRating": "R",
+        "summary": "Supervillains Harley Quinn, Bloodsport, Peacemaker, and a collection of nutty cons at Belle Reve prison join the super-secret, super-shady Task Force X as they are dropped off at the remote, enemy-infused island of Corto Maltese.",
+        "rating": 9.0,
+        "audienceRating": 8.2,
+        "viewCount": 1,
+        "lastViewedAt": 1702439344,
+        "year": 2021,
+        "tagline": "They're dying to save the world.",
+        "thumb": "/library/metadata/2150/thumb/1705739080",
+        "art": "/library/metadata/2150/art/1705739080",
+        "duration": 7926656,
+        "originallyAvailableAt": "2021-07-28",
+        "addedAt": 1705739079,
+        "updatedAt": 1705739080,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/2197",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 3662,
+            "duration": 7926656,
+            "bitrate": 18665,
+            "width": 3840,
+            "height": 2160,
+            "aspectRatio": 1.78,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 3918,
+                "key": "/library/parts/3918/1628396716/file.mkv",
+                "duration": 7926656,
+                "file": "/Users/felixding/.plex/movies/The.Suicide.Squad.2021.2160p.HMAX.WEB-DL.DDP5.1.Atmos.HDR.HEVC-EVO[TGx]/The.Suicide.Squad.2021.2160p.HMAX.WEB-DL.DDP5.1.Atmos.HDR.HEVC-EVO.mkv",
+                "size": 18496156765,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Action"
+          },
+          {
+            "tag": "Adventure"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "James Gunn"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "James Gunn"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Margot Robbie"
+          },
+          {
+            "tag": "Idris Elba"
+          },
+          {
+            "tag": "John Cena"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2033",
+        "key": "/library/metadata/2033",
+        "guid": "plex://movie/5f40cdfabf3e560040d5cd85",
+        "studio": "Universal Pictures",
+        "type": "movie",
+        "title": "The Super Mario Bros. Movie",
+        "titleSort": "Super Mario Bros. Movie",
+        "contentRating": "PG",
+        "summary": "A Brooklyn plumber named Mario travels through the Mushroom Kingdom with a princess named Peach and an anthropomorphic mushroom named Toad to find Mario's brother, Luigi, and to save the world from a ruthless fire-breathing Koopa named Bowser.",
+        "rating": 5.9,
+        "audienceRating": 9.5,
+        "viewOffset": 165457,
+        "viewCount": 1,
+        "lastViewedAt": 1707347460,
+        "year": 2023,
+        "tagline": "Not all heroes wear capes. Some wear overalls.",
+        "thumb": "/library/metadata/2033/thumb/1705739078",
+        "art": "/library/metadata/2033/art/1705739078",
+        "duration": 5545331,
+        "originallyAvailableAt": "2023-04-05",
+        "addedAt": 1705739077,
+        "updatedAt": 1705739078,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "chapterSource": "media",
+        "primaryExtraKey": "/library/metadata/2057",
+        "ratingImage": "rottentomatoes://image.rating.rotten",
+        "Media": [
+          {
+            "id": 3329,
+            "duration": 5545331,
+            "bitrate": 7315,
+            "width": 3840,
+            "height": 2160,
+            "aspectRatio": 1.78,
+            "audioChannels": 6,
+            "audioCodec": "ac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 3585,
+                "key": "/library/parts/3585/1704342809/file.mkv",
+                "duration": 5545331,
+                "file": "/Users/felixding/.plex/movies/The Super Mario Bros. Movie (2023)/The Super Mario Bros Movie 2023 2160p 4K BluRay H265 10 Bit Ita Eng Ac3 5 1 Sub Ita Eng iDN Cre.mkv",
+                "size": 5059797214,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Adventure"
+          },
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "Japan"
+          },
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Michael Jelenic"
+          },
+          {
+            "tag": "Aaron Horvath"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Matthew Fogel"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Chris Pratt"
+          },
+          {
+            "tag": "Anya Taylor-Joy"
+          },
+          {
+            "tag": "Charlie Day"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2030",
+        "key": "/library/metadata/2030",
+        "guid": "plex://movie/5e1632fc1493cd003f0d9400",
+        "studio": "Paramount",
+        "type": "movie",
+        "title": "Teenage Mutant Ninja Turtles: Mutant Mayhem",
+        "contentRating": "PG",
+        "summary": "After years of being sheltered from the human world, the Turtles set out to win the hearts of New Yorkers and be accepted as normal teenagers through heroic acts. But they soon get in over their heads when an army of mutants is unleashed upon them.",
+        "rating": 9.5,
+        "audienceRating": 9.0,
+        "viewCount": 1,
+        "lastViewedAt": 1707083253,
+        "year": 2023,
+        "tagline": "Heroes aren't born. They're mutated.",
+        "thumb": "/library/metadata/2030/thumb/1705745021",
+        "art": "/library/metadata/2030/art/1705745021",
+        "duration": 5959721,
+        "originallyAvailableAt": "2023-07-31",
+        "addedAt": 1705739076,
+        "updatedAt": 1705745021,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "chapterSource": "media",
+        "primaryExtraKey": "/library/metadata/2034",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 3326,
+            "duration": 5959721,
+            "bitrate": 10478,
+            "width": 3840,
+            "height": 1608,
+            "aspectRatio": 2.35,
+            "audioChannels": 8,
+            "audioCodec": "aac",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "audioProfile": "lc",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 3582,
+                "key": "/library/parts/3582/1705290169/file.mkv",
+                "duration": 5959721,
+                "file": "/Users/felixding/.plex/movies/Teenage Mutant Ninja Turtles - Mutant Mayhem (2023) (2160p BluRay x265 HEVC 10bit HDR AAC 7.1 Tigole)/Teenage Mutant Ninja Turtles - Mutant Mayhem (2023) (2160p BluRay x265 10bit HDR Tigole).mkv",
+                "size": 7787394063,
+                "audioProfile": "lc",
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Animation"
+          },
+          {
+            "tag": "Action"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "Canada"
+          },
+          {
+            "tag": "France"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Jeff Rowe"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Kevin Eastman"
+          },
+          {
+            "tag": "Peter Laird"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Micah Abbey"
+          },
+          {
+            "tag": "Shamon Brown Jr."
+          },
+          {
+            "tag": "Nicolas Cantu"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4102",
+        "key": "/library/metadata/4102",
+        "guid": "plex://movie/5f19e61b4de80e00423e5fde",
+        "studio": "Marv",
+        "type": "movie",
+        "title": "Tetris",
+        "contentRating": "R",
+        "summary": "The story of how one of the world's most popular video games found its way to players around the globe. Businessman Henk Rogers and Tetris inventor Alexey Pazhitnov join forces in the USSR, risking it all to bring it to the masses.",
+        "rating": 8.1,
+        "audienceRating": 8.8,
+        "userRating": 10.0,
+        "viewOffset": 6307967,
+        "viewCount": 1,
+        "lastViewedAt": 1707441827,
+        "lastRatedAt": 1707185866,
+        "year": 2023,
+        "tagline": "The game you couldn't put down. The story you couldn't make up.",
+        "thumb": "/library/metadata/4102/thumb/1706486203",
+        "art": "/library/metadata/4102/art/1706486203",
+        "duration": 7066944,
+        "originallyAvailableAt": "2023-03-31",
+        "addedAt": 1706486203,
+        "updatedAt": 1706486203,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/4103",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 6338,
+            "duration": 7066944,
+            "bitrate": 25105,
+            "width": 3840,
+            "height": 1606,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 6594,
+                "key": "/library/parts/6594/1706486160/file.mkv",
+                "duration": 7066944,
+                "file": "/Users/felixding/.plex/movies/Tetris (2023)/Tetris 2023 HDR 2160p WEB H265 NAISU TGx.mkv",
+                "size": 22181819753,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Biography"
+          },
+          {
+            "tag": "Thriller"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United Kingdom"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Jon S. Baird"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Noah Pink"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Taron Egerton"
+          },
+          {
+            "tag": "Nikita Efremov"
+          },
+          {
+            "tag": "Sofia Lebedeva"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3796",
+        "key": "/library/metadata/3796",
+        "guid": "plex://movie/5f40dee458b26e00426ccebf",
+        "studio": "MACRO",
+        "type": "movie",
+        "title": "They Cloned Tyrone",
+        "contentRating": "R",
+        "summary": "A series of eerie events thrusts an unlikely trio onto the trail of a nefarious government conspiracy in this pulpy mystery caper.",
+        "rating": 9.5,
+        "audienceRating": 10.0,
+        "viewOffset": 414767,
+        "lastViewedAt": 1707380873,
+        "year": 2023,
+        "tagline": "Beware cheap imitations.",
+        "thumb": "/library/metadata/3796/thumb/1706387921",
+        "art": "/library/metadata/3796/art/1706387921",
+        "duration": 7450858,
+        "originallyAvailableAt": "2023-07-21",
+        "addedAt": 1706387920,
+        "updatedAt": 1706387921,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 5903,
+            "duration": 7450858,
+            "bitrate": 6284,
+            "width": 3840,
+            "height": 2160,
+            "aspectRatio": 1.78,
+            "audioChannels": 6,
+            "audioCodec": "aac",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "audioProfile": "lc",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 6159,
+                "key": "/library/parts/6159/1706387852/file.mkv",
+                "duration": 7450858,
+                "file": "/Users/felixding/.plex/movies/They Cloned Tyrone (2023)/They Cloned Tyrone (2023) [2160p] [WEBRip] [x265] [10bit] [5.1].mkv",
+                "size": 5859465220,
+                "audioProfile": "lc",
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Science Fiction"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Juel Taylor"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Juel Taylor"
+          },
+          {
+            "tag": "Tony Rettenmaier"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "John Boyega"
+          },
+          {
+            "tag": "Teyonah Parris"
+          },
+          {
+            "tag": "Jamie Foxx"
+          }
+        ]
+      },
+      {
+        "ratingKey": "2055",
+        "key": "/library/metadata/2055",
+        "guid": "plex://movie/5ddbaa0b70c0b60021f6729a",
+        "studio": "Saturn Films",
+        "type": "movie",
+        "title": "The Unbearable Weight of Massive Talent",
+        "titleSort": "Unbearable Weight of Massive Talent",
+        "contentRating": "R",
+        "summary": "The fictionalized version of Nick Cage must accept a $1 million offer to attend the birthday of a dangerous super fan Javi Gutierrez. Things take a wildly unexpected turn when Nick Cage is recruited by a CIA operative Vivian and forced to live up to his own legend, channeling his most iconic and beloved on-screen characters in order to save himself and his loved ones.",
+        "rating": 8.7,
+        "audienceRating": 8.7,
+        "viewOffset": 5687098,
+        "lastViewedAt": 1707595484,
+        "year": 2022,
+        "tagline": "Nicolas Cage is Nick Cage.",
+        "thumb": "/library/metadata/2055/thumb/1705745005",
+        "art": "/library/metadata/2055/art/1705745005",
+        "duration": 6411279,
+        "originallyAvailableAt": "2022-04-20",
+        "addedAt": 1705739077,
+        "updatedAt": 1705745005,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "chapterSource": "media",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 3391,
+            "duration": 6411279,
+            "bitrate": 32797,
+            "width": 3840,
+            "height": 2160,
+            "aspectRatio": 1.78,
+            "audioChannels": 8,
+            "audioCodec": "truehd",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 3647,
+                "key": "/library/parts/3647/1702492785/file.mkv",
+                "duration": 6411279,
+                "file": "/Users/felixding/.plex/movies/The Unbearable Weight of Massive Talent (2022)/The.Unbearable.Weight.of.Massive.Talent.2022.2160p.UHD.Bluray.TrueHD.7.1.Atmos.HDR.x265-EVO[TGx].mkv",
+                "size": 26339876589,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Action"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Tom Gormican"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Tom Gormican"
+          },
+          {
+            "tag": "Kevin Etten"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Nicolas Cage"
+          },
+          {
+            "tag": "Pedro Pascal"
+          },
+          {
+            "tag": "Sharon Horgan"
+          }
+        ]
+      },
+      {
+        "ratingKey": "1946",
+        "key": "/library/metadata/1946",
+        "guid": "plex://movie/5d777042ad5437001f81db2c",
+        "studio": "One Cool Film Production",
+        "type": "movie",
+        "title": "Warriors of Future",
+        "originalTitle": "明日戰記",
+        "contentRating": "PG-13",
+        "summary": "A meteorite brings an extraterrestrial life to the earth. When powerful alien creatures threaten humanity, Commander Sing Lee's elite forces are almost wiped out, and the surviving soldier Tai Loi discovers an even bigger conspiracy.",
+        "rating": 8.8,
+        "audienceRating": 4.6,
+        "year": 2022,
+        "thumb": "/library/metadata/1946/thumb/1705744999",
+        "art": "/library/metadata/1946/art/1705744999",
+        "duration": 6074528,
+        "originallyAvailableAt": "2022-08-05",
+        "addedAt": 1705736769,
+        "updatedAt": 1705744999,
+        "audienceRatingImage": "rottentomatoes://image.rating.spilled",
+        "chapterSource": "media",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 3248,
+            "duration": 6074528,
+            "bitrate": 1982,
+            "width": 1920,
+            "height": 804,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "ac3",
+            "videoCodec": "h264",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "high",
+            "Part": [
+              {
+                "id": 3504,
+                "key": "/library/parts/3504/1705736703/file.mkv",
+                "duration": 6074528,
+                "file": "/Users/felixding/.plex/movies/Warriors of Future (2022)/Warriors.of.Future.2022.1080p.NF.WEBRip.1400MB.DD5.1.x264-GalaxyRG[TGx].mkv",
+                "size": 1508131240,
+                "container": "mkv",
+                "videoProfile": "high"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Action"
+          },
+          {
+            "tag": "Adventure"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "China"
+          },
+          {
+            "tag": "Hong Kong"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Ng Yuen-fai"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Lau Ho-leung"
+          },
+          {
+            "tag": "Mak Tin-Shu"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Louis Koo"
+          },
+          {
+            "tag": "Lau Ching-wan"
+          },
+          {
+            "tag": "Carina Lau"
+          }
+        ]
+      },
+      {
+        "ratingKey": "3982",
+        "key": "/library/metadata/3982",
+        "guid": "plex://movie/5d776a87ad5437001f7809ad",
+        "studio": "Bold Films",
+        "type": "movie",
+        "title": "Whiplash",
+        "contentRating": "R",
+        "summary": "A promising young drummer enrolls at a cut-throat music conservatory where his dreams of greatness are mentored by an instructor who will stop at nothing to realize a student's potential.",
+        "rating": 9.4,
+        "audienceRating": 9.4,
+        "year": 2014,
+        "tagline": "The road to greatness can take you to the edge.",
+        "thumb": "/library/metadata/3982/thumb/1706427669",
+        "art": "/library/metadata/3982/art/1706427669",
+        "duration": 6417457,
+        "originallyAvailableAt": "2014-10-15",
+        "addedAt": 1706427667,
+        "updatedAt": 1706427669,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "primaryExtraKey": "/library/metadata/3983",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 6122,
+            "duration": 6417457,
+            "bitrate": 60428,
+            "width": 3840,
+            "height": 2160,
+            "aspectRatio": 1.78,
+            "audioChannels": 8,
+            "audioCodec": "truehd",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mpegts",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 6378,
+                "key": "/library/parts/6378/1706427596/file.m2ts",
+                "duration": 6417457,
+                "file": "/Users/felixding/.plex/movies/Whiplash (2014)/00001.m2ts",
+                "size": 51794921472,
+                "container": "mpegts",
+                "packetLength": 188,
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Music"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Damien Chazelle"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Damien Chazelle"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Miles Teller"
+          },
+          {
+            "tag": "J.K. Simmons"
+          },
+          {
+            "tag": "Paul Reiser"
+          }
+        ]
+      },
+      {
+        "ratingKey": "4364",
+        "key": "/library/metadata/4364",
+        "guid": "plex://movie/5d77705cdd931c001e38bb3e",
+        "studio": "Warner Bros. Pictures",
+        "type": "movie",
+        "title": "Wonka",
+        "contentRating": "PG",
+        "summary": "Willy Wonka – chock-full of ideas and determined to change the world one delectable bite at a time – is proof that the best things in life begin with a dream, and if you’re lucky enough to meet Willy Wonka, anything is possible.",
+        "rating": 8.3,
+        "audienceRating": 9.1,
+        "viewCount": 1,
+        "lastViewedAt": 1706986487,
+        "year": 2023,
+        "tagline": "Every good thing in this world started with a dream.",
+        "thumb": "/library/metadata/4364/thumb/1706776221",
+        "art": "/library/metadata/4364/art/1706776221",
+        "duration": 6973799,
+        "originallyAvailableAt": "2023-12-06",
+        "addedAt": 1706776220,
+        "updatedAt": 1706776221,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "chapterSource": "media",
+        "primaryExtraKey": "/library/metadata/4365",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 6670,
+            "duration": 6973799,
+            "bitrate": 24856,
+            "width": 3840,
+            "height": 1604,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "4k",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 6926,
+                "key": "/library/parts/6926/1706776188/file.mkv",
+                "duration": 6973799,
+                "file": "/Users/felixding/.plex/movies/Wonka (2023)/Wonka 2023 2160p WEB DL DDP5 1 Atmos DV HDR H 265 FLUX TGx.mkv",
+                "size": 21672601869,
+                "container": "mkv",
+                "videoProfile": "main 10"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Adventure"
+          },
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "United Kingdom"
+          },
+          {
+            "tag": "United States of America"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Paul King"
+          }
+        ],
+        "Writer": [
+          {
+            "tag": "Roald Dahl"
+          },
+          {
+            "tag": "Paul King"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Timothée Chalamet"
+          },
+          {
+            "tag": "Calah Lane"
+          },
+          {
+            "tag": "Keegan-Michael Key"
+          }
+        ]
+      }
+    ]
+  }
+}
