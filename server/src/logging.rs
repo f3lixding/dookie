@@ -63,7 +63,7 @@ impl Logger<Unprimed> {
                 let now = SystemTime::now().duration_since(UNIX_EPOCH)?;
                 while let Ok(Some(file)) = files.next_entry().await {
                     let metadata = tokio::fs::metadata(file.path()).await?;
-                    let age = now - metadata.modified()?.duration_since(UNIX_EPOCH)?;
+                    let age = now.saturating_sub(metadata.modified()?.duration_since(UNIX_EPOCH)?);
                     if age.as_secs() > threshold {
                         tokio::fs::remove_file(file.path()).await?;
                         tracing::info!("Log {} deleted", file.file_name().to_str().unwrap());

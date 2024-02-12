@@ -101,7 +101,7 @@ where
                 Ok(PlexOutput::ShowList(vec![]))
             }
             PlexInput::GetAllMovies => {
-                static url: &'static str = "/Library/sections/2/all";
+                static url: &'static str = "/library/sections/2/all";
 
                 Ok(PlexOutput::MovieList(vec![]))
             }
