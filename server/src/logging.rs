@@ -72,7 +72,7 @@ impl Logger<Unprimed> {
 
                 tokio::select! {
                     _ = tokio::time::sleep(time::Duration::from_secs(60 * 60 * 24)) => {
-                        tracing::info!("Log deleteion check routine initiated");
+                        tracing::info!("Log deletion check routine initiated");
                     }
                     _ = rx.recv() => {
                         // TODO: terminate loop and log here
