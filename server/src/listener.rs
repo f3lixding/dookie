@@ -2,6 +2,7 @@ use crate::envelope::Data;
 use crate::move_job;
 use crate::move_job::IncomingMessage;
 use crate::DataType;
+use crate::IBundleClient;
 use crate::Job;
 use crate::MoveJobCommand;
 use crate::{media_bundle::MediaBundle, Envelope};
@@ -35,9 +36,9 @@ pub struct Assigned;
 pub struct Initiated;
 
 #[derive(Debug, Default)]
-pub struct MainListener<Status = Unassigned> {
+pub struct MainListener<C: IBundleClient, Status = Unassigned> {
     handle: Option<JoinHandle<Result<(), Box<dyn std::error::Error + Send + Sync + 'static>>>>,
-    bundle: Option<MediaBundle>,
+    bundle: Option<MediaBundle<C>>,
     move_job_sender: Option<
         Sender<(
             <move_job::JobStruct as Job>::IncomingMessage,
@@ -47,8 +48,11 @@ pub struct MainListener<Status = Unassigned> {
     _status: std::marker::PhantomData<Status>,
 }
 
-impl MainListener<Unassigned> {
-    pub fn assign_sender_bundle(self, bundle: MediaBundle) -> MainListener<NeedsMovejob> {
+impl<C> MainListener<C, Unassigned>
+where
+    C: IBundleClient,
+{
+    pub fn assign_sender_bundle(self, bundle: MediaBundle<C>) -> MainListener<C, NeedsMovejob> {
         MainListener {
             handle: self.handle,
             bundle: Some(bundle),
@@ -58,14 +62,14 @@ impl MainListener<Unassigned> {
     }
 }
 
-impl MainListener<NeedsMovejob> {
+impl<C: IBundleClient> MainListener<C, NeedsMovejob> {
     pub fn assign_movejob_sender(
         self,
         move_job_sender: Sender<(
             <move_job::JobStruct as Job>::IncomingMessage,
             Option<OneShotSender<<move_job::JobStruct as Job>::OutgoingMessage>>,
         )>,
-    ) -> MainListener<Assigned> {
+    ) -> MainListener<C, Assigned> {
         MainListener {
             handle: self.handle,
             bundle: self.bundle,
@@ -75,8 +79,8 @@ impl MainListener<NeedsMovejob> {
     }
 }
 
-impl MainListener<Assigned> {
-    pub fn initiate_listener(self) -> MainListener<Initiated> {
+impl<C: IBundleClient> MainListener<C, Assigned> {
+    pub fn initiate_listener(self) -> MainListener<C, Initiated> {
         // This is safe because otherwise we would not be in this state and thus this function
         // would not be callable.
         let handle = task::spawn(async move {
@@ -164,13 +168,17 @@ impl MainListener<Assigned> {
     }
 }
 
-impl Future for MainListener<Initiated> {
+impl<C: IBundleClient> Future for MainListener<C, Initiated> {
     type Output = Result<Result<(), Box<dyn std::error::Error + Send + Sync + 'static>>, JoinError>;
 
     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
-        // We can unwrap here because we would not want to proceed further if there is nothing in
-        // this Option.
-        let handle = self.get_mut().handle.as_mut().unwrap();
+        // Safety: the only thing that might not be Unpin here is the client. And we know that is
+        // actually Unpin. I just did not want to introduce another trait bound for it.
+        let handle = unsafe {
+            // We can unwrap here because we would not want to proceed further if there is nothing in
+            // this Option.
+            self.get_unchecked_mut().handle.as_mut().unwrap()
+        };
         // Safety: We never move `handle` after it is pinned.
         let handle = Pin::new(handle);
 

@@ -9,9 +9,11 @@ mod listener;
 mod dookie_proto {
     include!(concat!(env!("OUT_DIR"), "/dookie.rs"));
 }
+mod client;
 mod logging;
 mod media_bundle;
 
+pub use client::*;
 pub use config::Config;
 pub use dookie_proto::*;
 pub use job::*;
@@ -94,8 +96,9 @@ pub mod move_job {
         type OutgoingMessage = OutgoingMessage;
         type ReturnType = Result<(), Box<dyn Error + Send + Sync + 'static>>;
 
-        fn spawn_(
+        fn spawn_<C: IBundleClient>(
             config: &Config,
+            media_bundle: Option<MediaBundle<C>>,
             #[allow(unused)] front_desk_handle: &mut Option<
                 JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>,
             >,
@@ -452,8 +455,9 @@ pub mod spawn_server_job {
         type OutgoingMessage = ();
         type ReturnType = ();
 
-        fn spawn_(
+        fn spawn_<C: IBundleClient>(
             config: &Config,
+            _media_bundle: Option<MediaBundle<C>>,
             front_desk_handle: &mut Option<
                 JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>,
             >,
@@ -472,6 +476,7 @@ pub mod spawn_server_job {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use async_trait::async_trait;
     use std::borrow::Cow;
     use std::collections::HashMap;
     use std::fs::{create_dir_all, remove_dir_all, File};
@@ -480,6 +485,32 @@ mod tests {
     const CONFIG_PATH: &'static str = "./var_";
     const SRC_FOLDER: &'static str = "src_folder";
     const DST_FOLDER: &'static str = "dst_folder";
+
+    #[derive(Clone)]
+    struct MockClient {}
+
+    #[async_trait]
+    impl IBundleClient for MockClient {
+        async fn get(&self, _url: &str) -> Result<reqwest::Response, Box<dyn Error + Send + Sync>> {
+            unimplemented!()
+        }
+
+        async fn post(
+            &self,
+            _url: &str,
+            _body: impl Into<reqwest::Body> + Send + Sync,
+        ) -> Result<reqwest::Response, Box<dyn Error + Send + Sync>> {
+            unimplemented!()
+        }
+
+        fn from_port(_port: u16) -> Self {
+            MockClient {}
+        }
+
+        fn set_port(&mut self, _port: u16) {}
+
+        fn set_token(&mut self, token: (impl AsRef<str>, impl AsRef<str>)) {}
+    }
 
     fn create_test_config<'a>() -> Config<'a> {
         let src_dir = format!("{}/{}", CONFIG_PATH, SRC_FOLDER);
@@ -750,7 +781,8 @@ mod tests {
         create_test_files();
         let config = create_test_config();
         let mut fd_handle = None;
-        let mut job_move = move_job::JobStruct::spawn_(&config, &mut fd_handle).unwrap();
+        let mut job_move =
+            move_job::JobStruct::spawn_::<MockClient>(&config, None, &mut fd_handle).unwrap();
         let front_desk_sender = job_move.give_sender().unwrap();
 
         let job_move_handle = task::spawn(async move {

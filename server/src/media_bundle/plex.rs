@@ -66,6 +66,7 @@ pub(in crate::media_bundle) enum PlexOutput {
     MovieList(Vec<Metadata>),
 }
 
+#[derive(Default, Debug, Clone)]
 pub(in crate::media_bundle) struct Plex<C>
 where
     C: IBundleClient,
@@ -132,7 +133,7 @@ mod tests {
     const SHOW_LIB_METADATA_URL: &'static str = "/library/sections/2/all";
     const SESSION_HISTORY_URL: &'static str = "/status/sessions/history/all";
 
-    #[derive(Default)]
+    #[derive(Default, Clone)]
     struct MockResponse {
         status: u16,
         body: Vec<u8>,
@@ -145,7 +146,7 @@ mod tests {
         }
     }
 
-    #[derive(Default)]
+    #[derive(Default, Clone)]
     struct MockClient {
         return_map: HashMap<String, MockResponse>,
     }

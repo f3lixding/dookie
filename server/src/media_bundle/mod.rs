@@ -30,7 +30,7 @@ impl BundleResponse for reqwest::Response {
 }
 
 #[async_trait]
-pub(in crate::media_bundle) trait IBundleClient: Send + Sync {
+pub trait IBundleClient: Send + Sync + Clone + 'static {
     fn from_port(port: u16) -> Self;
     fn set_port(&mut self, port: u16);
     fn set_token(&mut self, token: (impl AsRef<str>, impl AsRef<str>));
@@ -40,65 +40,6 @@ pub(in crate::media_bundle) trait IBundleClient: Send + Sync {
         url: &str,
         body: impl Into<reqwest::Body> + Send + Sync,
     ) -> Result<impl BundleResponse, Box<dyn Error + Send + Sync>>;
-}
-
-/// This is really just a wrapper around reqwest::Client.
-/// The existence of it is to also retain information about the port. This way the constructor for
-/// ServerEntity is "prettier".
-#[derive(Debug, Clone)]
-pub(in crate::media_bundle) struct BundleClient {
-    client: reqwest::Client,
-    token_name: String,
-    token_value: String,
-    port: u16,
-}
-
-#[async_trait]
-impl IBundleClient for BundleClient {
-    fn from_port(port: u16) -> Self {
-        BundleClient {
-            client: reqwest::Client::new(),
-            token_name: String::default(),
-            token_value: String::default(),
-            port,
-        }
-    }
-
-    fn set_port(&mut self, port: u16) {
-        self.port = port;
-    }
-
-    fn set_token(&mut self, token: (impl AsRef<str>, impl AsRef<str>)) {
-        self.token_name = token.0.as_ref().to_string();
-        self.token_name = token.1.as_ref().to_string();
-    }
-
-    async fn get(&self, url: &str) -> Result<reqwest::Response, Box<dyn Error + Send + Sync>> {
-        let url = format!("http://localhost:{}/{}", self.port, url);
-        Ok(self
-            .client
-            .get(&url)
-            .header(&self.token_name, &self.token_value)
-            .send()
-            .await?)
-    }
-
-    async fn post(
-        &self,
-        url: &str,
-        body: impl Into<reqwest::Body> + Send + Sync,
-    ) -> Result<reqwest::Response, Box<dyn Error + Send + Sync>> {
-        let url = format!("http://localhost:{}/{}", self.port, url);
-        let msg_body: reqwest::Body = body.into();
-
-        Ok(self
-            .client
-            .post(&url)
-            .header(&self.token_name, &self.token_value)
-            .body::<reqwest::Body>(msg_body)
-            .send()
-            .await?)
-    }
 }
 
 #[async_trait]
@@ -133,10 +74,17 @@ pub(in crate::media_bundle) trait ServerEntity {
 /// etc)
 /// MediaBundle is to have a compositional relationship with ServerEntity.
 #[derive(Debug, Clone, Default)]
-pub struct MediaBundle {}
+pub struct MediaBundle<C>
+where
+    C: IBundleClient,
+{
+    plex_client: Plex<C>,
+}
 
-unsafe impl Send for MediaBundle {}
-unsafe impl Sync for MediaBundle {}
+unsafe impl<C> Send for MediaBundle<C> where C: IBundleClient {}
+unsafe impl<C> Sync for MediaBundle<C> where C: IBundleClient {}
+
+impl<C> MediaBundle<C> where C: IBundleClient {}
 
 /// A collection of utility functions for media bundles
 pub(in crate::media_bundle) mod bundle_util {

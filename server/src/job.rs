@@ -1,4 +1,5 @@
 use super::config::Config;
+use crate::{IBundleClient, MediaBundle};
 use std::error::Error;
 use std::future::Future;
 use std::pin::Pin;
@@ -50,8 +51,9 @@ pub trait Job {
     type IncomingMessage;
     type ReturnType: Send + Sync;
 
-    fn spawn_(
+    fn spawn_<C: IBundleClient>(
         config: &Config,
+        media_bundle: Option<MediaBundle<C>>,
         front_desk_handle: &mut Option<
             JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>,
         >,
@@ -60,12 +62,13 @@ pub trait Job {
         Box<dyn Error>,
     >;
 
-    fn spawn(
+    fn spawn<C: IBundleClient>(
         config: &Config,
+        media_bundle: Option<MediaBundle<C>>,
     ) -> Result<
         SpawnedJob<Self::ReturnType, Self::IncomingMessage, Self::OutgoingMessage>,
         Box<dyn Error>,
     > {
-        Self::spawn_(config, &mut None)
+        Self::spawn_(config, media_bundle, &mut None)
     }
 }
