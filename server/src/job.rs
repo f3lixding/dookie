@@ -13,6 +13,21 @@ use tokio::task::{JoinError, JoinHandle};
 /// It can be polled directly since Future is implemented for it.
 /// Note that the message type of (I, Option<Sender<O>>) is a tuple of incoming message and sender
 /// for a reply.
+///
+/// This trait is made (as opposed to a concrete SpawnJob) because I want allow each job to have
+/// the freedom to choose how it is to be constructed / equipped.
+/// For example, a "scan job" would need to have a reference to the client with which to issue the
+/// scan (i.e. this is the plex client). This would mean the concrete type would need to be
+/// imported.
+pub trait SpawnedJobType<R, I, O>: Future {
+    fn give_sender(&mut self) -> Result<Sender<(I, Option<OneShotSender<O>>)>, Box<dyn Error>>;
+}
+
+// TODO: merge the following into SpawnedJobType.
+// This is because we would need the info here to be implemented by their own Job
+// It has the following requirements:
+// - give_sender: Returns a Sender that can be used to send the reply
+// - poll: This makes the job pollable.
 pub struct SpawnedJob<R, I, O> {
     handle: JoinHandle<R>,
     sender: Option<Sender<(I, Option<OneShotSender<O>>)>>,
@@ -58,7 +73,7 @@ pub trait Job {
             JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>,
         >,
     ) -> Result<
-        SpawnedJob<Self::ReturnType, Self::IncomingMessage, Self::OutgoingMessage>,
+        impl SpawnedJobType<Self::ReturnType, Self::IncomingMessage, Self::OutgoingMessage>,
         Box<dyn Error>,
     >;
 
@@ -66,9 +81,12 @@ pub trait Job {
         config: &Config,
         media_bundle: Option<MediaBundle<C>>,
     ) -> Result<
-        SpawnedJob<Self::ReturnType, Self::IncomingMessage, Self::OutgoingMessage>,
+        impl SpawnedJobType<Self::ReturnType, Self::IncomingMessage, Self::OutgoingMessage>,
         Box<dyn Error>,
     > {
-        Self::spawn_(config, media_bundle, &mut None)
+        static mut NONE: Option<JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>> =
+            None;
+        // SAFETY: we'll never do anything with option here under non-test target.
+        unsafe { Self::spawn_(config, media_bundle, &mut NONE) }
     }
 }

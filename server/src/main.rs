@@ -1,5 +1,6 @@
 use dookie_server_lib::{
-    move_job, BundleClient, Config, Job, Logger, MainListener, MediaBundle, Unassigned, Unprimed,
+    move_job, BundleClient, Config, Job, Logger, MainListener, MediaBundle, SpawnedJobType,
+    Unassigned, Unprimed,
 };
 use std::error::Error;
 use structopt::StructOpt;
@@ -38,11 +39,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     // Logging set up
     let logger: Logger<Unprimed> = Logger::from_config(&config);
-    let (logger, _guard, logger_tx) = logger.prime();
+    let (logger, _guard, _logger_tx) = logger.prime();
 
     tokio::select! {
-        move_job_return = move_job_handle => {
-            println!("Move job finished {:?}", move_job_return);
+        _ = move_job_handle => {
+            println!("Move job exited");
         }
         listener_return = listener => {
             println!("Listener finished {:?}", listener_return);
