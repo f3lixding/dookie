@@ -12,6 +12,7 @@ use sonarr::*;
 
 use async_trait::async_trait;
 use std::error::Error;
+use std::marker::Unpin;
 
 /// Test related. Not sure if there is a better way to do this but this mainly helps with mocking
 /// so that tests can be written more easily.
@@ -30,7 +31,7 @@ impl BundleResponse for reqwest::Response {
 }
 
 #[async_trait]
-pub trait IBundleClient: Send + Sync + Clone + 'static {
+pub trait IBundleClient: Unpin + Send + Sync + Clone + 'static {
     fn from_port(port: u16) -> Self;
     fn set_port(&mut self, port: u16);
     fn set_token(&mut self, token: (impl AsRef<str>, impl AsRef<str>));

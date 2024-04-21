@@ -65,6 +65,7 @@ pub trait Job {
     type OutgoingMessage;
     type IncomingMessage;
     type ReturnType: Send + Sync;
+    type SpawnedJob: SpawnedJobType<Self::ReturnType, Self::IncomingMessage, Self::OutgoingMessage>;
 
     fn spawn_<C: IBundleClient>(
         config: &Config,
@@ -72,18 +73,12 @@ pub trait Job {
         front_desk_handle: &mut Option<
             JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>,
         >,
-    ) -> Result<
-        impl SpawnedJobType<Self::ReturnType, Self::IncomingMessage, Self::OutgoingMessage>,
-        Box<dyn Error>,
-    >;
+    ) -> Result<Self::SpawnedJob, Box<dyn Error>>;
 
     fn spawn<C: IBundleClient>(
         config: &Config,
         media_bundle: Option<MediaBundle<C>>,
-    ) -> Result<
-        impl SpawnedJobType<Self::ReturnType, Self::IncomingMessage, Self::OutgoingMessage>,
-        Box<dyn Error>,
-    > {
+    ) -> Result<Self::SpawnedJob, Box<dyn Error>> {
         static mut NONE: Option<JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>> =
             None;
         // SAFETY: we'll never do anything with option here under non-test target.

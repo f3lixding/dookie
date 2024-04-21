@@ -30,9 +30,10 @@ impl IBundleClient for BundleClient {
 
     fn set_token(&mut self, token: (impl AsRef<str>, impl AsRef<str>)) {
         self.token_name = token.0.as_ref().to_string();
-        self.token_name = token.1.as_ref().to_string();
+        self.token_value = token.1.as_ref().to_string();
     }
 
+    #[allow(refining_impl_trait)]
     async fn get(&self, url: &str) -> Result<reqwest::Response, Box<dyn Error + Send + Sync>> {
         let url = format!("http://localhost:{}/{}", self.port, url);
         Ok(self
@@ -43,6 +44,7 @@ impl IBundleClient for BundleClient {
             .await?)
     }
 
+    #[allow(refining_impl_trait)]
     async fn post(
         &self,
         url: &str,

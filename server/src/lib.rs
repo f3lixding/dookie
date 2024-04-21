@@ -94,12 +94,16 @@ pub mod move_job {
         }
     }
 
-    pub struct SpawnedJob {
+    pub struct SpawnedJob<M: IBundleClient> {
         handle: JoinHandle<ReturnType>,
         sender: Option<Sender<(IncomingMessage, Option<OneShotSender<OutgoingMessage>>)>>,
+        media_bundle: Option<M>,
     }
 
-    impl SpawnedJob {
+    impl<M> SpawnedJob<M>
+    where
+        M: IBundleClient,
+    {
         pub fn new(
             handle: JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>,
             sender: Sender<(IncomingMessage, Option<OneShotSender<OutgoingMessage>>)>,
@@ -107,11 +111,19 @@ pub mod move_job {
             Self {
                 handle,
                 sender: Some(sender),
+                media_bundle: None,
             }
+        }
+
+        pub fn assign_bundle_client(&mut self, media_bundle: M) {
+            self.media_bundle = Some(media_bundle);
         }
     }
 
-    impl SpawnedJobType<ReturnType, IncomingMessage, OutgoingMessage> for SpawnedJob {
+    impl<M> SpawnedJobType<ReturnType, IncomingMessage, OutgoingMessage> for SpawnedJob<M>
+    where
+        M: IBundleClient,
+    {
         fn give_sender(
             &mut self,
         ) -> Result<Sender<(IncomingMessage, Option<OneShotSender<OutgoingMessage>>)>, Box<dyn Error>>
@@ -122,7 +134,10 @@ pub mod move_job {
         }
     }
 
-    impl Future for SpawnedJob {
+    impl<M> Future for SpawnedJob<M>
+    where
+        M: IBundleClient,
+    {
         type Output = Result<ReturnType, JoinError>;
 
         fn poll(
@@ -136,18 +151,18 @@ pub mod move_job {
         }
     }
 
-    impl std::fmt::Debug for SpawnedJob {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            f.debug_struct("SpawnedJob").finish()
-        }
+    pub struct JobStruct<M> {
+        phantom: std::marker::PhantomData<M>,
     }
 
-    pub struct JobStruct;
-
-    impl Job for JobStruct {
+    impl<M> Job for JobStruct<M>
+    where
+        M: IBundleClient,
+    {
         type IncomingMessage = IncomingMessage;
         type OutgoingMessage = OutgoingMessage;
         type ReturnType = ReturnType;
+        type SpawnedJob = SpawnedJob<M>;
 
         #[allow(refining_impl_trait)]
         fn spawn_<C: IBundleClient>(
@@ -156,7 +171,7 @@ pub mod move_job {
             #[allow(unused)] front_desk_handle: &mut Option<
                 JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>,
             >,
-        ) -> Result<SpawnedJob, Box<(dyn Error)>> {
+        ) -> Result<Self::SpawnedJob, Box<(dyn Error)>> {
             let move_job_period = config.move_job_period;
             let age_threshold = config.age_threshold;
             let move_map = config.move_map.iter().fold(
@@ -552,6 +567,7 @@ pub mod spawn_server_job {
         type IncomingMessage = IncomingMessage;
         type OutgoingMessage = ();
         type ReturnType = ();
+        type SpawnedJob = SpawnedJob;
 
         #[allow(refining_impl_trait)]
         fn spawn_<C: IBundleClient>(

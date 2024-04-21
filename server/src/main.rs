@@ -1,6 +1,7 @@
 use dookie_server_lib::{
-    move_job, BundleClient, Config, Job, Logger, MainListener, MediaBundle, SpawnedJobType,
-    Unassigned, Unprimed,
+    move_job::{self, SpawnedJob},
+    BundleClient, Config, Job, Logger, MainListener, MediaBundle, SpawnedJobType, Unassigned,
+    Unprimed,
 };
 use std::error::Error;
 use structopt::StructOpt;
@@ -22,10 +23,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let media_bundle = MediaBundle::<BundleClient>::default();
 
     let (move_job_handle, move_job_sender) = {
-        let mut move_job_handle = move_job::JobStruct::spawn::<BundleClient>(&config, None)?;
+        let mut move_job_handle: SpawnedJob<BundleClient> =
+            move_job::JobStruct::spawn::<BundleClient>(&config, None)?;
         let sender = move_job_handle.give_sender()?;
         (move_job_handle, sender)
     };
+
     let move_job_handle = move_job_handle.instrument(tracing::trace_span!("move_job"));
     let bundle = MediaBundle::<BundleClient>::default();
 
