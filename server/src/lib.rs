@@ -591,6 +591,14 @@ pub mod spawn_server_job {
 /// - There is a change in the directory detected
 /// - There are not move job ongoing
 pub mod scan_library_job {
+    use super::*;
+    use std::error::Error;
+
+    use tokio::sync::mpsc::Sender;
+    use tokio::task::JoinHandle;
+
+    use crate::{Envelope, IBundleClient};
+
     #[derive(Debug, PartialEq, Eq)]
     pub enum IncomingMessage {
         Start,
@@ -599,6 +607,20 @@ pub mod scan_library_job {
     #[derive(Debug, PartialEq, Eq)]
     pub enum OutgoingMessage {
         Ok,
+    }
+
+    pub type ReturnType = Result<(), Box<dyn Error + Send + Sync + 'static>>;
+
+    pub struct SpawnedJob<C: IBundleClient> {
+        handle: JoinHandle<ReturnType>,
+        sender: Option<Sender<(IncomingMessage, Option<OneShotSender<OutgoingMessage>>)>>,
+        media_bundle: Option<MediaBundle<C>>,
+        move_job_sender: Option<
+            Sender<(
+                move_job::IncomingMessage,
+                Option<OneShotSender<move_job::OutgoingMessage>>,
+            )>,
+        >,
     }
 }
 
