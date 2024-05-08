@@ -1,5 +1,6 @@
 use dookie_server_lib::{
-    move_job, BundleClient, Config, Job, Logger, MainListener, MediaBundle, Unassigned, Unprimed,
+    move_job, BundleClient, Config, Job, Logger, MainListener, MediaBundle, SpawnedJobType,
+    Unassigned, Unprimed,
 };
 use std::error::Error;
 use structopt::StructOpt;
@@ -21,10 +22,13 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let media_bundle = MediaBundle::<BundleClient>::default();
 
     let (move_job_handle, move_job_sender) = {
-        let mut move_job_handle = move_job::JobStruct::spawn::<BundleClient>(&config, None)?;
+        let mut move_job_handle: move_job::SpawnedJob<BundleClient> =
+            move_job::JobStruct::spawn::<BundleClient>(&config, None)?;
+        move_job_handle.assign_bundle(media_bundle.clone());
         let sender = move_job_handle.give_sender()?;
         (move_job_handle, sender)
     };
+
     let move_job_handle = move_job_handle.instrument(tracing::trace_span!("move_job"));
     let bundle = MediaBundle::<BundleClient>::default();
 
@@ -38,11 +42,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     // Logging set up
     let logger: Logger<Unprimed> = Logger::from_config(&config);
-    let (logger, _guard, logger_tx) = logger.prime();
+    let (logger, _guard, _logger_tx) = logger.prime();
 
     tokio::select! {
-        move_job_return = move_job_handle => {
-            println!("Move job finished {:?}", move_job_return);
+        _ = move_job_handle => {
+            println!("Move job exited");
         }
         listener_return = listener => {
             println!("Listener finished {:?}", listener_return);

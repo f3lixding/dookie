@@ -41,8 +41,8 @@ pub struct MainListener<C: IBundleClient, Status = Unassigned> {
     bundle: Option<MediaBundle<C>>,
     move_job_sender: Option<
         Sender<(
-            <move_job::JobStruct as Job>::IncomingMessage,
-            Option<OneShotSender<<move_job::JobStruct as Job>::OutgoingMessage>>,
+            <move_job::JobStruct<C> as Job>::IncomingMessage,
+            Option<OneShotSender<<move_job::JobStruct<C> as Job>::OutgoingMessage>>,
         )>,
     >,
     _status: std::marker::PhantomData<Status>,
@@ -66,8 +66,8 @@ impl<C: IBundleClient> MainListener<C, NeedsMovejob> {
     pub fn assign_movejob_sender(
         self,
         move_job_sender: Sender<(
-            <move_job::JobStruct as Job>::IncomingMessage,
-            Option<OneShotSender<<move_job::JobStruct as Job>::OutgoingMessage>>,
+            <move_job::JobStruct<C> as Job>::IncomingMessage,
+            Option<OneShotSender<<move_job::JobStruct<C> as Job>::OutgoingMessage>>,
         )>,
     ) -> MainListener<C, Assigned> {
         MainListener {

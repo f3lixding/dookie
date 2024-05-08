@@ -39,10 +39,15 @@ pub mod move_job {
         sync::{atomic::AtomicBool, Arc},
     };
 
-    use tokio::task::JoinHandle;
-    use tokio::{sync::RwLock, time::Instant};
+    use tokio::task::{JoinError, JoinHandle};
+    use tokio::{
+        sync::{mpsc::Sender, RwLock},
+        time::Instant,
+    };
 
     use super::*;
+
+    pub type ReturnType = Result<(), Box<dyn Error + Send + Sync + 'static>>;
 
     #[derive(Debug, PartialEq, Eq)]
     pub enum IncomingMessage {
@@ -89,23 +94,84 @@ pub mod move_job {
         }
     }
 
-    pub struct JobStruct;
+    pub struct SpawnedJob<C: IBundleClient> {
+        handle: JoinHandle<ReturnType>,
+        sender: Option<Sender<(IncomingMessage, Option<OneShotSender<OutgoingMessage>>)>>,
+        media_bundle: Option<MediaBundle<C>>,
+    }
 
-    impl Job for JobStruct {
+    impl<C> SpawnedJob<C>
+    where
+        C: IBundleClient,
+    {
+        pub fn new(
+            handle: JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>,
+            sender: Sender<(IncomingMessage, Option<OneShotSender<OutgoingMessage>>)>,
+        ) -> Self {
+            Self {
+                handle,
+                sender: Some(sender),
+                media_bundle: None,
+            }
+        }
+
+        pub fn assign_bundle(&mut self, media_bundle: MediaBundle<C>) {
+            self.media_bundle = Some(media_bundle);
+        }
+    }
+
+    impl<M> SpawnedJobType<ReturnType, IncomingMessage, OutgoingMessage> for SpawnedJob<M>
+    where
+        M: IBundleClient,
+    {
+        fn give_sender(
+            &mut self,
+        ) -> Result<Sender<(IncomingMessage, Option<OneShotSender<OutgoingMessage>>)>, Box<dyn Error>>
+        {
+            self.sender
+                .take()
+                .ok_or("No sender stored in this spawned job".into())
+        }
+    }
+
+    impl<M> Future for SpawnedJob<M>
+    where
+        M: IBundleClient,
+    {
+        type Output = Result<ReturnType, JoinError>;
+
+        fn poll(
+            self: Pin<&mut Self>,
+            cx: &mut std::task::Context<'_>,
+        ) -> std::task::Poll<Self::Output> {
+            // Safety: We never move `handle` after it is pinned.
+            let handle = Pin::new(&mut self.get_mut().handle);
+
+            handle.poll(cx)
+        }
+    }
+
+    pub struct JobStruct<M> {
+        phantom: std::marker::PhantomData<M>,
+    }
+
+    impl<M> Job for JobStruct<M>
+    where
+        M: IBundleClient,
+    {
         type IncomingMessage = IncomingMessage;
         type OutgoingMessage = OutgoingMessage;
-        type ReturnType = Result<(), Box<dyn Error + Send + Sync + 'static>>;
+        type ReturnType = ReturnType;
+        type SpawnedJob = SpawnedJob<M>;
 
+        #[allow(refining_impl_trait)]
         fn spawn_<C: IBundleClient>(
             config: &Config,
             media_bundle: Option<MediaBundle<C>>,
             #[allow(unused)] front_desk_handle: &mut Option<
                 JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>,
             >,
-        ) -> Result<
-            SpawnedJob<Self::ReturnType, Self::IncomingMessage, Self::OutgoingMessage>,
-            Box<(dyn Error)>,
-        > {
+        ) -> Result<Self::SpawnedJob, Box<(dyn Error)>> {
             let move_job_period = config.move_job_period;
             let age_threshold = config.age_threshold;
             let move_map = config.move_map.iter().fold(
@@ -429,7 +495,11 @@ pub mod move_job {
 ///   - QBitTorrent
 ///   - Plex Server
 pub mod spawn_server_job {
-    use tokio::task::JoinHandle;
+    use std::future::Future;
+    use std::pin::Pin;
+    use std::task::{Context, Poll};
+    use tokio::sync::mpsc::Sender;
+    use tokio::task::{JoinError, JoinHandle};
 
     use super::*;
 
@@ -448,28 +518,87 @@ pub mod spawn_server_job {
         Stop(Subject),
     }
 
+    pub struct SpawnedJob {
+        handle: JoinHandle<()>,
+        sender: Option<Sender<(IncomingMessage, Option<OneShotSender<()>>)>>,
+    }
+
+    impl SpawnedJob {
+        pub fn new(
+            handle: JoinHandle<()>,
+            sender: Sender<(IncomingMessage, Option<OneShotSender<()>>)>,
+        ) -> Self {
+            Self {
+                handle,
+                sender: Some(sender),
+            }
+        }
+    }
+
+    impl SpawnedJobType<(), IncomingMessage, ()> for SpawnedJob {
+        fn give_sender(
+            &mut self,
+        ) -> Result<Sender<(IncomingMessage, Option<OneShotSender<()>>)>, Box<dyn Error>> {
+            self.sender
+                .take()
+                .ok_or("No sender stored in this spawned job".into())
+        }
+    }
+
+    impl Future for SpawnedJob {
+        type Output = Result<(), JoinError>;
+        fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+            // Safety: We never move `handle` after it is pinned.
+            let handle = Pin::new(&mut self.get_mut().handle);
+
+            handle.poll(cx)
+        }
+    }
+
+    impl std::fmt::Debug for SpawnedJob {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            f.debug_struct("SpawnedJob").finish()
+        }
+    }
+
     pub struct JobStruct;
 
     impl Job for JobStruct {
         type IncomingMessage = IncomingMessage;
         type OutgoingMessage = ();
         type ReturnType = ();
+        type SpawnedJob = SpawnedJob;
 
+        #[allow(refining_impl_trait)]
         fn spawn_<C: IBundleClient>(
             config: &Config,
             _media_bundle: Option<MediaBundle<C>>,
             front_desk_handle: &mut Option<
                 JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>,
             >,
-        ) -> Result<
-            SpawnedJob<Self::ReturnType, Self::IncomingMessage, Self::OutgoingMessage>,
-            Box<dyn Error>,
-        > {
+        ) -> Result<SpawnedJob, Box<dyn Error>> {
             let handle = task::spawn(async {});
             let (sender, _receiver) = tokio::sync::mpsc::channel(100);
 
             Ok(SpawnedJob::new(handle, sender))
         }
+    }
+}
+
+/// This job monitors the target library directories and initiates scanning to plex if the
+/// following conditions are true:
+/// - At least 10 symlinks are valid and not broken
+/// - There is a change in the directory detected
+/// - There are not move job ongoing
+pub mod scan_library_job {
+    #[derive(Debug, PartialEq, Eq)]
+    pub enum IncomingMessage {
+        Start,
+    }
+
+    #[derive(Debug, PartialEq, Eq)]
+    pub enum OutgoingMessage {
+        Ok,
     }
 }
 
@@ -781,7 +910,7 @@ mod tests {
         create_test_files();
         let config = create_test_config();
         let mut fd_handle = None;
-        let mut job_move =
+        let mut job_move: move_job::SpawnedJob<MockClient> =
             move_job::JobStruct::spawn_::<MockClient>(&config, None, &mut fd_handle).unwrap();
         let front_desk_sender = job_move.give_sender().unwrap();
 
