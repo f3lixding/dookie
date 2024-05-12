@@ -165,9 +165,8 @@ pub mod move_job {
         type SpawnedJob = SpawnedJob<M>;
 
         #[allow(refining_impl_trait)]
-        fn spawn_<C: IBundleClient>(
+        fn spawn_(
             config: &Config,
-            media_bundle: Option<MediaBundle<C>>,
             #[allow(unused)] front_desk_handle: &mut Option<
                 JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>,
             >,
@@ -570,9 +569,8 @@ pub mod spawn_server_job {
         type SpawnedJob = SpawnedJob;
 
         #[allow(refining_impl_trait)]
-        fn spawn_<C: IBundleClient>(
+        fn spawn_(
             config: &Config,
-            _media_bundle: Option<MediaBundle<C>>,
             front_desk_handle: &mut Option<
                 JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>,
             >,
@@ -590,12 +588,21 @@ pub mod spawn_server_job {
 /// - At least 10 symlinks are valid and not broken
 /// - There is a change in the directory detected
 /// - There are not move job ongoing
+///
+/// The reason for the existence of this job is so that when the external storage is disconnected,
+/// we do not clear out the library by accident.
+///
+/// For api to refresh the library see https://plexapi.dev/docs/plex/refresh-library
 pub mod scan_library_job {
     use super::*;
     use std::error::Error;
+    use std::future::Future;
 
-    use tokio::sync::mpsc::Sender;
+    use std::path::PathBuf;
+    use std::pin::Pin;
+    use std::task::Poll;
     use tokio::task::JoinHandle;
+    use tokio::{sync::mpsc::Sender, task::JoinError};
 
     use crate::{Envelope, IBundleClient};
 
@@ -621,6 +628,80 @@ pub mod scan_library_job {
                 Option<OneShotSender<move_job::OutgoingMessage>>,
             )>,
         >,
+    }
+
+    impl<M> SpawnedJobType<ReturnType, IncomingMessage, OutgoingMessage> for SpawnedJob<M>
+    where
+        M: IBundleClient,
+    {
+        fn give_sender(
+            &mut self,
+        ) -> Result<Sender<(IncomingMessage, Option<OneShotSender<OutgoingMessage>>)>, Box<dyn Error>>
+        {
+            self.sender
+                .take()
+                .ok_or("No sender stored in this spawned job".into())
+        }
+    }
+
+    impl<M> Future for SpawnedJob<M>
+    where
+        M: IBundleClient,
+    {
+        type Output = Result<ReturnType, JoinError>;
+
+        fn poll(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<Self::Output> {
+            // Safety: We never move `handle` after it is pinned.
+            let handle = Pin::new(&mut self.get_mut().handle);
+            handle.poll(cx)
+        }
+    }
+
+    pub struct JobStruct<M> {
+        phantom: std::marker::PhantomData<M>,
+    }
+
+    impl<M> Job for JobStruct<M>
+    where
+        M: IBundleClient,
+    {
+        type IncomingMessage = IncomingMessage;
+        type OutgoingMessage = OutgoingMessage;
+        type ReturnType = ReturnType;
+        type SpawnedJob = SpawnedJob<M>;
+
+        #[allow(refining_impl_trait)]
+        fn spawn_(
+            config: &Config,
+            front_desk_handle: &mut Option<
+                JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>,
+            >,
+        ) -> Result<Self::SpawnedJob, Box<dyn Error>> {
+            let paths_to_monitor =
+                config
+                    .move_map
+                    .iter()
+                    .fold(Vec::new(), |mut acc, (src_path, _)| {
+                        let src_path = src_path.to_string();
+                        acc.push(PathBuf::from(src_path));
+                        acc
+                    });
+
+            // for testing purposes
+            // let fd_handle;
+
+            let (tx, mut rx) = tokio::sync::mpsc::channel::<(Self::IncomingMessage, _)>(100);
+
+            let handle = tokio::task::spawn(async move { Ok(()) });
+            let spawned_job = Self::SpawnedJob {
+                handle,
+                sender: Some(tx),
+                media_bundle: None,
+                move_job_sender: None,
+            };
+
+            Ok(spawned_job)
+        }
     }
 }
 
@@ -933,7 +1014,7 @@ mod tests {
         let config = create_test_config();
         let mut fd_handle = None;
         let mut job_move: move_job::SpawnedJob<MockClient> =
-            move_job::JobStruct::spawn_::<MockClient>(&config, None, &mut fd_handle).unwrap();
+            move_job::JobStruct::spawn_(&config, &mut fd_handle).unwrap();
         let front_desk_sender = job_move.give_sender().unwrap();
 
         let job_move_handle = task::spawn(async move {

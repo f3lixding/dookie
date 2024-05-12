@@ -67,21 +67,17 @@ pub trait Job {
     type ReturnType: Send + Sync;
     type SpawnedJob: SpawnedJobType<Self::ReturnType, Self::IncomingMessage, Self::OutgoingMessage>;
 
-    fn spawn_<C: IBundleClient>(
+    fn spawn_(
         config: &Config,
-        media_bundle: Option<MediaBundle<C>>,
         front_desk_handle: &mut Option<
             JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>,
         >,
     ) -> Result<Self::SpawnedJob, Box<dyn Error>>;
 
-    fn spawn<C: IBundleClient>(
-        config: &Config,
-        media_bundle: Option<MediaBundle<C>>,
-    ) -> Result<Self::SpawnedJob, Box<dyn Error>> {
+    fn spawn(config: &Config) -> Result<Self::SpawnedJob, Box<dyn Error>> {
         static mut NONE: Option<JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>> =
             None;
         // SAFETY: we'll never do anything with option here under non-test target.
-        unsafe { Self::spawn_(config, media_bundle, &mut NONE) }
+        unsafe { Self::spawn_(config, &mut NONE) }
     }
 }

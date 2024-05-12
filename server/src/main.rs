@@ -22,8 +22,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let media_bundle = MediaBundle::<BundleClient>::default();
 
     let (move_job_handle, move_job_sender) = {
-        let mut move_job_handle: move_job::SpawnedJob<BundleClient> =
-            move_job::JobStruct::spawn::<BundleClient>(&config, None)?;
+        let mut move_job_handle = move_job::JobStruct::spawn(&config)?;
         move_job_handle.assign_bundle(media_bundle.clone());
         let sender = move_job_handle.give_sender()?;
         (move_job_handle, sender)
