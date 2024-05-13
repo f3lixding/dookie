@@ -85,7 +85,17 @@ where
 unsafe impl<C> Send for MediaBundle<C> where C: IBundleClient {}
 unsafe impl<C> Sync for MediaBundle<C> where C: IBundleClient {}
 
-impl<C> MediaBundle<C> where C: IBundleClient {}
+impl<C> MediaBundle<C>
+where
+    C: IBundleClient,
+{
+    pub async fn refresh_libraries(
+        &self,
+        lib_id: usize,
+    ) -> Result<reqwest::StatusCode, Box<dyn Error + Send + Sync>> {
+        unimplemented!()
+    }
+}
 
 /// A collection of utility functions for media bundles
 pub(in crate::media_bundle) mod bundle_util {

@@ -595,16 +595,15 @@ pub mod spawn_server_job {
 /// For api to refresh the library see https://plexapi.dev/docs/plex/refresh-library
 pub mod scan_library_job {
     use super::*;
+    use crate::IBundleClient;
+    use notify::{recommended_watcher, Watcher};
     use std::error::Error;
     use std::future::Future;
-
     use std::path::PathBuf;
     use std::pin::Pin;
     use std::task::Poll;
     use tokio::task::JoinHandle;
     use tokio::{sync::mpsc::Sender, task::JoinError};
-
-    use crate::{Envelope, IBundleClient};
 
     #[derive(Debug, PartialEq, Eq)]
     pub enum IncomingMessage {
@@ -619,7 +618,7 @@ pub mod scan_library_job {
     pub type ReturnType = Result<(), Box<dyn Error + Send + Sync + 'static>>;
 
     pub struct SpawnedJob<C: IBundleClient> {
-        handle: JoinHandle<ReturnType>,
+        paths_to_watch: Vec<PathBuf>,
         sender: Option<Sender<(IncomingMessage, Option<OneShotSender<OutgoingMessage>>)>>,
         media_bundle: Option<MediaBundle<C>>,
         move_job_sender: Option<
@@ -652,7 +651,142 @@ pub mod scan_library_job {
 
         fn poll(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<Self::Output> {
             // Safety: We never move `handle` after it is pinned.
-            let handle = Pin::new(&mut self.get_mut().handle);
+            let this = self.get_mut();
+            let paths_to_watch = this.paths_to_watch.clone();
+            let media_bundle = this.media_bundle.take();
+            if media_bundle.is_none() {
+                return Poll::Ready(Ok(Err("Media bundle not found".into())));
+            }
+            let media_bundle = media_bundle.unwrap();
+            let move_job_sender = this.move_job_sender.take();
+
+            #[inline]
+            async fn find_broken_symlinks(
+                path: &PathBuf,
+            ) -> Result<bool, Box<dyn Error + Send + Sync + 'static>> {
+                let mut entries = tokio::fs::read_dir(path).await?;
+                let mut count = 0;
+
+                let res = loop {
+                    if count >= 10 {
+                        break Ok::<_, Box<dyn Error + Send + Sync + 'static>>(false);
+                    }
+
+                    if let Some(entry) = entries.next_entry().await? {
+                        if entry.file_type().await?.is_symlink() {
+                            if let Ok(path) = entry.path().read_link() {
+                                let complete_path = path.canonicalize()?;
+                                match tokio::fs::metadata(&complete_path).await {
+                                    Ok(_) => count += 1,
+                                    Err(e) => {
+                                        tracing::error!(
+                                            "Broken symlink detected: {:?}. Terminating scan job",
+                                            e
+                                        );
+                                        break Ok(true);
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        // We had exhausted all the entries in the directory and there are fewer
+                        // than 10 symlinks to check and they are all okay. Thus we should return
+                        // a go ahead.
+                        break Ok(false);
+                    }
+                };
+
+                res
+            }
+
+            let handle = tokio::task::spawn(async move {
+                let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel::<usize>();
+
+                let tx_for_movies = tx.clone();
+                let mut watcher_one =
+                    recommended_watcher(move |res: notify::Result<notify::Event>| match res {
+                        Ok(event) => {
+                            if let notify::EventKind::Modify(_) = event.kind {
+                                let _ = tx_for_movies.send(0);
+                            } else {
+                                tracing::info!("Ignoring event: {:?}", event);
+                            }
+                        }
+                        Err(e) => {
+                            tracing::error!("Failed to watch directory. Error: {:?}", e);
+                        }
+                    })?;
+
+                let tx_for_shows = tx.clone();
+                let mut watcher_two =
+                    recommended_watcher(move |res: notify::Result<notify::Event>| match res {
+                        Ok(event) => {
+                            if let notify::EventKind::Modify(_) = event.kind {
+                                let _ = tx_for_shows.send(1);
+                            } else {
+                                tracing::info!("Ignoring event: {:?}", event);
+                            }
+                        }
+                        Err(e) => {
+                            tracing::error!("Failed to watch directory. Error: {:?}", e);
+                        }
+                    })?;
+
+                // Not sure really if this is too hacky but for the time being this should be okay
+                // but in the future make sure that watcher one is watching the first element and
+                // watcher two is watching the second element.
+                watcher_one.watch(&paths_to_watch[0].clone(), notify::RecursiveMode::Recursive)?;
+                watcher_two.watch(&paths_to_watch[1].clone(), notify::RecursiveMode::Recursive)?;
+
+                loop {
+                    let res = rx.recv().await;
+
+                    match res {
+                        Some(idx) if idx < paths_to_watch.len() => {
+                            if let Ok(res) = find_broken_symlinks(&paths_to_watch[idx]).await {
+                                let is_moving = if let Some(move_job_sender) = &move_job_sender {
+                                    let (tx, rx) = tokio::sync::oneshot::channel::<
+                                        move_job::OutgoingMessage,
+                                    >();
+                                    move_job_sender
+                                        .send((move_job::IncomingMessage::StatusRequest, Some(tx)))
+                                        .await?;
+                                    let move_job_status = rx.await?;
+                                    move_job_status == move_job::OutgoingMessage::InProgress
+                                } else {
+                                    false
+                                };
+
+                                match (res, is_moving) {
+                                    (true, _) => tracing::error!("Found broken symlinks in library directory. Skipping this scan."),
+                                    (false, true) => tracing::info!("Move job is in progress. Skipping this scan."),
+                                    (false, false) => {
+                                        // here we actually do the scan since everything is okay
+                                        let resp = media_bundle.refresh_libraries(idx).await;
+                                        if let Err(e) = resp {
+                                            tracing::error!("Failed to refresh libraries. Error: {:?}", e);
+                                        } else if let Ok(resp_code) = resp {
+                                            tracing::error!("Refreshed libraries. Response: {:?}", resp_code);
+                                        } else {
+                                            tracing::info!("Refreshed library id {}", idx);
+                                        }
+                                    }
+                                }
+                            } else {
+                                tracing::error!("Failed to determine if there are broken symlinks. Skipping this scan.");
+                            }
+                        }
+                        _ => tracing::info!(
+                            "Scan job received a notification that was not a valid event. Noop."
+                        ),
+                    }
+                }
+
+                #[allow(unreachable_code)]
+                Ok(())
+            });
+
+            let handle = std::pin::pin!(handle);
             handle.poll(cx)
         }
     }
@@ -677,7 +811,7 @@ pub mod scan_library_job {
                 JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>,
             >,
         ) -> Result<Self::SpawnedJob, Box<dyn Error>> {
-            let paths_to_monitor =
+            let paths_to_watch =
                 config
                     .move_map
                     .iter()
@@ -687,14 +821,17 @@ pub mod scan_library_job {
                         acc
                     });
 
+            //  There should be no foreseeable use case where we are monitoring more than 2
+            //  directories (one for movies and one for shows).
+            assert!(paths_to_watch.len() == 2);
+
             // for testing purposes
             // let fd_handle;
 
             let (tx, mut rx) = tokio::sync::mpsc::channel::<(Self::IncomingMessage, _)>(100);
 
-            let handle = tokio::task::spawn(async move { Ok(()) });
             let spawned_job = Self::SpawnedJob {
-                handle,
+                paths_to_watch,
                 sender: Some(tx),
                 media_bundle: None,
                 move_job_sender: None,
