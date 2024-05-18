@@ -629,6 +629,25 @@ pub mod scan_library_job {
         >,
     }
 
+    impl<C> SpawnedJob<C>
+    where
+        C: IBundleClient,
+    {
+        pub fn assign_move_job_sender(
+            &mut self,
+            sender: Sender<(
+                move_job::IncomingMessage,
+                Option<OneShotSender<move_job::OutgoingMessage>>,
+            )>,
+        ) {
+            self.move_job_sender.replace(sender);
+        }
+
+        pub fn assign_media_bundle(&mut self, media_bundle: MediaBundle<C>) {
+            self.media_bundle.replace(media_bundle);
+        }
+    }
+
     impl<M> SpawnedJobType<ReturnType, IncomingMessage, OutgoingMessage> for SpawnedJob<M>
     where
         M: IBundleClient,
@@ -807,7 +826,7 @@ pub mod scan_library_job {
         #[allow(refining_impl_trait)]
         fn spawn_(
             config: &Config,
-            front_desk_handle: &mut Option<
+            #[allow(unused)] front_desk_handle: &mut Option<
                 JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>,
             >,
         ) -> Result<Self::SpawnedJob, Box<dyn Error>> {
@@ -855,13 +874,63 @@ mod tests {
     const SRC_FOLDER: &'static str = "src_folder";
     const DST_FOLDER: &'static str = "dst_folder";
 
-    #[derive(Clone)]
-    struct MockClient {}
+    struct CleanUp {}
+
+    impl Drop for CleanUp {
+        fn drop(&mut self) {
+            remove_dir_all(CONFIG_PATH).unwrap();
+        }
+    }
+
+    struct MockResponse {
+        status: u16,
+        body: Vec<u8>,
+    }
+
+    impl Default for MockResponse {
+        fn default() -> Self {
+            Self {
+                status: 200,
+                body: Vec::new(),
+            }
+        }
+    }
+
+    #[async_trait]
+    impl BundleResponse for MockResponse {
+        async fn as_bytes(self) -> Result<Vec<u8>, Box<dyn Error + Send + Sync>> {
+            Ok(self.body)
+        }
+
+        fn get_statuscode(&self) -> u16 {
+            self.status
+        }
+    }
+
+    #[derive(Clone, Default)]
+    struct MockClient {
+        map: std::sync::Arc<tokio::sync::RwLock<HashMap<String, usize>>>,
+    }
+
+    impl MockClient {
+        pub fn give_map(&self) -> std::sync::Arc<tokio::sync::RwLock<HashMap<String, usize>>> {
+            self.map.clone()
+        }
+    }
 
     #[async_trait]
     impl IBundleClient for MockClient {
-        async fn get(&self, _url: &str) -> Result<reqwest::Response, Box<dyn Error + Send + Sync>> {
-            unimplemented!()
+        async fn get(&self, url: &str) -> Result<MockResponse, Box<dyn Error + Send + Sync>> {
+            println!("Get called with url: {}", url);
+            let mut call_map = self.map.write().await;
+            call_map
+                .entry(url.to_string())
+                .and_modify(|count| {
+                    *count += 1;
+                })
+                .or_insert(1);
+
+            Ok(MockResponse::default())
         }
 
         async fn post(
@@ -873,7 +942,7 @@ mod tests {
         }
 
         fn from_port(_port: u16) -> Self {
-            MockClient {}
+            MockClient::default()
         }
 
         fn set_port(&mut self, _port: u16) {}
@@ -881,9 +950,7 @@ mod tests {
         fn set_token(&mut self, token: (impl AsRef<str>, impl AsRef<str>)) {}
     }
 
-    fn create_test_config<'a>() -> Config<'a> {
-        let src_dir = format!("{}/{}", CONFIG_PATH, SRC_FOLDER);
-        let dst_dir = format!("{}/{}", CONFIG_PATH, DST_FOLDER);
+    fn create_test_config<'a>(mappings: &'a Vec<(String, String)>) -> Config<'a> {
         Config {
             config_path: CONFIG_PATH.into(),
             log_path: Cow::from(""),
@@ -899,33 +966,58 @@ mod tests {
             age_threshold: 10,
             move_map: {
                 let mut map = HashMap::new();
-                map.insert(Cow::from(src_dir), Cow::from(dst_dir));
+                for (src_dir, dst_dir) in mappings {
+                    map.insert(Cow::from(src_dir), Cow::from(dst_dir));
+                }
                 map
             },
         }
     }
 
-    fn create_test_files() {
-        let src_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, SRC_FOLDER));
-        let dst_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, DST_FOLDER));
+    fn create_test_files(mappings: &Vec<(String, String)>) -> CleanUp {
+        for mapping in mappings {
+            let src_dir = PathBuf::from(mapping.0.clone());
+            let dst_dir = PathBuf::from(mapping.1.clone());
 
-        create_dir_all(&src_dir).unwrap();
-        create_dir_all(&dst_dir).unwrap();
-        _ = File::create(format!(
-            "{}/{}",
-            src_dir.to_str().unwrap(),
-            "test_file_1.txt"
-        ))
-        .unwrap();
-        _ = File::create(format!(
-            "{}/{}",
-            src_dir.to_str().unwrap(),
-            "test_file_2.txt"
-        ))
-        .unwrap();
+            create_dir_all(&src_dir).unwrap();
+            create_dir_all(&dst_dir).unwrap();
+            _ = File::create(format!(
+                "{}/{}",
+                src_dir.to_str().unwrap(),
+                "test_file_1.txt"
+            ))
+            .unwrap();
+            _ = File::create(format!(
+                "{}/{}",
+                src_dir.to_str().unwrap(),
+                "test_file_2.txt"
+            ))
+            .unwrap();
+        }
+
+        CleanUp {}
     }
 
-    fn create_test_dirs() {
+    // The files should be in src directory in this case.
+    // Since in our set up the symlinks should exist in the src directory and the real files should
+    // be in the destination directory, we are also going to move the files to destination
+    // directory in this function
+    fn create_sym_links(mappings: &Vec<(String, String)>) {
+        for mapping in mappings {
+            let src_dir = PathBuf::from(mapping.0.clone());
+            let dst_dir = PathBuf::from(mapping.1.clone());
+            let entries = std::fs::read_dir(src_dir).unwrap();
+
+            for entry in entries {
+                let entry = entry.unwrap();
+                std::fs::copy(entry.path(), dst_dir.join(entry.file_name())).unwrap();
+                std::fs::remove_file(entry.path()).unwrap();
+                std::os::unix::fs::symlink(dst_dir.join(entry.file_name()), entry.path()).unwrap();
+            }
+        }
+    }
+
+    fn create_test_dirs() -> CleanUp {
         let src_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, SRC_FOLDER));
         let dst_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, DST_FOLDER));
 
@@ -960,9 +1052,11 @@ mod tests {
             "test_file_2.txt"
         ))
         .unwrap();
+
+        CleanUp {}
     }
 
-    fn create_nested_test_dirs() {
+    fn create_nested_test_dirs() -> CleanUp {
         let src_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, SRC_FOLDER));
         let dst_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, DST_FOLDER));
 
@@ -997,20 +1091,21 @@ mod tests {
             "test_file_2.txt"
         ))
         .unwrap();
-    }
 
-    fn clean_up() {
-        remove_dir_all(CONFIG_PATH).unwrap();
+        CleanUp {}
     }
 
     #[tokio::test]
     #[serial_test::serial]
     // This tests moving of files directly without having them in the target directory
     async fn test_move_func_for_move_job() {
-        create_test_files();
+        let src_dir = format!("{}/{}", CONFIG_PATH, "src_folder");
+        let dst_dir = format!("{}/{}", CONFIG_PATH, "dst_folder");
+        let mappings = Vec::from([(src_dir.clone(), dst_dir.clone())]);
 
-        let src_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, "src_folder"));
-        let dst_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, "dst_folder"));
+        let _to_drop = create_test_files(&mappings);
+        let src_dir = PathBuf::from(src_dir);
+        let dst_dir = PathBuf::from(dst_dir);
 
         let files_in_src = src_dir.read_dir().unwrap();
         assert_eq!(files_in_src.count(), 2);
@@ -1036,8 +1131,6 @@ mod tests {
 
             assert!(metadata.is_symlink(), "remaining files should be symlinks");
         }
-
-        clean_up();
     }
 
     #[tokio::test]
@@ -1047,99 +1140,100 @@ mod tests {
         let src_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, "src_folder"));
         let dst_dir = PathBuf::from(format!("{}/{}", CONFIG_PATH, "dst_folder"));
 
-        create_test_dirs();
+        {
+            let _to_drop = create_test_dirs();
 
-        // Testing targeted move first
-        let targeted_dir = src_dir.join("sub_dir_one");
-        let move_res = move_job::move_dir_(true, false, &targeted_dir, &dst_dir).await;
-        if move_res.is_err() {
-            println!("move_res error: {:?}", move_res);
-        }
-        assert!(move_res.is_ok());
-        let files_in_dst = dst_dir.read_dir().unwrap();
-        let files_in_src = src_dir.read_dir().unwrap();
-        assert_eq!(files_in_dst.count(), 1);
-        assert_eq!(files_in_src.count(), 2);
+            // Testing targeted move first
+            let targeted_dir = src_dir.join("sub_dir_one");
+            let move_res = move_job::move_dir_(true, false, &targeted_dir, &dst_dir).await;
+            if move_res.is_err() {
+                println!("move_res error: {:?}", move_res);
+            }
+            assert!(move_res.is_ok());
+            let files_in_dst = dst_dir.read_dir().unwrap();
+            let files_in_src = src_dir.read_dir().unwrap();
+            assert_eq!(files_in_dst.count(), 1);
+            assert_eq!(files_in_src.count(), 2);
 
-        let mut num_normal_files = 0;
-        let mut num_symlinks = 0;
-        for file in src_dir.read_dir().unwrap() {
-            let file = file.expect("Files remaining in src dir should be ok to read");
+            let mut num_normal_files = 0;
+            let mut num_symlinks = 0;
+            for file in src_dir.read_dir().unwrap() {
+                let file = file.expect("Files remaining in src dir should be ok to read");
 
-            if file.metadata().unwrap().is_symlink() {
-                num_symlinks += 1;
-            } else {
-                num_normal_files += 1;
+                if file.metadata().unwrap().is_symlink() {
+                    num_symlinks += 1;
+                } else {
+                    num_normal_files += 1;
+                }
+            }
+            assert_eq!(num_normal_files, 1);
+            assert_eq!(num_symlinks, 1);
+
+            // And now we test the mass move
+            let move_res = move_job::move_dir_(true, true, &src_dir, &dst_dir).await;
+            if move_res.is_err() {
+                println!("move_res error: {:?}", move_res);
+            }
+            assert!(move_res.is_ok());
+            let files_in_dst = dst_dir.read_dir().unwrap();
+            let files_in_src = src_dir.read_dir().unwrap();
+            assert_eq!(files_in_dst.count(), 2);
+            assert_eq!(files_in_src.count(), 2);
+            for file in src_dir.read_dir().unwrap() {
+                let file = file.expect("Files remaining in src dir should be ok to read");
+
+                // Whatever is left should just be symlinks
+                assert!(file.metadata().unwrap().is_symlink());
             }
         }
-        assert_eq!(num_normal_files, 1);
-        assert_eq!(num_symlinks, 1);
-
-        // And now we test the mass move
-        let move_res = move_job::move_dir_(true, true, &src_dir, &dst_dir).await;
-        if move_res.is_err() {
-            println!("move_res error: {:?}", move_res);
-        }
-        assert!(move_res.is_ok());
-        let files_in_dst = dst_dir.read_dir().unwrap();
-        let files_in_src = src_dir.read_dir().unwrap();
-        assert_eq!(files_in_dst.count(), 2);
-        assert_eq!(files_in_src.count(), 2);
-        for file in src_dir.read_dir().unwrap() {
-            let file = file.expect("Files remaining in src dir should be ok to read");
-
-            // Whatever is left should just be symlinks
-            assert!(file.metadata().unwrap().is_symlink());
-        }
-        clean_up();
 
         // Now we test for further nested directories
-        create_nested_test_dirs();
+        {
+            let _to_drop = create_nested_test_dirs();
 
-        // Testing targeted move first
-        let targeted_dir = src_dir.join("sub_dir_one");
-        let move_res = move_job::move_dir_(true, false, &targeted_dir, &dst_dir).await;
-        if move_res.is_err() {
-            println!("move_res error: {:?}", move_res);
-        }
-        assert!(move_res.is_ok());
-        let files_in_dst = dst_dir.read_dir().unwrap();
-        let files_in_src = src_dir.read_dir().unwrap();
-        assert_eq!(files_in_dst.count(), 1);
-        assert_eq!(files_in_src.count(), 2);
+            // Testing targeted move first
+            let targeted_dir = src_dir.join("sub_dir_one");
+            let move_res = move_job::move_dir_(true, false, &targeted_dir, &dst_dir).await;
+            if move_res.is_err() {
+                println!("move_res error: {:?}", move_res);
+            }
+            assert!(move_res.is_ok());
+            let files_in_dst = dst_dir.read_dir().unwrap();
+            let files_in_src = src_dir.read_dir().unwrap();
+            assert_eq!(files_in_dst.count(), 1);
+            assert_eq!(files_in_src.count(), 2);
 
-        let mut num_normal_files = 0;
-        let mut num_symlinks = 0;
-        for file in src_dir.read_dir().unwrap() {
-            let file = file.expect("Files remaining in src dir should be ok to read");
+            let mut num_normal_files = 0;
+            let mut num_symlinks = 0;
+            for file in src_dir.read_dir().unwrap() {
+                let file = file.expect("Files remaining in src dir should be ok to read");
 
-            if file.metadata().unwrap().is_symlink() {
-                num_symlinks += 1;
-            } else {
-                num_normal_files += 1;
+                if file.metadata().unwrap().is_symlink() {
+                    num_symlinks += 1;
+                } else {
+                    num_normal_files += 1;
+                }
+            }
+            assert_eq!(num_normal_files, 1);
+            assert_eq!(num_symlinks, 1);
+
+            // And now we test the mass move
+            let move_res = move_job::move_dir_(true, true, &src_dir, &dst_dir).await;
+            if move_res.is_err() {
+                println!("move_res error: {:?}", move_res);
+            }
+            assert!(move_res.is_ok());
+            let files_in_dst = dst_dir.read_dir().unwrap();
+            let files_in_src = src_dir.read_dir().unwrap();
+            assert_eq!(files_in_dst.count(), 2);
+            assert_eq!(files_in_src.count(), 2);
+            for file in src_dir.read_dir().unwrap() {
+                let file = file.expect("Files remaining in src dir should be ok to read");
+
+                // Whatever is left should just be symlinks
+                assert!(file.metadata().unwrap().is_symlink());
             }
         }
-        assert_eq!(num_normal_files, 1);
-        assert_eq!(num_symlinks, 1);
-
-        // And now we test the mass move
-        let move_res = move_job::move_dir_(true, true, &src_dir, &dst_dir).await;
-        if move_res.is_err() {
-            println!("move_res error: {:?}", move_res);
-        }
-        assert!(move_res.is_ok());
-        let files_in_dst = dst_dir.read_dir().unwrap();
-        let files_in_src = src_dir.read_dir().unwrap();
-        assert_eq!(files_in_dst.count(), 2);
-        assert_eq!(files_in_src.count(), 2);
-        for file in src_dir.read_dir().unwrap() {
-            let file = file.expect("Files remaining in src dir should be ok to read");
-
-            // Whatever is left should just be symlinks
-            assert!(file.metadata().unwrap().is_symlink());
-        }
-
-        clean_up();
     }
 
     // Perhaps this is one for the readme:
@@ -1147,8 +1241,13 @@ mod tests {
     #[tokio::test(flavor = "multi_thread")]
     #[serial_test::serial]
     async fn test_channel_for_move_job() {
-        create_test_files();
-        let config = create_test_config();
+        let src_dir = format!("{}/{}", CONFIG_PATH, SRC_FOLDER);
+        let dst_dir = format!("{}/{}", CONFIG_PATH, DST_FOLDER);
+        let mappings = Vec::from([(src_dir, dst_dir)]);
+
+        let _to_drop = create_test_files(&mappings);
+
+        let config = create_test_config(&mappings);
         let mut fd_handle = None;
         let mut job_move: move_job::SpawnedJob<MockClient> =
             move_job::JobStruct::spawn_(&config, &mut fd_handle).unwrap();
@@ -1200,7 +1299,115 @@ mod tests {
             tokio::join!(job_move_handle, test_send_msg_handle, fd_handle);
         assert!(job_move_handle_res.is_ok());
         assert!(test_send_msg_handle_res.is_ok());
+    }
 
-        clean_up();
+    #[tokio::test(flavor = "multi_thread")]
+    #[serial_test::serial]
+    async fn test_scan_job() {
+        let shows_src = format!("{}/{}", CONFIG_PATH, "shows_src");
+        let shows_dst = format!("{}/{}", CONFIG_PATH, "shows_dst");
+        let movies_src = format!("{}/{}", CONFIG_PATH, "movies_src");
+        let movies_dst = format!("{}/{}", CONFIG_PATH, "movies_dst");
+        let mappings = Vec::from([
+            (shows_src.clone(), shows_dst.clone()),
+            (movies_src.clone(), movies_dst.clone()),
+        ]);
+
+        let _to_drop = create_test_files(&mappings);
+
+        create_sym_links(&mappings);
+
+        for (src, _) in &mappings {
+            let src_dir = PathBuf::from(&src);
+            let entries = src_dir.read_dir().unwrap();
+            let mut file_count = 0;
+
+            for entry in entries {
+                let entry = entry.unwrap();
+
+                let md = entry.metadata().unwrap();
+                assert!(md.is_symlink());
+                file_count += 1;
+            }
+
+            assert_eq!(file_count, 2);
+        }
+
+        let config = create_test_config(&mappings);
+        let mut scan_job = scan_library_job::JobStruct::<MockClient>::spawn(&config).unwrap();
+        let (move_tx, mut move_rx) = tokio::sync::mpsc::channel::<(
+            move_job::IncomingMessage,
+            Option<OneShotSender<move_job::OutgoingMessage>>,
+        )>(10);
+        let mock_client = MockClient::default();
+        let call_map = mock_client.give_map();
+        let media_bundle = MediaBundle::from_client(mock_client);
+        scan_job.assign_media_bundle(media_bundle);
+        scan_job.assign_move_job_sender(move_tx.clone());
+
+        let move_job_ans_task = task::spawn(async move {
+            while let Some((msg, oneshot_sender)) = move_rx.recv().await {
+                if let move_job::IncomingMessage::Stop = msg {
+                    break;
+                }
+                if let Some(oneshot_sender) = oneshot_sender {
+                    oneshot_sender
+                        .send(move_job::OutgoingMessage::TimeUntilNextScan(100))
+                        .unwrap();
+                }
+            }
+        });
+
+        let assert_task = tokio::spawn(async move {
+            // First we add a file to shows_src to see if it triggers a scan.
+            _ = File::create(format!("{}/file1.mkv", shows_src)).unwrap();
+            {
+                // Needed to wait for the file to be added. If we run the lines after directly
+                // without waiting the test is going to fail.
+                tokio::time::sleep(std::time::Duration::from_millis(1)).await;
+                let call_map = call_map.read().await;
+                let expected_url = format!("/library/sections/{}/refresh", 0);
+                assert!(call_map.get(&expected_url).is_some());
+            }
+
+            // And then we are going to break a symlink in the movies_src.
+            // This should not result in a scan.
+            std::fs::remove_file(format!("{}/test_file_1.txt", movies_dst)).unwrap();
+            _ = File::create(format!("{}/file1.mkv", movies_src)).unwrap();
+            {
+                // Needed to wait for the file to be added. If we run the lines after directly
+                // without waiting the test is going to fail.
+                tokio::time::sleep(std::time::Duration::from_millis(1)).await;
+                let call_map = call_map.read().await;
+                let expected_url = format!("/library/sections/{}/refresh", 1);
+                assert!(call_map.get(&expected_url).is_none());
+            }
+
+            // If we restore the symlink we should be a go again. (And this time we should not have
+            // to create anything since the act of restoration is a change event)
+            _ = File::create(format!("{}/test_file_1.txt", movies_dst)).unwrap();
+            {
+                // Needed to wait for the file to be added. If we run the lines after directly
+                // without waiting the test is going to fail.
+                tokio::time::sleep(std::time::Duration::from_millis(1)).await;
+                let call_map = call_map.read().await;
+                let expected_url = format!("/library/sections/{}/refresh", 1);
+                let res = call_map.get(&expected_url);
+                assert!(res.is_some());
+                assert_eq!(*res.unwrap(), 1);
+            }
+
+            // Don't forget to end the move_job_ans_task otherwise the test will hang.
+            move_tx
+                .send((move_job::IncomingMessage::Stop, None))
+                .await
+                .unwrap();
+        });
+
+        tokio::select! {
+            _ = move_job_ans_task => {},
+            _ = assert_task => {},
+            _ = scan_job => {},
+        }
     }
 }

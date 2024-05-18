@@ -17,8 +17,9 @@ use std::marker::Unpin;
 /// Test related. Not sure if there is a better way to do this but this mainly helps with mocking
 /// so that tests can be written more easily.
 #[async_trait]
-pub(in crate::media_bundle) trait BundleResponse {
+pub trait BundleResponse {
     async fn as_bytes(self) -> Result<Vec<u8>, Box<dyn Error + Send + Sync>>;
+    fn get_statuscode(&self) -> u16;
 }
 
 #[async_trait]
@@ -27,6 +28,10 @@ impl BundleResponse for reqwest::Response {
         let res = self.bytes().await?.into();
 
         Ok(res)
+    }
+
+    fn get_statuscode(&self) -> u16 {
+        self.status().as_u16()
     }
 }
 
@@ -89,11 +94,25 @@ impl<C> MediaBundle<C>
 where
     C: IBundleClient,
 {
+    pub fn from_client(client: C) -> Self {
+        Self {
+            plex_client: Plex::from_bundle_client(client),
+        }
+    }
+    /// Refresh the plex library. Be careful when calling this method as a disconnected DAS would
+    /// mean the library would be emptied. Only use this when DAS is confirmed to be connected.
     pub async fn refresh_libraries(
         &self,
         lib_id: usize,
     ) -> Result<reqwest::StatusCode, Box<dyn Error + Send + Sync>> {
-        unimplemented!()
+        let input = PlexInput::RefreshLibrary(lib_id);
+        let output = self.plex_client.make_call(input).await?;
+
+        let PlexOutput::StatusCode(code) = output else {
+            return Err("Unexpected output".into());
+        };
+
+        Ok(reqwest::StatusCode::from_u16(code)?)
     }
 }
 
