@@ -1,6 +1,6 @@
 use dookie_server_lib::{
-    move_job, BundleClient, Config, Job, Logger, MainListener, MediaBundle, SpawnedJobType,
-    Unassigned, Unprimed,
+    move_job, scan_library_job, BundleClient, Config, Job, Logger, MainListener, MediaBundle,
+    SpawnedJobType, Unassigned, Unprimed,
 };
 use std::error::Error;
 use structopt::StructOpt;
@@ -31,10 +31,16 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let move_job_handle = move_job_handle.instrument(tracing::trace_span!("move_job"));
     let bundle = MediaBundle::<BundleClient>::default();
 
+    // Scan job set up
+    let mut scan_job = scan_library_job::JobStruct::<BundleClient>::spawn(&config)?;
+    scan_job.assign_media_bundle(media_bundle.clone());
+    scan_job.assign_move_job_sender(move_job_sender.clone());
+
     // Main listener set up
+    // TODO: set up listener for scan job
     let listener: MainListener<_, Unassigned> = MainListener::default();
     let listener = listener.assign_sender_bundle(bundle);
-    let listener = listener.assign_movejob_sender(move_job_sender);
+    let listener = listener.assign_movejob_sender(move_job_sender.clone());
     let listener = listener
         .initiate_listener()
         .instrument(tracing::trace_span!("listener"));
@@ -52,6 +58,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
         }
         _ = logger => {
             println!("Logger finished");
+        }
+        _ = scan_job => {
+            println!("Scan job exited");
         }
     }
 
