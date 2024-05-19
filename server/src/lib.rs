@@ -724,13 +724,17 @@ pub mod scan_library_job {
                 let tx_for_movies = tx.clone();
                 let mut watcher_one =
                     recommended_watcher(move |res: notify::Result<notify::Event>| match res {
-                        Ok(event) => {
-                            if let notify::EventKind::Modify(_) = event.kind {
+                        Ok(event) => match event.kind {
+                            notify::EventKind::Create(_)
+                            | notify::EventKind::Modify(_)
+                            | notify::EventKind::Remove(_) => {
                                 let _ = tx_for_movies.send(1);
-                            } else {
+                                tracing::info!("Sent movie folder event: {:?}", event);
+                            }
+                            _ => {
                                 tracing::info!("Ignoring event: {:?}", event);
                             }
-                        }
+                        },
                         Err(e) => {
                             tracing::error!("Failed to watch directory. Error: {:?}", e);
                         }
@@ -739,13 +743,17 @@ pub mod scan_library_job {
                 let tx_for_shows = tx.clone();
                 let mut watcher_two =
                     recommended_watcher(move |res: notify::Result<notify::Event>| match res {
-                        Ok(event) => {
-                            if let notify::EventKind::Modify(_) = event.kind {
+                        Ok(event) => match event.kind {
+                            notify::EventKind::Create(_)
+                            | notify::EventKind::Modify(_)
+                            | notify::EventKind::Remove(_) => {
                                 let _ = tx_for_shows.send(2);
-                            } else {
+                                tracing::info!("Sent show folder event: {:?}", event);
+                            }
+                            _ => {
                                 tracing::info!("Ignoring event: {:?}", event);
                             }
-                        }
+                        },
                         Err(e) => {
                             tracing::error!("Failed to watch directory. Error: {:?}", e);
                         }
