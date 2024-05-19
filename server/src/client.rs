@@ -35,7 +35,7 @@ impl IBundleClient for BundleClient {
 
     #[allow(refining_impl_trait)]
     async fn get(&self, url: &str) -> Result<reqwest::Response, Box<dyn Error + Send + Sync>> {
-        let url = format!("http://localhost:{}/{}", self.port, url);
+        let url = format!("http://localhost:{}{}", self.port, url);
         Ok(self
             .client
             .get(&url)
@@ -50,7 +50,7 @@ impl IBundleClient for BundleClient {
         url: &str,
         body: impl Into<reqwest::Body> + Send + Sync,
     ) -> Result<reqwest::Response, Box<dyn Error + Send + Sync>> {
-        let url = format!("http://localhost:{}/{}", self.port, url);
+        let url = format!("http://localhost:{}{}", self.port, url);
         let msg_body: reqwest::Body = body.into();
 
         Ok(self

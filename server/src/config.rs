@@ -11,11 +11,13 @@ pub struct Config<'a> {
     pub radarr_port: u16,
     pub sonarr_port: u16,
     pub prowlarr_port: u16,
+    pub plex_port: u16,
     pub qbit_torrent_port: u16,
     pub radarr_api_key: Cow<'a, str>,
     pub sonarr_api_key: Cow<'a, str>,
     pub prowlarr_api_key: Cow<'a, str>,
     pub qbit_torrent_api_key: Cow<'a, str>,
+    pub plex_api_key: Cow<'a, str>,
     pub move_job_period: u64,
     pub age_threshold: u64,
     pub move_map: HashMap<Cow<'a, str>, Cow<'a, str>>,
@@ -36,10 +38,12 @@ impl<'a> Default for Config<'a> {
             sonarr_port: 8989,
             prowlarr_port: 8888,
             qbit_torrent_port: 9090,
+            plex_port: 32400,
             radarr_api_key: "".into(),
             sonarr_api_key: "".into(),
             prowlarr_api_key: "".into(),
             qbit_torrent_api_key: "".into(),
+            plex_api_key: "".into(),
             move_job_period: 100,
             age_threshold: 100,
             move_map: HashMap::new(),
@@ -58,10 +62,12 @@ mod tests {
             sonarr_port: 8989
             prowlarr_port: 8888
             qbit_torrent_port: 9090
+            plex_port: 32400
             radarr_api_key: "some_key"
             sonarr_api_key: "some_key"
             prowlarr_api_key: "some_key"
             qbit_torrent_api_key: "some_key"
+            plex_api_key: "some_key"
             move_job_period: 100
             age_threshold: 100
             move_map:

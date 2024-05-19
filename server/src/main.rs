@@ -1,6 +1,6 @@
 use dookie_server_lib::{
-    move_job, BundleClient, Config, Job, Logger, MainListener, MediaBundle, SpawnedJobType,
-    Unassigned, Unprimed,
+    move_job, scan_library_job, BundleClient, Config, Job, Logger, MainListener, MediaBundle,
+    SpawnedJobType, Unassigned, Unprimed,
 };
 use std::error::Error;
 use structopt::StructOpt;
@@ -19,7 +19,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let config = Config::from_buffer(&config_file)?;
 
     // We need to construct media bundle here for all the jobs that would require it
-    let media_bundle = MediaBundle::<BundleClient>::default();
+    let client = BundleClient::default();
+    let media_bundle = MediaBundle::<BundleClient>::from_client_with_config(client, &config);
 
     let (move_job_handle, move_job_sender) = {
         let mut move_job_handle = move_job::JobStruct::spawn(&config)?;
@@ -29,12 +30,17 @@ async fn main() -> Result<(), Box<dyn Error>> {
     };
 
     let move_job_handle = move_job_handle.instrument(tracing::trace_span!("move_job"));
-    let bundle = MediaBundle::<BundleClient>::default();
+
+    // Scan job set up
+    let mut scan_job = scan_library_job::JobStruct::<BundleClient>::spawn(&config)?;
+    scan_job.assign_media_bundle(media_bundle.clone());
+    scan_job.assign_move_job_sender(move_job_sender.clone());
 
     // Main listener set up
+    // TODO: set up listener for scan job
     let listener: MainListener<_, Unassigned> = MainListener::default();
-    let listener = listener.assign_sender_bundle(bundle);
-    let listener = listener.assign_movejob_sender(move_job_sender);
+    let listener = listener.assign_sender_bundle(media_bundle);
+    let listener = listener.assign_movejob_sender(move_job_sender.clone());
     let listener = listener
         .initiate_listener()
         .instrument(tracing::trace_span!("listener"));
@@ -52,6 +58,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
         }
         _ = logger => {
             println!("Logger finished");
+        }
+        _ = scan_job => {
+            println!("Scan job exited");
         }
     }
 

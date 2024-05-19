@@ -54,9 +54,10 @@ pub(in crate::media_bundle) enum MediaType {
 }
 
 pub(in crate::media_bundle) enum PlexInput {
-    GetSessionHistory(i32),
+    GetSessionHistory(usize),
     GetAllShows,
     GetAllMovies,
+    RefreshLibrary(usize),
 }
 
 pub(in crate::media_bundle) enum PlexOutput {
@@ -64,6 +65,7 @@ pub(in crate::media_bundle) enum PlexOutput {
     SessionHistory(Vec<Metadata>),
     ShowList(Vec<Metadata>),
     MovieList(Vec<Metadata>),
+    StatusCode(u16),
 }
 
 #[derive(Default, Debug, Clone)]
@@ -106,6 +108,12 @@ where
 
                 Ok(PlexOutput::MovieList(vec![]))
             }
+            PlexInput::RefreshLibrary(id) => {
+                let url = format!("/library/sections/{}/refresh", id);
+                let resp = self.client.get(&url).await?;
+
+                Ok(PlexOutput::StatusCode(resp.get_statuscode()))
+            }
         }
     }
 
@@ -128,7 +136,6 @@ mod tests {
     const MOVIE_TEST_METADATA: &'static str = "test_data/movies_metadata.json";
     const SHOW_TEST_METADATA: &'static str = "test_data/shows_metadata.json";
     const SESSION_TEST_METADATA: &'static str = "test_data/session_history.json";
-
     const MOVIE_LIB_METADATA_URL: &'static str = "/library/sections/1/all";
     const SHOW_LIB_METADATA_URL: &'static str = "/library/sections/2/all";
     const SESSION_HISTORY_URL: &'static str = "/status/sessions/history/all";
@@ -143,6 +150,10 @@ mod tests {
     impl BundleResponse for MockResponse {
         async fn as_bytes(self) -> Result<Vec<u8>, Box<dyn Error + Send + Sync>> {
             Ok(self.body)
+        }
+
+        fn get_statuscode(&self) -> u16 {
+            self.status
         }
     }
 
