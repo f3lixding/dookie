@@ -19,7 +19,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let config = Config::from_buffer(&config_file)?;
 
     // We need to construct media bundle here for all the jobs that would require it
-    let media_bundle = MediaBundle::<BundleClient>::default();
+    let client = BundleClient::default();
+    let media_bundle = MediaBundle::<BundleClient>::from_client_with_config(client, &config);
 
     let (move_job_handle, move_job_sender) = {
         let mut move_job_handle = move_job::JobStruct::spawn(&config)?;
@@ -29,7 +30,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
     };
 
     let move_job_handle = move_job_handle.instrument(tracing::trace_span!("move_job"));
-    let bundle = MediaBundle::<BundleClient>::default();
 
     // Scan job set up
     let mut scan_job = scan_library_job::JobStruct::<BundleClient>::spawn(&config)?;
@@ -39,7 +39,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // Main listener set up
     // TODO: set up listener for scan job
     let listener: MainListener<_, Unassigned> = MainListener::default();
-    let listener = listener.assign_sender_bundle(bundle);
+    let listener = listener.assign_sender_bundle(media_bundle);
     let listener = listener.assign_movejob_sender(move_job_sender.clone());
     let listener = listener
         .initiate_listener()

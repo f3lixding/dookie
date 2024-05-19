@@ -14,6 +14,8 @@ use async_trait::async_trait;
 use std::error::Error;
 use std::marker::Unpin;
 
+use crate::Config;
+
 /// Test related. Not sure if there is a better way to do this but this mainly helps with mocking
 /// so that tests can be written more easily.
 #[async_trait]
@@ -94,9 +96,14 @@ impl<C> MediaBundle<C>
 where
     C: IBundleClient,
 {
-    pub fn from_client(client: C) -> Self {
+    pub fn from_client_with_config(client: C, config: &Config) -> Self {
         Self {
-            plex_client: Plex::from_bundle_client(client),
+            plex_client: {
+                let mut client = client.clone();
+                client.set_port(config.plex_port);
+                client.set_token(("X-Plex-Token", config.plex_api_key.clone()));
+                Plex::from_bundle_client(client)
+            },
         }
     }
     /// Refresh the plex library. Be careful when calling this method as a disconnected DAS would

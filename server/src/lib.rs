@@ -726,7 +726,7 @@ pub mod scan_library_job {
                     recommended_watcher(move |res: notify::Result<notify::Event>| match res {
                         Ok(event) => {
                             if let notify::EventKind::Modify(_) = event.kind {
-                                let _ = tx_for_movies.send(0);
+                                let _ = tx_for_movies.send(1);
                             } else {
                                 tracing::info!("Ignoring event: {:?}", event);
                             }
@@ -741,7 +741,7 @@ pub mod scan_library_job {
                     recommended_watcher(move |res: notify::Result<notify::Event>| match res {
                         Ok(event) => {
                             if let notify::EventKind::Modify(_) = event.kind {
-                                let _ = tx_for_shows.send(1);
+                                let _ = tx_for_shows.send(2);
                             } else {
                                 tracing::info!("Ignoring event: {:?}", event);
                             }
@@ -761,7 +761,7 @@ pub mod scan_library_job {
                     let res = rx.recv().await;
 
                     match res {
-                        Some(idx) if idx < paths_to_watch.len() => {
+                        Some(idx) if idx <= paths_to_watch.len() => {
                             if let Ok(res) = find_broken_symlinks(&paths_to_watch[idx]).await {
                                 let is_moving = if let Some(move_job_sender) = &move_job_sender {
                                     let (tx, rx) = tokio::sync::oneshot::channel::<
@@ -785,7 +785,11 @@ pub mod scan_library_job {
                                         if let Err(e) = resp {
                                             tracing::error!("Failed to refresh libraries. Error: {:?}", e);
                                         } else if let Ok(resp_code) = resp {
-                                            tracing::error!("Refreshed libraries. Response: {:?}", resp_code);
+                                            if resp_code != 200 {
+                                                tracing::error!("Failed to refreshed libraries. Response: {:?}", resp_code);
+                                            } else {
+                                                tracing::info!("Refreshed library id {}", idx);
+                                            }
                                         } else {
                                             tracing::info!("Refreshed library id {}", idx);
                                         }
@@ -957,11 +961,13 @@ mod tests {
             radarr_port: 7878,
             sonarr_port: 8989,
             prowlarr_port: 8888,
+            plex_port: 32400,
             qbit_torrent_port: 9090,
             radarr_api_key: Cow::from(""),
             sonarr_api_key: Cow::from(""),
             prowlarr_api_key: Cow::from(""),
             qbit_torrent_api_key: Cow::from(""),
+            plex_api_key: Cow::from(""),
             move_job_period: 10,
             age_threshold: 10,
             move_map: {
@@ -1341,7 +1347,7 @@ mod tests {
         )>(10);
         let mock_client = MockClient::default();
         let call_map = mock_client.give_map();
-        let media_bundle = MediaBundle::from_client(mock_client);
+        let media_bundle = MediaBundle::from_client_with_config(mock_client, &config);
         scan_job.assign_media_bundle(media_bundle);
         scan_job.assign_move_job_sender(move_tx.clone());
 
