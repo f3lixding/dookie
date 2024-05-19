@@ -728,7 +728,7 @@ pub mod scan_library_job {
                             notify::EventKind::Create(_)
                             | notify::EventKind::Modify(_)
                             | notify::EventKind::Remove(_) => {
-                                let _ = tx_for_movies.send(1);
+                                let _ = tx_for_movies.send(0);
                                 tracing::info!("Sent movie folder event: {:?}", event);
                             }
                             _ => {
@@ -747,7 +747,7 @@ pub mod scan_library_job {
                             notify::EventKind::Create(_)
                             | notify::EventKind::Modify(_)
                             | notify::EventKind::Remove(_) => {
-                                let _ = tx_for_shows.send(2);
+                                let _ = tx_for_shows.send(1);
                                 tracing::info!("Sent show folder event: {:?}", event);
                             }
                             _ => {
@@ -762,14 +762,20 @@ pub mod scan_library_job {
                 // Not sure really if this is too hacky but for the time being this should be okay
                 // but in the future make sure that watcher one is watching the first element and
                 // watcher two is watching the second element.
-                watcher_one.watch(&paths_to_watch[0].clone(), notify::RecursiveMode::Recursive)?;
-                watcher_two.watch(&paths_to_watch[1].clone(), notify::RecursiveMode::Recursive)?;
+                for path in &paths_to_watch {
+                    let path_as_str = path.to_str().ok_or("Invalid path")?;
+                    if path_as_str.contains("movies") {
+                        watcher_one.watch(path, notify::RecursiveMode::Recursive)?;
+                    } else {
+                        watcher_two.watch(path, notify::RecursiveMode::Recursive)?;
+                    }
+                }
 
                 loop {
                     let res = rx.recv().await;
 
                     match res {
-                        Some(idx) if idx <= paths_to_watch.len() => {
+                        Some(idx) if idx < paths_to_watch.len() => {
                             if let Ok(res) = find_broken_symlinks(&paths_to_watch[idx]).await {
                                 let is_moving = if let Some(move_job_sender) = &move_job_sender {
                                     let (tx, rx) = tokio::sync::oneshot::channel::<
@@ -789,17 +795,19 @@ pub mod scan_library_job {
                                     (false, true) => tracing::info!("Move job is in progress. Skipping this scan."),
                                     (false, false) => {
                                         // here we actually do the scan since everything is okay
-                                        let resp = media_bundle.refresh_libraries(idx).await;
-                                        if let Err(e) = resp {
-                                            tracing::error!("Failed to refresh libraries. Error: {:?}", e);
-                                        } else if let Ok(resp_code) = resp {
-                                            if resp_code != 200 {
-                                                tracing::error!("Failed to refreshed libraries. Response: {:?}", resp_code);
-                                            } else {
-                                                tracing::info!("Refreshed library id {}", idx);
+                                        let lib_id = idx + 1;
+                                        let resp = media_bundle.refresh_libraries(lib_id).await;
+                                        match resp {
+                                            Ok(resp_code) => {
+                                                if resp_code != 200 {
+                                                    tracing::error!("Failed to refreshed libraries. Response: {:?}", resp_code);
+                                                } else {
+                                                    tracing::info!("Refreshed library id {}", lib_id);
+                                                }
                                             }
-                                        } else {
-                                            tracing::info!("Refreshed library id {}", idx);
+                                            Err(e) => {
+                                                tracing::error!("Failed to refresh libraries. Error: {:?}", e);
+                                            }
                                         }
                                     }
                                 }
