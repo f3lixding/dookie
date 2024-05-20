@@ -771,8 +771,24 @@ pub mod scan_library_job {
                     }
                 }
 
+                let mut is_in_debounce = false;
+                let mut res = None;
+
                 loop {
-                    let res = rx.recv().await;
+                    if !is_in_debounce {
+                        res = rx.recv().await;
+                    }
+
+                    tokio::select! {
+                        _ = tokio::time::sleep(std::time::Duration::from_millis(500)) => {
+                            is_in_debounce = false;
+                        }
+                        res_ = rx.recv() => {
+                            res = res_;
+                            is_in_debounce = true;
+                            continue;
+                        }
+                    }
 
                     match res {
                         Some(idx) if idx < paths_to_watch.len() => {
@@ -889,6 +905,7 @@ mod tests {
     use std::collections::HashMap;
     use std::fs::{create_dir_all, remove_dir_all, File};
     use std::path::PathBuf;
+    use std::sync::atomic::AtomicBool;
 
     const CONFIG_PATH: &'static str = "./var_";
     const SRC_FOLDER: &'static str = "src_folder";
@@ -1386,7 +1403,7 @@ mod tests {
             {
                 // Needed to wait for the file to be added. If we run the lines after directly
                 // without waiting the test is going to fail.
-                tokio::time::sleep(std::time::Duration::from_millis(1)).await;
+                tokio::time::sleep(std::time::Duration::from_millis(1000)).await;
                 let call_map = call_map.read().await;
                 let expected_url = format!("/library/sections/{}/refresh", 0);
                 assert!(call_map.get(&expected_url).is_some());
@@ -1399,7 +1416,7 @@ mod tests {
             {
                 // Needed to wait for the file to be added. If we run the lines after directly
                 // without waiting the test is going to fail.
-                tokio::time::sleep(std::time::Duration::from_millis(1)).await;
+                tokio::time::sleep(std::time::Duration::from_millis(750)).await;
                 let call_map = call_map.read().await;
                 let expected_url = format!("/library/sections/{}/refresh", 1);
                 assert!(call_map.get(&expected_url).is_none());
@@ -1411,12 +1428,28 @@ mod tests {
             {
                 // Needed to wait for the file to be added. If we run the lines after directly
                 // without waiting the test is going to fail.
-                tokio::time::sleep(std::time::Duration::from_millis(1)).await;
+                tokio::time::sleep(std::time::Duration::from_millis(750)).await;
                 let call_map = call_map.read().await;
                 let expected_url = format!("/library/sections/{}/refresh", 1);
                 let res = call_map.get(&expected_url);
                 assert!(res.is_some());
                 assert_eq!(*res.unwrap(), 1);
+            }
+
+            // And then here we test for debounce. If we have successive change events, we would
+            // only want to scan the last event.
+            _ = File::create(format!("{}/test_file_11.txt", movies_dst)).unwrap();
+            tokio::time::sleep(std::time::Duration::from_millis(250)).await;
+            _ = File::create(format!("{}/test_file_12.txt", movies_dst)).unwrap();
+            {
+                // Needed to wait for the file to be added. If we run the lines after directly
+                // without waiting the test is going to fail.
+                tokio::time::sleep(std::time::Duration::from_millis(750)).await;
+                let call_map = call_map.read().await;
+                let expected_url = format!("/library/sections/{}/refresh", 1);
+                let res = call_map.get(&expected_url);
+                assert!(res.is_some());
+                assert_eq!(*res.unwrap(), 2);
             }
 
             // Don't forget to end the move_job_ans_task otherwise the test will hang.
@@ -1426,10 +1459,17 @@ mod tests {
                 .unwrap();
         });
 
+        let attendance = AtomicBool::new(false);
+
         tokio::select! {
             _ = move_job_ans_task => {},
-            _ = assert_task => {},
-            _ = scan_job => {},
+            _ = assert_task => {
+                attendance.store(true, std::sync::atomic::Ordering::SeqCst);
+            },
+            _ = scan_job => {
+                let is_check_complete = attendance.load(std::sync::atomic::Ordering::SeqCst);
+                assert!(is_check_complete);
+            },
         }
     }
 }
