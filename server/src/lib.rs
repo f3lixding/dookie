@@ -618,7 +618,7 @@ pub mod scan_library_job {
     pub type ReturnType = Result<(), Box<dyn Error + Send + Sync + 'static>>;
 
     pub struct SpawnedJob<C: IBundleClient> {
-        paths_to_watch: Vec<PathBuf>,
+        paths_to_watch: Vec<(PathBuf, PathBuf)>,
         sender: Option<Sender<(IncomingMessage, Option<OneShotSender<OutgoingMessage>>)>>,
         media_bundle: Option<MediaBundle<C>>,
         move_job_sender: Option<
@@ -719,56 +719,62 @@ pub mod scan_library_job {
             }
 
             let handle = tokio::task::spawn(async move {
-                let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel::<usize>();
+                let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel::<(usize, PathBuf)>();
+                let mut watchers = Vec::new();
 
-                let tx_for_movies = tx.clone();
-                let mut watcher_one =
-                    recommended_watcher(move |res: notify::Result<notify::Event>| match res {
-                        Ok(event) => match event.kind {
-                            notify::EventKind::Create(_)
-                            | notify::EventKind::Modify(_)
-                            | notify::EventKind::Remove(_) => {
-                                let _ = tx_for_movies.send(0);
-                                tracing::info!("Sent movie folder event: {:?}", event);
-                            }
-                            _ => {
-                                tracing::info!("Ignoring event: {:?}", event);
-                            }
-                        },
-                        Err(e) => {
-                            tracing::error!("Failed to watch directory. Error: {:?}", e);
-                        }
-                    })?;
-
-                let tx_for_shows = tx.clone();
-                let mut watcher_two =
-                    recommended_watcher(move |res: notify::Result<notify::Event>| match res {
-                        Ok(event) => match event.kind {
-                            notify::EventKind::Create(_)
-                            | notify::EventKind::Modify(_)
-                            | notify::EventKind::Remove(_) => {
-                                let _ = tx_for_shows.send(1);
-                                tracing::info!("Sent show folder event: {:?}", event);
-                            }
-                            _ => {
-                                tracing::info!("Ignoring event: {:?}", event);
-                            }
-                        },
-                        Err(e) => {
-                            tracing::error!("Failed to watch directory. Error: {:?}", e);
-                        }
-                    })?;
-
-                // Not sure really if this is too hacky but for the time being this should be okay
-                // but in the future make sure that watcher one is watching the first element and
-                // watcher two is watching the second element.
-                for path in &paths_to_watch {
-                    let path_as_str = path.to_str().ok_or("Invalid path")?;
-                    if path_as_str.contains("movies") {
-                        watcher_one.watch(path, notify::RecursiveMode::Recursive)?;
+                for (_idx, (src_path, dst_path)) in paths_to_watch.into_iter().enumerate() {
+                    let tx_ = tx.clone();
+                    let src_path_as_str = src_path.to_str().ok_or("Invalid path")?;
+                    let lib_id = if src_path_as_str.contains("movies") {
+                        1
+                    } else if src_path_as_str.contains("shows") {
+                        2
                     } else {
-                        watcher_two.watch(path, notify::RecursiveMode::Recursive)?;
-                    }
+                        unreachable!("Bad path naming")
+                    };
+
+                    let src_path_ = src_path.clone();
+                    let mut src_watcher =
+                        recommended_watcher(move |res: notify::Result<notify::Event>| match res {
+                            Ok(event) => match event.kind {
+                                notify::EventKind::Create(_)
+                                | notify::EventKind::Modify(_)
+                                | notify::EventKind::Remove(_) => {
+                                    let _ = tx_.send((lib_id, src_path_.to_path_buf()));
+                                    tracing::info!("Sent movie folder event: {:?}", event);
+                                }
+                                _ => {
+                                    tracing::info!("Ignoring event: {:?}", event);
+                                }
+                            },
+                            Err(e) => {
+                                tracing::error!("Failed to watch directory. Error: {:?}", e);
+                            }
+                        })?;
+                    src_watcher.watch(&src_path.clone(), notify::RecursiveMode::Recursive)?;
+
+                    let tx_ = tx.clone();
+                    let mut dst_watcher =
+                        recommended_watcher(move |res: notify::Result<notify::Event>| match res {
+                            Ok(event) => match event.kind {
+                                notify::EventKind::Create(_)
+                                | notify::EventKind::Modify(_)
+                                | notify::EventKind::Remove(_) => {
+                                    let _ = tx_.send((lib_id, src_path.to_path_buf()));
+                                    tracing::info!("Sent movie folder event: {:?}", event);
+                                }
+                                _ => {
+                                    tracing::info!("Ignoring event: {:?}", event);
+                                }
+                            },
+                            Err(e) => {
+                                tracing::error!("Failed to watch directory. Error: {:?}", e);
+                            }
+                        })?;
+                    dst_watcher.watch(&dst_path, notify::RecursiveMode::Recursive)?;
+
+                    watchers.push(src_watcher);
+                    watchers.push(dst_watcher);
                 }
 
                 let mut is_in_debounce = false;
@@ -791,8 +797,8 @@ pub mod scan_library_job {
                     }
 
                     match res {
-                        Some(idx) if idx < paths_to_watch.len() => {
-                            if let Ok(res) = find_broken_symlinks(&paths_to_watch[idx]).await {
+                        Some((lib_id, ref path)) => {
+                            if let Ok(res) = find_broken_symlinks(path).await {
                                 let is_moving = if let Some(move_job_sender) = &move_job_sender {
                                     let (tx, rx) = tokio::sync::oneshot::channel::<
                                         move_job::OutgoingMessage,
@@ -811,7 +817,6 @@ pub mod scan_library_job {
                                     (false, true) => tracing::info!("Move job is in progress. Skipping this scan."),
                                     (false, false) => {
                                         // here we actually do the scan since everything is okay
-                                        let lib_id = idx + 1;
                                         let resp = media_bundle.refresh_libraries(lib_id).await;
                                         match resp {
                                             Ok(resp_code) => {
@@ -870,14 +875,15 @@ pub mod scan_library_job {
                 config
                     .move_map
                     .iter()
-                    .fold(Vec::new(), |mut acc, (src_path, _)| {
+                    .fold(Vec::new(), |mut acc, (src_path, dst_path)| {
                         let src_path = src_path.to_string();
-                        acc.push(PathBuf::from(src_path));
+                        let dst_path = dst_path.to_string();
+                        acc.push((PathBuf::from(src_path), PathBuf::from(dst_path)));
                         acc
                     });
 
-            //  There should be no foreseeable use case where we are monitoring more than 2
-            //  directories (one for movies and one for shows).
+            //  There should be no foreseeable use case where we are monitoring more than 2 pairs
+            //  of directories. Two for shows and two for movies (one for src and one for dst)..
             assert!(paths_to_watch.len() == 2);
 
             // for testing purposes
@@ -958,7 +964,6 @@ mod tests {
     #[async_trait]
     impl IBundleClient for MockClient {
         async fn get(&self, url: &str) -> Result<MockResponse, Box<dyn Error + Send + Sync>> {
-            println!("Get called with url: {}", url);
             let mut call_map = self.map.write().await;
             call_map
                 .entry(url.to_string())
@@ -1340,6 +1345,9 @@ mod tests {
         assert!(test_send_msg_handle_res.is_ok());
     }
 
+    // This test is kind of slow but it kind of has to be because of the debounce and waiting for
+    // events to happen properly.
+    // For future reference, to debug use `cargo test -- --nocapture`
     #[tokio::test(flavor = "multi_thread")]
     #[serial_test::serial]
     async fn test_scan_job() {
@@ -1373,6 +1381,7 @@ mod tests {
         }
 
         let config = create_test_config(&mappings);
+
         let mut scan_job = scan_library_job::JobStruct::<MockClient>::spawn(&config).unwrap();
         let (move_tx, mut move_rx) = tokio::sync::mpsc::channel::<(
             move_job::IncomingMessage,
@@ -1397,15 +1406,23 @@ mod tests {
             }
         });
 
+        let attendance = std::sync::Arc::new(AtomicBool::new(false));
+        let att = attendance.clone();
+
+        // Need to clear the map so that entries that were registered from events during the test
+        // set up does not interfere with the test.
+        tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+        call_map.write().await.clear();
+
         let assert_task = tokio::spawn(async move {
             // First we add a file to shows_src to see if it triggers a scan.
-            _ = File::create(format!("{}/file1.mkv", shows_src)).unwrap();
+            _ = File::create(format!("{}/file1.mkv", shows_dst)).unwrap();
             {
                 // Needed to wait for the file to be added. If we run the lines after directly
                 // without waiting the test is going to fail.
-                tokio::time::sleep(std::time::Duration::from_millis(1000)).await;
+                tokio::time::sleep(std::time::Duration::from_millis(750)).await;
                 let call_map = call_map.read().await;
-                let expected_url = format!("/library/sections/{}/refresh", 0);
+                let expected_url = format!("/library/sections/{}/refresh", 2);
                 assert!(call_map.get(&expected_url).is_some());
             }
 
@@ -1438,9 +1455,22 @@ mod tests {
 
             // And then here we test for debounce. If we have successive change events, we would
             // only want to scan the last event.
-            _ = File::create(format!("{}/test_file_11.txt", movies_dst)).unwrap();
+            _ = File::create(format!("{}/test_file_11.txt", movies_src)).unwrap();
             tokio::time::sleep(std::time::Duration::from_millis(250)).await;
-            _ = File::create(format!("{}/test_file_12.txt", movies_dst)).unwrap();
+            _ = File::create(format!("{}/test_file_12.txt", movies_src)).unwrap();
+            {
+                // Needed to wait for the file to be added. If we run the lines after directly
+                // without waiting the test is going to fail.
+                tokio::time::sleep(std::time::Duration::from_millis(1000)).await;
+                let call_map = call_map.read().await;
+                let expected_url = format!("/library/sections/{}/refresh", 1);
+                let res = call_map.get(&expected_url);
+                assert!(res.is_some());
+                assert_eq!(*res.unwrap(), 2);
+            }
+
+            // Testing for changes in destination directory
+            _ = File::create(format!("{}/test_file_111.txt", movies_dst)).unwrap();
             {
                 // Needed to wait for the file to be added. If we run the lines after directly
                 // without waiting the test is going to fail.
@@ -1449,26 +1479,42 @@ mod tests {
                 let expected_url = format!("/library/sections/{}/refresh", 1);
                 let res = call_map.get(&expected_url);
                 assert!(res.is_some());
-                assert_eq!(*res.unwrap(), 2);
+                assert_eq!(*res.unwrap(), 3);
+            }
+
+            // Testing for changes in destination directory when there is a broken symlink
+            std::fs::remove_file(format!("{}/test_file_2.txt", movies_dst)).unwrap();
+            _ = File::create(format!("{}/test_file_112.txt", movies_dst)).unwrap();
+            {
+                // Needed to wait for the file to be added. If we run the lines after directly
+                // without waiting the test is going to fail.
+                tokio::time::sleep(std::time::Duration::from_millis(750)).await;
+                let call_map = call_map.read().await;
+                let expected_url = format!("/library/sections/{}/refresh", 1);
+                let res = call_map.get(&expected_url);
+                assert!(res.is_some());
+                assert_eq!(*res.unwrap(), 3);
             }
 
             // Don't forget to end the move_job_ans_task otherwise the test will hang.
+            att.store(true, std::sync::atomic::Ordering::SeqCst);
             move_tx
                 .send((move_job::IncomingMessage::Stop, None))
                 .await
                 .unwrap();
         });
 
-        let attendance = AtomicBool::new(false);
-
         tokio::select! {
             _ = move_job_ans_task => {},
             _ = assert_task => {
-                attendance.store(true, std::sync::atomic::Ordering::SeqCst);
+                let is_check_complete = attendance.load(std::sync::atomic::Ordering::SeqCst);
+                assert!(is_check_complete);
             },
             _ = scan_job => {
                 let is_check_complete = attendance.load(std::sync::atomic::Ordering::SeqCst);
-                assert!(is_check_complete);
+                if !is_check_complete {
+                    panic!("Scan job did not complete");
+                }
             },
         }
     }
