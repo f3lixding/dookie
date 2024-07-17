@@ -10,6 +10,7 @@ mod dookie_proto {
     include!(concat!(env!("OUT_DIR"), "/dookie.rs"));
 }
 mod client;
+mod discord_bot;
 mod logging;
 mod media_bundle;
 
@@ -20,6 +21,8 @@ pub use job::*;
 pub use listener::*;
 pub use logging::*;
 pub use media_bundle::*;
+
+use discord_bot::DiscordHandler;
 
 /// This job monitors local drive to check for various factors to determine if content in the
 /// specified directory should be moved to the "cold" storage.
@@ -899,6 +902,87 @@ pub mod scan_library_job {
             };
 
             Ok(spawned_job)
+        }
+    }
+}
+
+/// This job monitors for presence of remote sessions in Plex.
+/// When there are remote sessions, it pauses all downloads.
+/// When there are no more remote sessions, it resumes all downloads.
+/// Aside from the action of pausing, we would also ideally notify some sort of subsriber (we are
+/// going to use discord for this. So this job is going to be a bit of a misnotation).
+pub mod auto_torrent_shutoff_job {
+    use super::*;
+    use axum::http::StatusCode;
+    use axum::routing::get;
+    use axum::Router;
+    use serenity::all::{ChannelId, EventHandler, GatewayIntents, Message, Ready};
+    use std::collections::HashSet;
+    use std::future::Future;
+    use std::pin::Pin;
+    use std::task::{Context, Poll};
+
+    #[derive(Debug, PartialEq, Eq)]
+    pub enum IncomingMessage {
+        StatusRequest,
+    }
+
+    #[derive(Debug, PartialEq, Eq)]
+    pub enum OutgoingMessage {
+        Ok,
+    }
+
+    pub type ReturnType = Result<(), Box<dyn Error + Send + Sync + 'static>>;
+
+    pub struct SpawnedJob<C: IBundleClient> {
+        webhook_port: u16,
+        channel_id: u64,
+        token: String,
+        media_bundle: Option<MediaBundle<C>>,
+    }
+
+    impl<C> SpawnedJob<C>
+    where
+        C: IBundleClient,
+    {
+        pub fn assign_media_bundle(&mut self, media_bundle: MediaBundle<C>) {
+            self.media_bundle = Some(media_bundle);
+        }
+    }
+
+    impl<M> Future for SpawnedJob<M>
+    where
+        M: IBundleClient,
+    {
+        type Output = Result<(), Box<dyn Error + Send + Sync + 'static>>;
+
+        fn poll(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<Self::Output> {
+            let this = self.get_mut();
+            let media_bundle = this.media_bundle.take();
+            assert!(media_bundle.is_some()); // for now we would assume that this is a must
+            let media_bundle = media_bundle.unwrap();
+
+            let webhook_port = this.webhook_port;
+            let token = this.token.clone();
+            let intents = GatewayIntents::GUILD_MESSAGES
+                | GatewayIntents::DIRECT_MESSAGES
+                | GatewayIntents::MESSAGE_CONTENT;
+            let handle = async move {
+                let mut client = serenity::Client::builder(&token, intents)
+                    .event_handler(DiscordHandler::default())
+                    .await
+                    .expect("Err creating client");
+
+                if let Err(e) = client.start().await {
+                    tracing::error!("Client error: {:?}", e);
+                    return Err(e.into());
+                }
+
+                Ok(())
+            };
+
+            let handle = std::pin::pin!(handle);
+            handle.poll(cx)
         }
     }
 }
