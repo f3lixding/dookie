@@ -912,6 +912,8 @@ pub mod scan_library_job {
 /// Aside from the action of pausing, we would also ideally notify some sort of subsriber (we are
 /// going to use discord for this. So this job is going to be a bit of a misnotation).
 pub mod auto_torrent_shutoff_job {
+    use crate::discord_bot::DiscordHandlerBuilder;
+
     use super::*;
     use axum::http::StatusCode;
     use axum::routing::get;
@@ -935,9 +937,10 @@ pub mod auto_torrent_shutoff_job {
     pub type ReturnType = Result<(), Box<dyn Error + Send + Sync + 'static>>;
 
     pub struct SpawnedJob<C: IBundleClient> {
-        webhook_port: u16,
-        channel_id: u64,
-        token: String,
+        webhook_port: Option<u16>,
+        channel_id: Option<u64>,
+        token: Option<String>,
+        permitted_guilds: Vec<u64>,
         media_bundle: Option<MediaBundle<C>>,
     }
 
@@ -962,14 +965,21 @@ pub mod auto_torrent_shutoff_job {
             assert!(media_bundle.is_some()); // for now we would assume that this is a must
             let media_bundle = media_bundle.unwrap();
 
+            let mut dh_builder = DiscordHandlerBuilder::<M>::default();
+            dh_builder.set_channel_id(this.channel_id.take().unwrap());
+            dh_builder.set_webhook_port(this.webhook_port.take().unwrap());
+            dh_builder.set_permitted_guilds(this.permitted_guilds.clone());
+            dh_builder.set_media_bundle(this.media_bundle.take().unwrap());
+            let discord_handler = dh_builder.build();
+
             let webhook_port = this.webhook_port;
             let token = this.token.clone();
             let intents = GatewayIntents::GUILD_MESSAGES
                 | GatewayIntents::DIRECT_MESSAGES
                 | GatewayIntents::MESSAGE_CONTENT;
             let handle = async move {
-                let mut client = serenity::Client::builder(&token, intents)
-                    .event_handler(DiscordHandler::default())
+                let mut client = serenity::Client::builder(&(token.unwrap()), intents)
+                    .event_handler(discord_handler)
                     .await
                     .expect("Err creating client");
 
