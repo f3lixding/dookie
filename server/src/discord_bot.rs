@@ -15,37 +15,6 @@ use std::collections::HashSet;
 
 use crate::{IBundleClient, MediaBundle};
 
-#[derive(Debug)]
-enum CommandParsingError {
-    NotACommand,
-    Malformation(String),
-}
-
-impl std::fmt::Display for CommandParsingError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Failed to convert str to a valid command")
-    }
-}
-
-impl std::error::Error for CommandParsingError {}
-
-enum Command {
-    Ping,
-    GrantPermission(String),
-    QueryMovie(String),
-    QueryShow(String),
-    DownloadMovie(String),
-    DownloadShow(String),
-    QueryOngoingRemoteSessions,
-}
-
-impl TryFrom<&str> for Command {
-    type Error = CommandParsingError;
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
-        unimplemented!()
-    }
-}
-
 pub struct DiscordHandler<C: IBundleClient> {
     channel_id: u64,
     permitted_guilds: HashSet<u64>,
@@ -117,52 +86,7 @@ impl<C> EventHandler for DiscordHandler<C>
 where
     C: IBundleClient,
 {
-    async fn message(&self, ctx: serenity::prelude::Context, msg: Message) {
-        let command = Command::try_from(msg.content.as_str());
-
-        if let Err(parsing_error) = command {
-            match parsing_error {
-                CommandParsingError::Malformation(_) => {
-                    // TODO: Depending on how malformed the commands are, provide hints for correct
-                    // commands.
-                    tracing::error!("Error parsing command");
-                }
-                _ => { /*noop since text is not a command*/ }
-            }
-            return;
-        }
-
-        let command = command.unwrap();
-        match command {
-            Command::Ping => {
-                if let Err(why) = msg.channel_id.say(&ctx.http, "Pong!").await {
-                    tracing::error!("Error sending message for ping check: {:?}", why);
-                }
-            }
-            Command::GrantPermission(email) => {
-                // First we need to check permission
-                // Right now we are only allowing admins to grant permission
-                let member = msg.member(&ctx.http).await;
-                if let Err(why) = member {
-                    tracing::error!("Error enountered while retrieving member info: {}", why);
-                    return;
-                }
-                let member = member.unwrap();
-                let permission = member.permissions;
-                if let Some(permissions) = permission {
-                    if permissions.administrator() {
-                        // TODO: grant access here
-                    }
-                } else {
-                    tracing::error!(
-                        "User {} does not have permissions associated during access request",
-                        member.display_name()
-                    );
-                }
-            }
-            _ => { /* noop on non command messages */ }
-        }
-    }
+    async fn message(&self, ctx: serenity::prelude::Context, msg: Message) {}
 
     async fn ready(&self, ctx: serenity::prelude::Context, ready: Ready) {
         ready.guilds.iter().for_each(|g| println!("{:?}", g));
