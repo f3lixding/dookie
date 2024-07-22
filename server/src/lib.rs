@@ -967,7 +967,9 @@ pub mod auto_torrent_shutoff_job {
 
             let mut dh_builder = DiscordHandlerBuilder::<M>::default();
             dh_builder.set_channel_id(this.channel_id.take().unwrap());
-            dh_builder.set_webhook_port(this.webhook_port.take().unwrap());
+            dh_builder.set_webhook_port(this.webhook_port.take().unwrap()); // for now this is
+                                                                            // restricted to
+                                                                            // localhost
             dh_builder.set_permitted_guilds(this.permitted_guilds.clone());
             dh_builder.set_media_bundle(this.media_bundle.take().unwrap());
             let discord_handler = dh_builder.build();
@@ -1100,8 +1102,11 @@ mod tests {
             prowlarr_api_key: Cow::from(""),
             qbit_torrent_api_key: Cow::from(""),
             plex_api_key: Cow::from(""),
+            plex_client_id: Cow::from(""),
+            plex_machine_id: Cow::from(""),
             move_job_period: 10,
             age_threshold: 10,
+            discord_token: Cow::from(""),
             move_map: {
                 let mut map = HashMap::new();
                 for (src_dir, dst_dir) in mappings {

@@ -58,6 +58,30 @@ pub(in crate::media_bundle) enum PlexInput {
     GetAllShows,
     GetAllMovies,
     RefreshLibrary(usize),
+    GrantLibAccess(PlexAccessMainBody),
+}
+
+impl PlexInput {
+    pub fn grant_access(email: String, machine_id: String) -> Self {
+        let main_body = PlexAccessMainBody {
+            invited_email: email,
+            machine_identifier: machine_id,
+            settings: PlexAccessSettings {
+                allow_sync: true,
+                allow_channels: false,
+                allow_subtitle_admin: false,
+                allow_tuners: 0,
+                filter_movies: "".to_string(),
+                filter_music: "".to_string(),
+                filter_photos: "".to_string(),
+                filter_television: "".to_string(),
+            },
+            skip_friendship: true,
+            library_section_ids: vec![120858782, 120858764],
+        };
+
+        PlexInput::GrantLibAccess(main_body)
+    }
 }
 
 pub(in crate::media_bundle) enum PlexOutput {
@@ -68,12 +92,65 @@ pub(in crate::media_bundle) enum PlexOutput {
     StatusCode(u16),
 }
 
+#[derive(Serialize)]
+pub(in crate::media_bundle) struct PlexAccessSettings {
+    allow_sync: bool,
+    allow_channels: bool,
+    allow_subtitle_admin: bool,
+    allow_tuners: i32,
+    filter_movies: String,
+    filter_music: String,
+    filter_photos: String,
+    filter_television: String,
+}
+
+impl Into<reqwest::Body> for PlexAccessSettings {
+    fn into(self) -> reqwest::Body {
+        let json = serde_json::to_string(&self).unwrap();
+        reqwest::Body::from(json)
+    }
+}
+
+#[derive(Serialize)]
+pub(in crate::media_bundle) struct PlexAccessMainBody {
+    invited_email: String,
+    settings: PlexAccessSettings,
+    skip_friendship: bool,
+    library_section_ids: Vec<i64>,
+    machine_identifier: String,
+}
+
+impl Into<reqwest::Body> for PlexAccessMainBody {
+    fn into(self) -> reqwest::Body {
+        let json = serde_json::to_string(&self).unwrap();
+        reqwest::Body::from(json)
+    }
+}
+
 #[derive(Default, Debug, Clone)]
 pub(in crate::media_bundle) struct Plex<C>
 where
     C: IBundleClient,
 {
     client: C,
+    machine_id: String, // this is for making calls to plex.tv
+    client_id: String,  // this is for making calls to plex.tv
+    plex_token: String, // this is for making calls to plex.tv
+}
+
+impl<C> Plex<C>
+where
+    C: IBundleClient,
+{
+    // This is for non type erasure construction
+    pub fn new(client: C, machine_id: String, client_id: String, plex_token: String) -> Self {
+        Self {
+            client,
+            machine_id,
+            client_id,
+            plex_token,
+        }
+    }
 }
 
 #[async_trait]
@@ -114,11 +191,49 @@ where
 
                 Ok(PlexOutput::StatusCode(resp.get_statuscode()))
             }
+            PlexInput::GrantLibAccess(body) => {
+                // If this api is ever called we'll need to make sure that the machine id is not
+                // empty
+                let machine_id = if self.machine_id.is_empty() {
+                    Err("Missing machine id")
+                } else {
+                    Ok(&self.machine_id)
+                }?;
+                // We'll also need to do the same for client id
+                let client_id = if self.client_id.is_empty() {
+                    Err("Missing client id")
+                } else {
+                    Ok(&self.client_id)
+                }?;
+                // Normally we won't need the token in the server entity but because for this api
+                // call we'll need it in the url, we'll also need to make sure the token exists
+                let plex_token = if self.plex_token.is_empty() {
+                    Err("Missing plex token")
+                } else {
+                    Ok(&self.plex_token)
+                }?;
+
+                let url = format!(
+                    "https://clients.plex.tv/api/v2/shared_servers\
+                    ?X-Plex-Client-Identifier={}&\
+                    X-Plex-Token={}&\
+                    X-Plex-Language=en",
+                    client_id, plex_token,
+                );
+                let resp = self.client.post(&url, body).await?;
+                Ok(PlexOutput::StatusCode(resp.get_statuscode()))
+            }
         }
     }
 
+    /// Only to be used when there is nothing else needed to construct the Entity
     fn from_bundle_client(client: C) -> Self {
-        Plex { client }
+        Plex {
+            client,
+            machine_id: "".to_string(),
+            client_id: "".to_string(),
+            plex_token: "".to_string(),
+        }
     }
 
     fn get_app_name(&self) -> &str {

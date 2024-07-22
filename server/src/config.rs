@@ -18,8 +18,11 @@ pub struct Config<'a> {
     pub prowlarr_api_key: Cow<'a, str>,
     pub qbit_torrent_api_key: Cow<'a, str>,
     pub plex_api_key: Cow<'a, str>,
+    pub plex_client_id: Cow<'a, str>,
+    pub plex_machine_id: Cow<'a, str>,
     pub move_job_period: u64,
     pub age_threshold: u64,
+    pub discord_token: Cow<'a, str>,
     pub move_map: HashMap<Cow<'a, str>, Cow<'a, str>>,
 }
 
@@ -44,8 +47,11 @@ impl<'a> Default for Config<'a> {
             prowlarr_api_key: "".into(),
             qbit_torrent_api_key: "".into(),
             plex_api_key: "".into(),
+            plex_client_id: "".into(),
+            plex_machine_id: "".into(),
             move_job_period: 100,
             age_threshold: 100,
+            discord_token: "".into(),
             move_map: HashMap::new(),
         }
     }
@@ -68,8 +74,11 @@ mod tests {
             prowlarr_api_key: "some_key"
             qbit_torrent_api_key: "some_key"
             plex_api_key: "some_key"
+            plex_client_id: "some_key"
+            plex_machine_id: "some_key"
             move_job_period: 100
             age_threshold: 100
+            discord_token: "some_key"
             move_map:
                 "/root/path/local/one": "/root/path/ext/one"
                 "/root/path/local/two": "/root/path/ext/two"
