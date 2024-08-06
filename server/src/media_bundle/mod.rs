@@ -136,7 +136,7 @@ where
 
     pub async fn grant_library_access(
         &self,
-        lib_id: usize,
+        email: &str,
     ) -> Result<reqwest::StatusCode, Box<dyn Error + Send + Sync>> {
         unimplemented!()
     }
