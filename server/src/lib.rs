@@ -957,7 +957,9 @@ pub mod auto_torrent_shutoff_job {
     where
         M: IBundleClient,
     {
-        type Output = Result<(), Box<dyn Error + Send + Sync + 'static>>;
+        // type Output = Result<(), Box<dyn Error + Send + Sync + 'static>>;
+        type Output =
+            Result<Result<(), Box<dyn Error + Send + Sync + 'static>>, tokio::task::JoinError>;
 
         fn poll(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<Self::Output> {
             let this = self.get_mut();
@@ -979,7 +981,10 @@ pub mod auto_torrent_shutoff_job {
             let intents = GatewayIntents::GUILD_MESSAGES
                 | GatewayIntents::DIRECT_MESSAGES
                 | GatewayIntents::MESSAGE_CONTENT;
-            let handle = async move {
+
+            // We spawn a task here because we don't want this future to be interleaved with the
+            // main future in main()
+            let handle = tokio::spawn(async move {
                 let mut client = serenity::Client::builder(&(token.unwrap()), intents)
                     .event_handler(discord_handler)
                     .await
@@ -991,7 +996,7 @@ pub mod auto_torrent_shutoff_job {
                 }
 
                 Ok(())
-            };
+            });
 
             let handle = std::pin::pin!(handle);
             handle.poll(cx)
