@@ -18,7 +18,10 @@ use serenity::{
     model::{channel::Message, gateway::Ready},
     prelude::*,
 };
-use std::collections::{HashMap, HashSet};
+use std::{
+    collections::{HashMap, HashSet},
+    sync::atomic::AtomicBool,
+};
 
 static ADMIN_CHANNEL_NAME: &'static str = "admin-notifications";
 
@@ -172,6 +175,7 @@ pub struct DiscordHandler<C: IBundleClient> {
     webhook_port: u16,
     media_bundle: MediaBundle<C>,
     guild_config: GuildConfig,
+    has_ready_been_called: AtomicBool,
 }
 
 impl<C> DiscordHandler<C> where C: IBundleClient {}
@@ -181,8 +185,9 @@ pub struct DiscordHandlerBuilder<C: IBundleClient> {
     webhook_port: Option<u16>,
     media_bundle: Option<MediaBundle<C>>,
     guild_config: Option<GuildConfig>, // not really sure if there is such a day but if we want to
-                                       // add support to multi guilds, we can do so by changing
-                                       // this to a Vec<GuildConfig>
+    // add support to multi guilds, we can do so by changing
+    // this to a Vec<GuildConfig>
+    has_ready_been_called: AtomicBool,
 }
 
 impl<C> Default for DiscordHandlerBuilder<C>
@@ -195,6 +200,7 @@ where
             webhook_port: None,
             media_bundle: None,
             guild_config: None,
+            has_ready_been_called: AtomicBool::new(false),
         }
     }
 }
@@ -231,6 +237,7 @@ where
             webhook_port: self.webhook_port.unwrap(),
             media_bundle: self.media_bundle.unwrap(),
             guild_config: self.guild_config.unwrap(),
+            has_ready_been_called: self.has_ready_been_called,
         }
     }
 }
@@ -347,27 +354,11 @@ where
         let webhook_port = self.webhook_port;
         let cache_http = ctx.http.clone();
 
-        // Function to use to handle multipart form data
-        async fn handle_request(
-            mut multipart: axum::extract::Multipart,
-        ) -> impl axum::response::IntoResponse {
-            while let Ok(Some(field)) = multipart.next_field().await {
-                if field.name() == Some("payload") {
-                    if let Ok(json_str) = field.text().await {
-                        match serde_json::from_str::<WebhookEnvelope>(&json_str) {
-                            Ok(payload) => {
-                                println!("Received payload: {:?}", payload);
-                                return (StatusCode::OK, "Payload received").into_response();
-                            }
-                            Err(err) => {
-                                println!("Failed to parse JSON: {}", err);
-                                return (StatusCode::BAD_REQUEST, "Invalid JSON").into_response();
-                            }
-                        }
-                    }
-                }
-            }
-            (StatusCode::BAD_REQUEST, "Missing payload").into_response()
+        let has_ready_been_called = self
+            .has_ready_been_called
+            .load(std::sync::atomic::Ordering::Relaxed);
+        if has_ready_been_called {
+            return;
         }
 
         if let Some(admin_channel_id) = admin_channel_id {
@@ -415,6 +406,8 @@ where
                     .expect("Failed to bind to webhook port");
                 axum::serve(listener, app).await.unwrap();
             });
+            self.has_ready_been_called
+                .store(true, std::sync::atomic::Ordering::Relaxed);
         }
     }
 }
