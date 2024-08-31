@@ -1,6 +1,6 @@
 use dookie_server_lib::{
-    move_job, scan_library_job, BundleClient, Config, Job, Logger, MainListener, MediaBundle,
-    SpawnedJobType, Unassigned, Unprimed,
+    auto_torrent_shutoff_job, move_job, scan_library_job, BundleClient, Config, Job, Logger,
+    MainListener, MediaBundle, SpawnedJobType, Unassigned, Unprimed,
 };
 use std::error::Error;
 use structopt::StructOpt;
@@ -36,6 +36,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
     scan_job.assign_media_bundle(media_bundle.clone());
     scan_job.assign_move_job_sender(move_job_sender.clone());
 
+    // Auto shutoff job
+    let mut auto_shutoff_job = auto_torrent_shutoff_job::JobStruct::<BundleClient>::spawn(&config)?;
+    auto_shutoff_job.assign_media_bundle(media_bundle.clone());
+
     // Main listener set up
     // TODO: set up listener for scan job
     let listener: MainListener<_, Unassigned> = MainListener::default();
@@ -55,6 +59,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
         }
         listener_return = listener => {
             println!("Listener finished {:?}", listener_return);
+        }
+        _ = auto_shutoff_job => {
+            println!("Auto shutoff job exited");
         }
         _ = logger => {
             println!("Logger finished");

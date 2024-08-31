@@ -1,3 +1,5 @@
+use super::commands;
+use crate::{IBundleClient, MediaBundle};
 /// This is the discord bot that we will use for various purposes.
 /// So far these include:
 /// - Ping / health check
@@ -5,8 +7,8 @@
 /// - Notifications for new comer on instructions to set everything up
 /// - Notifications for leaving soon categories
 /// - Accept commands to add media (and return approporiate responses)
-use axum::{http::StatusCode, routing::post, Router};
-use serde::Deserialize;
+use axum::{http::StatusCode, response::IntoResponse as _, routing::post, Router};
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use serenity::{
     all::{
@@ -18,17 +20,15 @@ use serenity::{
 };
 use std::collections::{HashMap, HashSet};
 
-use crate::{IBundleClient, MediaBundle};
+static ADMIN_CHANNEL_NAME: &'static str = "admin-notifications";
 
-use super::commands;
-
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct GuildConfig {
     guild_id: GuildId,
     channels: Vec<ChannelConfig>,
 }
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct ChannelConfig {
     name: String,
     kind: String,
@@ -38,20 +38,20 @@ pub struct ChannelConfig {
     permissions: Vec<ChannelPermission>,
 }
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct ChannelPermission {
     role_id: u64,
     allow: Vec<String>,
     deny: Vec<String>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 struct Account {
     title: String,
     id: u64,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 enum MediaType {
     #[serde(rename = "movie")]
     Movie,
@@ -76,6 +76,8 @@ enum EventType {
     Play,
     #[serde(rename = "media.stop")]
     Stop,
+    #[serde(rename = "media.pause")]
+    Pause,
 }
 
 impl std::fmt::Display for EventType {
@@ -84,6 +86,7 @@ impl std::fmt::Display for EventType {
             EventType::Resume => write!(f, "resume"),
             EventType::Play => write!(f, "play"),
             EventType::Stop => write!(f, "stop"),
+            EventType::Pause => write!(f, "pause"),
         }
     }
 }
@@ -165,7 +168,6 @@ impl<'de> Deserialize<'de> for WebhookEnvelope {
 }
 
 pub struct DiscordHandler<C: IBundleClient> {
-    channel_id: u64,
     permitted_guilds: HashSet<u64>,
     webhook_port: u16,
     media_bundle: MediaBundle<C>,
@@ -175,7 +177,6 @@ pub struct DiscordHandler<C: IBundleClient> {
 impl<C> DiscordHandler<C> where C: IBundleClient {}
 
 pub struct DiscordHandlerBuilder<C: IBundleClient> {
-    channel_id: Option<u64>,
     permitted_guilds: Vec<u64>,
     webhook_port: Option<u16>,
     media_bundle: Option<MediaBundle<C>>,
@@ -190,7 +191,6 @@ where
 {
     fn default() -> Self {
         Self {
-            channel_id: None,
             permitted_guilds: vec![],
             webhook_port: None,
             media_bundle: None,
@@ -203,10 +203,6 @@ impl<C> DiscordHandlerBuilder<C>
 where
     C: IBundleClient,
 {
-    pub fn set_channel_id(&mut self, id: u64) {
-        self.channel_id.replace(id);
-    }
-
     pub fn set_permitted_guilds(&mut self, guilds: Vec<u64>) {
         self.permitted_guilds = guilds;
     }
@@ -225,7 +221,6 @@ where
 
     pub fn build(self) -> DiscordHandler<C> {
         DiscordHandler {
-            channel_id: self.channel_id.unwrap(),
             permitted_guilds: {
                 let mut set = HashSet::new();
                 for guild in self.permitted_guilds {
@@ -260,6 +255,7 @@ where
             tracing::error!("Error retrieving channel info from guild.");
             HashMap::default()
         });
+
         let existing_channel_names = channels.iter().map(|e| &e.1.name).collect::<Vec<_>>();
         for channel_config in &self.guild_config.channels {
             let mut is_one_of_existing_channels = false;
@@ -342,46 +338,84 @@ where
         }
 
         // Spawn a task to monitor the webhook port for remote session events
-        let channel_id = ChannelId::new(self.channel_id);
+        // TODO: maybe we should have a dedicated channel for this so we don't bombard the general
+        // chat with status updates that no one care about
+        let admin_channel_id = channels
+            .iter()
+            .find(|(_, channel)| channel.name == ADMIN_CHANNEL_NAME)
+            .map(|(channel_id, _)| *channel_id);
         let webhook_port = self.webhook_port;
         let cache_http = ctx.http.clone();
-        tokio::spawn(async move {
-            let app = Router::new().route(
-                "/",
-                post(
-                    move |payload: Result<
-                        axum::Json<WebhookEnvelope>,
-                        axum::extract::rejection::JsonRejection,
-                    >| async move {
-                        if let Err(why) = payload {
-                            tracing::error!("Error deserializing payload: {:?}", why);
-                            return StatusCode::BAD_REQUEST;
-                        }
-                        let payload = payload.unwrap();
 
-                        if let Err(why) = channel_id
-                            .say(
-                                &cache_http,
-                                format!(
-                                    "{} {}ed session with {}",
-                                    payload.account.title,
-                                    payload.event,
-                                    payload.session_info.title
-                                ),
-                            )
-                            .await
-                        {
-                            println!("Error sending message: {:?}", why);
+        // Function to use to handle multipart form data
+        async fn handle_request(
+            mut multipart: axum::extract::Multipart,
+        ) -> impl axum::response::IntoResponse {
+            while let Ok(Some(field)) = multipart.next_field().await {
+                if field.name() == Some("payload") {
+                    if let Ok(json_str) = field.text().await {
+                        match serde_json::from_str::<WebhookEnvelope>(&json_str) {
+                            Ok(payload) => {
+                                println!("Received payload: {:?}", payload);
+                                return (StatusCode::OK, "Payload received").into_response();
+                            }
+                            Err(err) => {
+                                println!("Failed to parse JSON: {}", err);
+                                return (StatusCode::BAD_REQUEST, "Invalid JSON").into_response();
+                            }
                         }
-                        StatusCode::OK
-                    },
-                ),
-            );
-            let listener = tokio::net::TcpListener::bind(format!("127.0.0.1:{}", webhook_port))
-                .await
-                .unwrap();
-            axum::serve(listener, app).await.unwrap();
-        });
+                    }
+                }
+            }
+            (StatusCode::BAD_REQUEST, "Missing payload").into_response()
+        }
+
+        if let Some(admin_channel_id) = admin_channel_id {
+            // TODO: give a handle to the spawned task so we can kill it later
+            tokio::spawn(async move {
+                let app = Router::new().route(
+                    "/",
+                    post(move |mut multipart: axum::extract::Multipart| async move {
+                        while let Ok(Some(field)) = multipart.next_field().await {
+                            if field.name() == Some("payload") {
+                                if let Ok(json_str) = field.text().await {
+                                    match serde_json::from_str::<WebhookEnvelope>(&json_str) {
+                                        Ok(payload) => {
+                                            if let Err(why) = admin_channel_id
+                                                .say(
+                                                    &cache_http,
+                                                    format!(
+                                                        "{} {}ed session with {}",
+                                                        payload.account.title,
+                                                        payload.event,
+                                                        payload.session_info.title
+                                                    ),
+                                                )
+                                                .await
+                                            {
+                                                tracing::error!("Failed to parse JSON: {}", why);
+                                                return axum::http::StatusCode::BAD_REQUEST;
+                                            }
+                                            return axum::http::StatusCode::OK;
+                                        }
+                                        Err(err) => {
+                                            tracing::error!("Failed to parse JSON: {}", err);
+                                            return axum::http::StatusCode::BAD_REQUEST;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        #[warn(clippy::needless_return)]
+                        return axum::http::StatusCode::BAD_REQUEST;
+                    }),
+                );
+                let listener = tokio::net::TcpListener::bind(format!("127.0.0.1:{}", webhook_port))
+                    .await
+                    .expect("Failed to bind to webhook port");
+                axum::serve(listener, app).await.unwrap();
+            });
+        }
     }
 }
 

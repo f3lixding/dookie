@@ -9,7 +9,7 @@ metadata = { workspace_root = "." }
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [workspace.dependencies]
-axum = "0.7.2"
+axum = { version = "0.7.2", features = ["multipart"] }
 num_cpus = "1.16.0"
 serde = { version = "1.0.193", features = ["derive"] }
 serde_yaml = "0.9.29"
