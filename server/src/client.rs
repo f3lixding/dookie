@@ -35,11 +35,15 @@ impl IBundleClient for BundleClient {
 
     #[allow(refining_impl_trait)]
     async fn get(&self, url: &str) -> Result<reqwest::Response, Box<dyn Error + Send + Sync>> {
+        // Eventually we are going to have to support adding headers but for now let's just leave
+        // it with the standardard headers
         let url = format!("http://localhost:{}{}", self.port, url);
         Ok(self
             .client
             .get(&url)
             .header(&self.token_name, &self.token_value)
+            .header("Accept", "application/json")
+            .header("Content-Type", "application/json")
             .send()
             .await?)
     }

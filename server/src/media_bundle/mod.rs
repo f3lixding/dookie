@@ -97,12 +97,24 @@ where
     C: IBundleClient,
 {
     pub fn from_client_with_config(client: C, config: &Config) -> Self {
+        let Config {
+            plex_api_key,
+            plex_machine_id,
+            plex_client_id,
+            ..
+        } = config;
+
         Self {
             plex_client: {
                 let mut client = client.clone();
                 client.set_port(config.plex_port);
-                client.set_token(("X-Plex-Token", config.plex_api_key.clone()));
-                Plex::from_bundle_client(client)
+                client.set_token(("X-Plex-Token", plex_api_key.clone()));
+                Plex::new(
+                    client,
+                    plex_machine_id.to_string(),
+                    plex_client_id.to_string(),
+                    plex_api_key.to_string(),
+                )
             },
         }
     }
@@ -120,6 +132,13 @@ where
         };
 
         Ok(reqwest::StatusCode::from_u16(code)?)
+    }
+
+    pub async fn grant_library_access(
+        &self,
+        email: &str,
+    ) -> Result<reqwest::StatusCode, Box<dyn Error + Send + Sync>> {
+        unimplemented!()
     }
 }
 

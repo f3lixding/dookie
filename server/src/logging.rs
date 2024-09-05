@@ -9,6 +9,7 @@ use std::{
 use tokio::task;
 use tokio::task::JoinError;
 use tokio::task::JoinHandle;
+use tracing::{level_filters::LevelFilter, Level};
 use tracing_appender::{
     non_blocking::WorkerGuard,
     rolling::{RollingFileAppender, Rotation},
@@ -51,6 +52,7 @@ impl Logger<Unprimed> {
             RollingFileAppender::new(Rotation::DAILY, &self.log_path, "dookied.log");
         let (non_blocking, guard) = tracing_appender::non_blocking(file_appender);
         tracing_subscriber::registry()
+            .with(tracing_subscriber::filter::LevelFilter::INFO)
             .with(fmt::layer().with_writer(non_blocking))
             .init();
         let path = self.log_path.clone();

@@ -10,6 +10,7 @@ mod dookie_proto {
     include!(concat!(env!("OUT_DIR"), "/dookie.rs"));
 }
 mod client;
+mod discord_bot;
 mod logging;
 mod media_bundle;
 
@@ -20,6 +21,8 @@ pub use job::*;
 pub use listener::*;
 pub use logging::*;
 pub use media_bundle::*;
+
+use discord_bot::DiscordHandler;
 
 /// This job monitors local drive to check for various factors to determine if content in the
 /// specified directory should be moved to the "cold" storage.
@@ -903,6 +906,158 @@ pub mod scan_library_job {
     }
 }
 
+/// This job monitors for presence of remote sessions in Plex.
+/// When there are remote sessions, it pauses all downloads.
+/// When there are no more remote sessions, it resumes all downloads.
+/// Aside from the action of pausing, we would also ideally notify some sort of subsriber (we are
+/// going to use discord for this. So this job is going to be a bit of a misnotation).
+pub mod auto_torrent_shutoff_job {
+    use crate::discord_bot::DiscordHandlerBuilder;
+
+    use super::*;
+    use axum::http::StatusCode;
+    use axum::routing::get;
+    use axum::Router;
+    use serenity::all::{ChannelId, EventHandler, GatewayIntents, Message, Ready};
+    use std::collections::HashSet;
+    use std::future::Future;
+    use std::pin::Pin;
+    use std::task::{Context, Poll};
+    use tokio::task::JoinHandle;
+
+    #[derive(Debug, PartialEq, Eq)]
+    pub enum IncomingMessage {
+        StatusRequest,
+    }
+
+    #[derive(Debug, PartialEq, Eq)]
+    pub enum OutgoingMessage {
+        Ok,
+    }
+
+    pub type ReturnType = Result<(), Box<dyn Error + Send + Sync + 'static>>;
+
+    pub struct JobStruct<M> {
+        phantom: std::marker::PhantomData<M>,
+    }
+
+    impl<M> Job for JobStruct<M>
+    where
+        M: IBundleClient,
+    {
+        type IncomingMessage = IncomingMessage;
+        type OutgoingMessage = OutgoingMessage;
+        type ReturnType = ReturnType;
+        type SpawnedJob = SpawnedJob<M>;
+
+        #[allow(refining_impl_trait)]
+        fn spawn_(
+            config: &Config,
+            #[allow(unused)] front_desk_handle: &mut Option<
+                JoinHandle<Result<(), Box<dyn Error + Send + Sync + 'static>>>,
+            >,
+        ) -> Result<Self::SpawnedJob, Box<dyn Error>> {
+            let mut spawned_job = Self::SpawnedJob {
+                webhook_port: None,
+                token: None,
+                permitted_guilds: Vec::new(),
+                media_bundle: None,
+                guild_config: None,
+            };
+            spawned_job.assign_config(config);
+            Ok(spawned_job)
+        }
+    }
+
+    pub struct SpawnedJob<C: IBundleClient> {
+        webhook_port: Option<u16>,
+        token: Option<String>,
+        permitted_guilds: Vec<u64>,
+        media_bundle: Option<MediaBundle<C>>,
+        guild_config: Option<discord_bot::GuildConfig>,
+    }
+
+    impl<C> SpawnedJob<C>
+    where
+        C: IBundleClient,
+    {
+        pub fn assign_media_bundle(&mut self, media_bundle: MediaBundle<C>) {
+            self.media_bundle = Some(media_bundle);
+        }
+
+        pub fn assign_config(&mut self, config: &Config) {
+            self.permitted_guilds = config.permitted_guilds.clone();
+            self.webhook_port = config.webhook_port;
+            self.token = config.discord_token.as_ref().map(|t| t.to_string());
+            self.guild_config = config.guild_config.clone();
+        }
+    }
+
+    impl<M> SpawnedJobType<ReturnType, IncomingMessage, OutgoingMessage> for SpawnedJob<M>
+    where
+        M: IBundleClient,
+    {
+        fn give_sender(
+            &mut self,
+        ) -> Result<
+            tokio::sync::mpsc::Sender<(IncomingMessage, Option<OneShotSender<OutgoingMessage>>)>,
+            Box<dyn Error>,
+        > {
+            unimplemented!()
+        }
+    }
+
+    impl<M> Future for SpawnedJob<M>
+    where
+        M: IBundleClient,
+    {
+        // type Output = Result<(), Box<dyn Error + Send + Sync + 'static>>;
+        type Output =
+            Result<Result<(), Box<dyn Error + Send + Sync + 'static>>, tokio::task::JoinError>;
+
+        fn poll(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<Self::Output> {
+            let this = self.get_mut();
+            let media_bundle = this.media_bundle.take();
+            assert!(media_bundle.is_some()); // for now we would assume that this is a must
+            let media_bundle = media_bundle.unwrap();
+
+            let mut dh_builder = DiscordHandlerBuilder::<M>::default();
+            dh_builder.set_webhook_port(this.webhook_port.take().unwrap()); // for now this is
+                                                                            // restricted to
+                                                                            // localhost
+            dh_builder.set_permitted_guilds(this.permitted_guilds.clone());
+            dh_builder.set_guild_config(this.guild_config.take().expect("No guild config found"));
+            dh_builder.set_media_bundle(media_bundle);
+            // dh_builder.set_guild_config(this.guild)
+            let discord_handler = dh_builder.build();
+
+            let token = this.token.clone().expect("Token not found");
+            let intents = GatewayIntents::GUILD_MESSAGES
+                | GatewayIntents::DIRECT_MESSAGES
+                | GatewayIntents::MESSAGE_CONTENT;
+
+            // We spawn a task here because we don't want this future to be interleaved with the
+            // main future in main()
+            let handle = tokio::spawn(async move {
+                let mut client = serenity::Client::builder(token, intents)
+                    .event_handler(discord_handler)
+                    .await
+                    .expect("Err creating client");
+
+                if let Err(e) = client.start().await {
+                    tracing::error!("Client error: {:?}", e);
+                    return Err(e.into());
+                }
+
+                Ok(())
+            });
+
+            let handle = std::pin::pin!(handle);
+            handle.poll(cx)
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1000,14 +1155,19 @@ mod tests {
             sonarr_port: 8989,
             prowlarr_port: 8888,
             plex_port: 32400,
+            webhook_port: Some(1025),
             qbit_torrent_port: 9090,
             radarr_api_key: Cow::from(""),
             sonarr_api_key: Cow::from(""),
             prowlarr_api_key: Cow::from(""),
             qbit_torrent_api_key: Cow::from(""),
             plex_api_key: Cow::from(""),
+            plex_client_id: Cow::from(""),
+            plex_machine_id: Cow::from(""),
             move_job_period: 10,
             age_threshold: 10,
+            discord_token: Some(Cow::from("")),
+            permitted_guilds: Vec::new(),
             move_map: {
                 let mut map = HashMap::new();
                 for (src_dir, dst_dir) in mappings {
@@ -1015,6 +1175,7 @@ mod tests {
                 }
                 map
             },
+            guild_config: None,
         }
     }
 
