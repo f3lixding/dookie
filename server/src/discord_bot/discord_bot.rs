@@ -334,6 +334,16 @@ where
             }
         }
 
+        // Here we clear the command list. This is to clear any old commands.
+        if let Err(e) = self
+            .guild_config
+            .guild_id
+            .set_commands(&ctx.http, Vec::new())
+            .await
+        {
+            tracing::error!("Error clearing commands for bastion: {:?}", e);
+        }
+
         // Here we register commands for bastion
         if let Err(e) = self
             .guild_config

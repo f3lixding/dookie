@@ -39,7 +39,7 @@ pub async fn run<C: IBundleClient>(
 }
 
 pub fn register() -> CreateCommand {
-    CreateCommand::new("GrantAccess")
+    CreateCommand::new("grant_access")
         .description(
             "Grant user access to libraries access.\nThis command grants access to both libraries.",
         )
