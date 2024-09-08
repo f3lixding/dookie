@@ -1,4 +1,4 @@
-use super::commands;
+use super::{commands, CommandError};
 use crate::{IBundleClient, MediaBundle};
 /// This is the discord bot that we will use for various purposes.
 /// So far these include:
@@ -12,7 +12,8 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use serenity::{
     all::{
-        ChannelId, ChannelType, CreateChannel, GuildId, PermissionOverwrite,
+        ChannelId, ChannelType, CreateChannel, CreateInteractionResponse,
+        CreateInteractionResponseMessage, GuildId, Interaction, PermissionOverwrite,
         PermissionOverwriteType, Permissions, RoleId,
     },
     model::{channel::Message, gateway::Ready},
@@ -418,6 +419,35 @@ where
             });
             self.has_ready_been_called
                 .store(true, std::sync::atomic::Ordering::Relaxed);
+        }
+    }
+
+    async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
+        if let Interaction::Command(command) = interaction {
+            let content: Option<Result<String, CommandError>> = match command.data.name.as_str() {
+                "grant_access" => Some(
+                    commands::grant_access::run(&command.data.options(), &self.media_bundle)
+                        .await
+                        .map_err(CommandError::from),
+                ),
+                _ => None,
+            };
+
+            if let Some(content) = content {
+                let response = match content {
+                    Ok(content) => content,
+                    Err(why) => {
+                        tracing::error!("Cannot grant access due to error: {:#?}", why);
+                        format!("Cannot grant access due to error: {why}")
+                    }
+                };
+
+                let data = CreateInteractionResponseMessage::new().content(response);
+                let builder = CreateInteractionResponse::Message(data);
+                if let Err(why) = command.create_response(&ctx.http, builder).await {
+                    tracing::error!("Cannot respond to slash command: {why}");
+                }
+            }
         }
     }
 }

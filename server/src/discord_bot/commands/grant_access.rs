@@ -1,8 +1,10 @@
 use serenity::builder::{CreateCommand, CreateCommandOption};
 use serenity::model::application::{CommandOptionType, ResolvedOption, ResolvedValue};
 
+use crate::discord_bot::CommandError;
 use crate::{IBundleClient, MediaBundle};
 
+#[derive(Debug)]
 pub enum GrantAccessError {
     EmailMalFormed,
     RequestFailed(String),
@@ -25,13 +27,15 @@ pub async fn run<C: IBundleClient>(
     {
         let res = media_bundle.grant_library_access(email).await;
         match res {
-            Ok(reqwest::StatusCode::OK) => Ok("Success".to_string()),
-            Ok(_) => Err(GrantAccessError::RequestFailed(
-                "Unexpected status code".to_string(),
-            )),
-            _ => Err(GrantAccessError::RequestFailed(
-                "Request failed".to_string(),
-            )),
+            Ok(reqwest::StatusCode::OK) | Ok(reqwest::StatusCode::CREATED) => {
+                Ok("Success".to_string())
+            }
+            Ok(code) => Err(GrantAccessError::RequestFailed(format!(
+                "Unexpected status code: {code}"
+            ))),
+            Err(why) => Err(GrantAccessError::RequestFailed(format!(
+                "Request failed: {why}"
+            ))),
         }
     } else {
         Err(GrantAccessError::EmailMalFormed)
@@ -51,4 +55,10 @@ pub fn register() -> CreateCommand {
             )
             .required(true),
         )
+}
+
+impl From<GrantAccessError> for CommandError {
+    fn from(value: GrantAccessError) -> Self {
+        CommandError::GrantAccessError(value)
+    }
 }

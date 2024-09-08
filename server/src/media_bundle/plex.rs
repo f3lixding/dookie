@@ -92,18 +92,27 @@ pub(in crate::media_bundle) enum PlexOutput {
     StatusCode(u16),
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub(in crate::media_bundle) struct PlexAccessSettings {
+    #[serde(rename = "allowSync")]
     allow_sync: bool,
+    #[serde(rename = "allowChannels")]
     allow_channels: bool,
+    #[serde(rename = "allowSubtitleAdmin")]
     allow_subtitle_admin: bool,
+    #[serde(rename = "allowTuners")]
     allow_tuners: i32,
+    #[serde(rename = "filterMovies")]
     filter_movies: String,
+    #[serde(rename = "filterMusic")]
     filter_music: String,
+    #[serde(rename = "filterPhotos")]
     filter_photos: String,
+    #[serde(rename = "filterTelevision")]
     filter_television: String,
 }
 
+#[allow(clippy::from_over_into)]
 impl Into<reqwest::Body> for PlexAccessSettings {
     fn into(self) -> reqwest::Body {
         let json = serde_json::to_string(&self).unwrap();
@@ -111,15 +120,20 @@ impl Into<reqwest::Body> for PlexAccessSettings {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub(in crate::media_bundle) struct PlexAccessMainBody {
+    #[serde(rename = "invitedEmail")]
     invited_email: String,
     settings: PlexAccessSettings,
+    #[serde(rename = "skipFriendship")]
     skip_friendship: bool,
+    #[serde(rename = "librarySectionIds")]
     library_section_ids: Vec<i64>,
+    #[serde(rename = "machineIdentifier")]
     machine_identifier: String,
 }
 
+#[allow(clippy::from_over_into)]
 impl Into<reqwest::Body> for PlexAccessMainBody {
     fn into(self) -> reqwest::Body {
         let json = serde_json::to_string(&self).unwrap();
@@ -133,9 +147,9 @@ where
     C: IBundleClient,
 {
     client: C,
-    machine_id: String, // this is for making calls to plex.tv
-    client_id: String,  // this is for making calls to plex.tv
-    plex_token: String, // this is for making calls to plex.tv
+    pub machine_id: String, // this is for making calls to plex.tv
+    client_id: String,      // this is for making calls to plex.tv
+    plex_token: String,     // this is for making calls to plex.tv
 }
 
 impl<C> Plex<C>
@@ -194,7 +208,7 @@ where
             PlexInput::GrantLibAccess(body) => {
                 // If this api is ever called we'll need to make sure that the machine id is not
                 // empty
-                let machine_id = if self.machine_id.is_empty() {
+                let _machine_id = if self.machine_id.is_empty() {
                     Err("Missing machine id")
                 } else {
                     Ok(&self.machine_id)
@@ -220,7 +234,16 @@ where
                     X-Plex-Language=en",
                     client_id, plex_token,
                 );
-                let resp = self.client.post(&url, body).await?;
+                // here we can't use the client's post method since this call is made to plex's
+                // server not our server.
+                let client = reqwest::Client::new();
+                let resp = client
+                    .post(url)
+                    .header("Accept", "application/json") // Set Accept header
+                    .header("Content-Type", "application/json")
+                    .body(body)
+                    .send()
+                    .await?;
                 Ok(PlexOutput::StatusCode(resp.get_statuscode()))
             }
         }

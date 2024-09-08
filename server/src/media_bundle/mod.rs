@@ -51,6 +51,7 @@ pub trait IBundleClient: Unpin + Send + Sync + Clone + 'static {
 }
 
 #[async_trait]
+// TODO: make it so that input takes reference. Currently the trait makes no room for lifetime
 pub(in crate::media_bundle) trait ServerEntity {
     type Input;
     type Output;
@@ -138,7 +139,15 @@ where
         &self,
         email: &str,
     ) -> Result<reqwest::StatusCode, Box<dyn Error + Send + Sync>> {
-        unimplemented!()
+        let machine_id = &self.plex_client.machine_id;
+        let input = PlexInput::grant_access(email.to_string(), machine_id.to_string());
+        let output = self.plex_client.make_call(input).await;
+
+        match output {
+            Ok(PlexOutput::StatusCode(code)) => Ok(reqwest::StatusCode::from_u16(code)?),
+            Err(why) => Err(why),
+            _ => Err("Unexpected output".into()),
+        }
     }
 }
 
