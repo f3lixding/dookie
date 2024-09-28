@@ -82,6 +82,8 @@ enum EventType {
     Stop,
     #[serde(rename = "media.pause")]
     Pause,
+    #[serde(rename = "library.new")]
+    New,
 }
 
 impl std::fmt::Display for EventType {
@@ -91,6 +93,7 @@ impl std::fmt::Display for EventType {
             EventType::Play => write!(f, "play"),
             EventType::Stop => write!(f, "stop"),
             EventType::Pause => write!(f, "pause"),
+            EventType::New => write!(f, "new"),
         }
     }
 }
@@ -259,10 +262,10 @@ where
     async fn ready(&self, ctx: serenity::prelude::Context, ready: Ready) {
         // Programmatic channel management
         let channels = self.guild_config.guild_id.channels(&ctx.http).await;
-        let channels = channels.unwrap_or_else(|_| {
-            tracing::error!("Error retrieving channel info from guild.");
-            HashMap::default()
-        });
+        if channels.is_err() {
+            tracing::error!("Error retrieving channel info from guild. {:?}", channels);
+        }
+        let channels = channels.unwrap_or_else(|_| HashMap::default());
 
         let existing_channel_names = channels.iter().map(|e| &e.1.name).collect::<Vec<_>>();
         for channel_config in &self.guild_config.channels {
@@ -280,6 +283,11 @@ where
             // We don't have a more robust way other than names right now
             if is_one_of_existing_channels {
                 continue;
+            }
+
+            tracing::info!("Creating channel: {}", channel_config.name);
+            for name in &existing_channel_names {
+                tracing::info!("Existing channel: {}", name);
             }
 
             // Now we do the actual creation
@@ -383,20 +391,50 @@ where
                                 if let Ok(json_str) = field.text().await {
                                     match serde_json::from_str::<WebhookEnvelope>(&json_str) {
                                         Ok(payload) => {
-                                            if let Err(why) = admin_channel_id
-                                                .say(
-                                                    &cache_http,
-                                                    format!(
-                                                        "{} {}ed session with {}",
-                                                        payload.account.title,
-                                                        payload.event,
-                                                        payload.session_info.title
-                                                    ),
-                                                )
-                                                .await
-                                            {
-                                                tracing::error!("Failed to parse JSON: {}", why);
-                                                return axum::http::StatusCode::BAD_REQUEST;
+                                            match payload.event {
+                                                EventType::Play
+                                                | EventType::Pause
+                                                | EventType::Stop
+                                                | EventType::Resume => {
+                                                    if let Err(why) = admin_channel_id
+                                                        .say(
+                                                            &cache_http,
+                                                            format!(
+                                                                "{} {}ed session with {}",
+                                                                payload.account.title,
+                                                                payload.event,
+                                                                payload.session_info.title
+                                                            ),
+                                                        )
+                                                        .await
+                                                    {
+                                                        tracing::error!(
+                                                            "Failed to parse JSON: {}",
+                                                            why
+                                                        );
+                                                        return axum::http::StatusCode::BAD_REQUEST;
+                                                    }
+                                                }
+                                                EventType::New => {
+                                                    if let Err(why) = admin_channel_id
+                                                        .say(
+                                                            &cache_http,
+                                                            format!(
+                                                                "{} {}ed session with {}",
+                                                                payload.account.title,
+                                                                payload.event,
+                                                                payload.session_info.title
+                                                            ),
+                                                        )
+                                                        .await
+                                                    {
+                                                        tracing::error!(
+                                                            "Failed to parse JSON: {}",
+                                                            why
+                                                        );
+                                                        return axum::http::StatusCode::BAD_REQUEST;
+                                                    }
+                                                }
                                             }
                                             return axum::http::StatusCode::OK;
                                         }
