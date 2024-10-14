@@ -20,6 +20,7 @@ use serenity::{
     prelude::*,
 };
 use std::{
+    borrow::BorrowMut,
     collections::{HashMap, HashSet},
     sync::atomic::AtomicBool,
 };
@@ -260,6 +261,14 @@ where
     // - Register commands for bastion (this is the bot's name).
     // - Spawn a task to monitor the webhook port for remote session events.
     async fn ready(&self, ctx: serenity::prelude::Context, ready: Ready) {
+        let has_ready_been_called = self
+            .has_ready_been_called
+            .load(std::sync::atomic::Ordering::Relaxed);
+        if has_ready_been_called {
+            tracing::info!("ready called more than once. skipping");
+            return;
+        }
+
         // Programmatic channel management
         let channels = self.guild_config.guild_id.channels(&ctx.http).await;
         if channels.is_err() {
@@ -373,13 +382,6 @@ where
         let webhook_port = self.webhook_port;
         let cache_http = ctx.http.clone();
 
-        let has_ready_been_called = self
-            .has_ready_been_called
-            .load(std::sync::atomic::Ordering::Relaxed);
-        if has_ready_been_called {
-            return;
-        }
-
         if let Some(admin_channel_id) = admin_channel_id {
             // TODO: give a handle to the spawned task so we can kill it later
             tokio::spawn(async move {
@@ -487,6 +489,13 @@ where
                 }
             }
         }
+    }
+
+    async fn resume(&self, ctx: Context, event: serenity::all::ResumedEvent) {
+        // we don't technically need this here
+        // I am putting it here because I want to keep track of the occurrence of this event
+        // This is because serenity takes care of the reconnection for us
+        tracing::info!("resume called with event {:?}", event);
     }
 }
 
