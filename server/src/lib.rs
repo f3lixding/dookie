@@ -464,14 +464,23 @@ pub mod move_job {
                 }
             }
 
-            // Here we check if this is a targeted move to symlink itself
+            // For targeted moves (when is_root is true and is_mass_move is false),
+            // replace the source with a symlink to the destination
             if is_root && !is_mass_move {
-                if src_path.is_dir() {
-                    tokio::fs::remove_dir(&src_path).await?;
-                } else {
-                    tokio::fs::remove_file(&src_path).await?;
-                }
+                // Remove the source based on its type
+                match src_path.is_dir() {
+                    true => tokio::fs::remove_dir(&src_path).await?,
+                    false => tokio::fs::remove_file(&src_path).await?,
+                };
+
+                // Create a symlink from the source to the destination
                 tokio::fs::symlink(&dst_path, &src_path).await?;
+
+                tracing::debug!(
+                    "Created symlink from {} to {}",
+                    src_path.display(),
+                    dst_path.display()
+                );
             }
 
             Ok(())
