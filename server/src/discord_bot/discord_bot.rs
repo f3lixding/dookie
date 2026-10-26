@@ -1,4 +1,5 @@
-use super::{commands, CommandError};
+use super::commands::{self, media, media::MediaKind};
+use super::CommandError;
 use crate::{IBundleClient, MediaBundle};
 /// This is the discord bot that we will use for various purposes.
 /// So far these include:
@@ -13,7 +14,8 @@ use serde_json::Value;
 use serenity::{
     all::{
         ChannelType, CreateChannel, CreateInteractionResponse, CreateInteractionResponseMessage,
-        GuildId, Interaction, PermissionOverwrite, PermissionOverwriteType, Permissions, RoleId,
+        EditInteractionResponse, GuildId, Interaction, PermissionOverwrite,
+        PermissionOverwriteType, Permissions, RoleId,
     },
     model::{channel::Message, gateway::Ready},
     prelude::*,
@@ -461,31 +463,49 @@ where
     }
 
     async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
-        if let Interaction::Command(command) = interaction {
-            let content: Option<Result<String, CommandError>> = match command.data.name.as_str() {
-                "grant_access" => Some(
-                    commands::grant_access::run(&command.data.options(), &self.media_bundle)
-                        .await
-                        .map_err(CommandError::from),
-                ),
-                _ => None,
+        let Interaction::Command(command) = interaction else {
+            return;
+        };
+
+        // Discord only waits 3 seconds for a response and looking media up can take longer, so we
+        // acknowledge the command first and fill in the response once it is done.
+        let defer = CreateInteractionResponse::Defer(CreateInteractionResponseMessage::new());
+        if let Err(why) = command.create_response(&ctx.http, defer).await {
+            tracing::error!("Cannot respond to slash command: {why}");
+            return;
+        }
+
+        let options = command.data.options();
+        let media_bundle = &self.media_bundle;
+        let response: Result<EditInteractionResponse, CommandError> =
+            match command.data.name.as_str() {
+                "grant_access" => commands::grant_access::run(&options, media_bundle)
+                    .await
+                    .map(|content| EditInteractionResponse::new().content(content))
+                    .map_err(CommandError::from),
+                "search_movie" => media::search(MediaKind::Movie, &options, media_bundle)
+                    .await
+                    .map_err(CommandError::from),
+                "add_movie" => media::add(MediaKind::Movie, &options, media_bundle)
+                    .await
+                    .map_err(CommandError::from),
+                "search_show" => media::search(MediaKind::Show, &options, media_bundle)
+                    .await
+                    .map_err(CommandError::from),
+                "add_show" => media::add(MediaKind::Show, &options, media_bundle)
+                    .await
+                    .map_err(CommandError::from),
+                name => {
+                    Ok(EditInteractionResponse::new().content(format!("Unknown command {name}")))
+                }
             };
 
-            if let Some(content) = content {
-                let response = match content {
-                    Ok(content) => content,
-                    Err(why) => {
-                        tracing::error!("Cannot grant access due to error: {:#?}", why);
-                        format!("Cannot grant access due to error: {why}")
-                    }
-                };
-
-                let data = CreateInteractionResponseMessage::new().content(response);
-                let builder = CreateInteractionResponse::Message(data);
-                if let Err(why) = command.create_response(&ctx.http, builder).await {
-                    tracing::error!("Cannot respond to slash command: {why}");
-                }
-            }
+        let response = response.unwrap_or_else(|why| {
+            tracing::error!("/{} failed: {:#?}", command.data.name, why);
+            EditInteractionResponse::new().content(format!("/{} failed: {why}", command.data.name))
+        });
+        if let Err(why) = command.edit_response(&ctx.http, response).await {
+            tracing::error!("Cannot respond to slash command: {why}");
         }
     }
 

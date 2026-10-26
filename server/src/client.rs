@@ -61,6 +61,8 @@ impl IBundleClient for BundleClient {
             .client
             .post(&url)
             .header(&self.token_name, &self.token_value)
+            .header("Accept", "application/json")
+            .header("Content-Type", "application/json")
             .body::<reqwest::Body>(msg_body)
             .send()
             .await?)
