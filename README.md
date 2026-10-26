@@ -21,3 +21,29 @@ In the future, I want it to also do the following:
 - `/help` lists the registered commands and their arguments, including the media search/add and access commands. Admin-only commands are shown only to administrators.
 
 The three operational commands require Discord Administrator permission in the configured guild. Their replies and help are private. The bot must run as the macOS user who owns the apps and have `docker`, `pkill`, `pgrep`, and `open` on its PATH, with access to Docker Desktop. Restarts interrupt active streams or downloads; these commands do not use sudo or force-kill a service that refuses to shut down.
+
+## Intel macOS builds
+
+GitHub Actions builds and tests both `dookie_server` and `dookie_cli_client` on
+`macos-15-intel` for pull requests and pushes to `master`. The workflow pins Rust
+1.90.0, uses `Cargo.lock`, and installs `protoc` through Homebrew. It does not use
+the Linux-only Nix flake.
+
+The current deployment target is **macOS 15.0 on Intel (`x86_64`)**. Older macOS
+versions are not validated. Builds check the architecture and reject dependencies
+on non-system dynamic libraries. The server's `--help` is smoke-tested; the demo
+CLI requires a running server at `/tmp/dookie.sock`, so it is not launched in CI.
+
+After a successful run, open **Actions → macOS build → the run → Artifacts** and
+download `dookie-x86_64-apple-darwin`. GitHub wraps the artifact in a ZIP; extract
+it, then extract the enclosed `.tar.gz` to preserve the binaries' executable bits.
+The `dookie/` directory contains both binaries and this README. These test builds
+are retained for 14 days, not published as GitHub Releases.
+
+Builds are not Developer ID signed or notarized, and macOS may require approval
+to run downloaded binaries. Configuration, credentials, automatic installation,
+and daemon startup are not included. To run the server with an existing config:
+
+```sh
+./dookie/dookie_server --config_path /absolute/path/to/config.yaml
+```

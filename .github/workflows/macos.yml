@@ -1,0 +1,75 @@
+name: macOS build
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macos-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and test Intel macOS
+    runs-on: macos-15-intel
+    timeout-minutes: 45
+    env:
+      CARGO_TERM_COLOR: always
+      RUSTUP_TOOLCHAIN: 1.90.0
+      # Older macOS versions have not been validated yet.
+      MACOSX_DEPLOYMENT_TARGET: '15.0'
+      HOMEBREW_NO_AUTO_UPDATE: '1'
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Install build tools
+        run: |
+          rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal --target x86_64-apple-darwin
+          brew install protobuf
+          rustc --version
+          protoc --version
+
+      - uses: Swatinem/rust-cache@e9d7b9f1e587218970671bac74e5511ed9506e6a # v2
+        with:
+          save-if: ${{ github.ref == 'refs/heads/master' }}
+
+      - name: Build both binaries
+        run: cargo build --release --locked --workspace --bins --target x86_64-apple-darwin
+
+      - name: Verify binaries
+        run: |
+          for binary in dookie_server dookie_cli_client; do
+            path="target/x86_64-apple-darwin/release/$binary"
+            test "$(lipo -archs "$path")" = x86_64
+            otool -L "$path"
+            # Downloads must not depend on Homebrew libraries on the build machine.
+            otool -L "$path" | awk 'NR > 1 && $1 !~ /^\/usr\/lib\// && $1 !~ /^\/System\/Library\// { bad = 1 } END { exit bad }'
+          done
+          target/x86_64-apple-darwin/release/dookie_server --help
+
+      - name: Test workspace
+        run: cargo test --release --locked --workspace --target x86_64-apple-darwin
+
+      - name: Archive binaries
+        run: |
+          mkdir -p "$RUNNER_TEMP/dookie"
+          cp target/x86_64-apple-darwin/release/{dookie_server,dookie_cli_client} "$RUNNER_TEMP/dookie/"
+          cp README.md "$RUNNER_TEMP/dookie/"
+          tar -czf "$RUNNER_TEMP/dookie-x86_64-apple-darwin.tar.gz" -C "$RUNNER_TEMP" dookie
+
+      - name: Upload test build
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: dookie-x86_64-apple-darwin
+          path: ${{ runner.temp }}/dookie-x86_64-apple-darwin.tar.gz
+          if-no-files-found: error
+          retention-days: 14
