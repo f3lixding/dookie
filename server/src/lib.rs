@@ -630,6 +630,7 @@ pub mod scan_library_job {
     pub type ReturnType = Result<(), Box<dyn Error + Send + Sync + 'static>>;
 
     pub struct SpawnedJob<C: IBundleClient> {
+        handle: Option<JoinHandle<ReturnType>>,
         paths_to_watch: Vec<(PathBuf, PathBuf)>,
         sender: Option<Sender<(IncomingMessage, Option<OneShotSender<OutgoingMessage>>)>>,
         media_bundle: Option<MediaBundle<C>>,
@@ -681,8 +682,11 @@ pub mod scan_library_job {
         type Output = Result<ReturnType, JoinError>;
 
         fn poll(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<Self::Output> {
-            // Safety: We never move `handle` after it is pinned.
             let this = self.get_mut();
+            if let Some(handle) = &mut this.handle {
+                return Pin::new(handle).poll(cx);
+            }
+
             let paths_to_watch = this.paths_to_watch.clone();
             let media_bundle = this.media_bundle.take();
             if media_bundle.is_none() {
@@ -858,8 +862,7 @@ pub mod scan_library_job {
                 Ok(())
             });
 
-            let handle = std::pin::pin!(handle);
-            handle.poll(cx)
+            Pin::new(this.handle.insert(handle)).poll(cx)
         }
     }
 
@@ -904,6 +907,7 @@ pub mod scan_library_job {
             let (tx, mut rx) = tokio::sync::mpsc::channel::<(Self::IncomingMessage, _)>(100);
 
             let spawned_job = Self::SpawnedJob {
+                handle: None,
                 paths_to_watch,
                 sender: Some(tx),
                 media_bundle: None,
@@ -1579,9 +1583,12 @@ mod tests {
         let attendance = std::sync::Arc::new(AtomicBool::new(false));
         let att = attendance.clone();
 
-        // Need to clear the map so that entries that were registered from events during the test
-        // set up does not interfere with the test.
-        tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+        // Start polling the lazy job before generating events. Poll it again below to
+        // verify that the same watcher task survives across polls.
+        tokio::select! {
+            result = &mut scan_job => panic!("Scan job exited during startup: {:?}", result),
+            _ = tokio::time::sleep(std::time::Duration::from_secs(1)) => {},
+        }
         call_map.write().await.clear();
 
         let assert_task = tokio::spawn(async move {
@@ -1680,10 +1687,10 @@ mod tests {
                 let is_check_complete = attendance.load(std::sync::atomic::Ordering::SeqCst);
                 assert!(is_check_complete);
             },
-            _ = scan_job => {
+            result = scan_job => {
                 let is_check_complete = attendance.load(std::sync::atomic::Ordering::SeqCst);
                 if !is_check_complete {
-                    panic!("Scan job did not complete");
+                    panic!("Scan job did not complete: {:?}", result);
                 }
             },
         }
