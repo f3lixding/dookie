@@ -13,6 +13,7 @@ mod client;
 mod discord_bot;
 mod logging;
 mod media_bundle;
+pub mod update;
 
 pub use client::*;
 pub use config::Config;
@@ -976,6 +977,7 @@ pub mod auto_torrent_shutoff_job {
                 permitted_guilds: Vec::new(),
                 media_bundle: None,
                 guild_config: None,
+                handle: None,
             };
             spawned_job.assign_config(config);
             Ok(spawned_job)
@@ -988,6 +990,7 @@ pub mod auto_torrent_shutoff_job {
         permitted_guilds: Vec<u64>,
         media_bundle: Option<MediaBundle<C>>,
         guild_config: Option<discord_bot::GuildConfig>,
+        handle: Option<JoinHandle<ReturnType>>,
     }
 
     impl<C> SpawnedJob<C>
@@ -1030,6 +1033,9 @@ pub mod auto_torrent_shutoff_job {
 
         fn poll(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<Self::Output> {
             let this = self.get_mut();
+            if let Some(handle) = &mut this.handle {
+                return Pin::new(handle).poll(cx);
+            }
             let media_bundle = this.media_bundle.take();
             assert!(media_bundle.is_some()); // for now we would assume that this is a must
             let media_bundle = media_bundle.unwrap();
@@ -1065,8 +1071,7 @@ pub mod auto_torrent_shutoff_job {
                 Ok(())
             });
 
-            let handle = std::pin::pin!(handle);
-            handle.poll(cx)
+            Pin::new(this.handle.insert(handle)).poll(cx)
         }
     }
 }
@@ -1158,6 +1163,34 @@ mod tests {
         fn set_port(&mut self, _port: u16) {}
 
         fn set_token(&mut self, token: (impl AsRef<str>, impl AsRef<str>)) {}
+    }
+
+    #[tokio::test]
+    async fn auto_shutoff_job_survives_repolls_from_other_select_branches() {
+        use std::{future::Future, pin::Pin, task::Poll};
+        let config = Config {
+            guild_config: Some(
+                serde_json::from_value(serde_json::json!({
+                    "guild_id": 1, "channels": []
+                }))
+                .unwrap(),
+            ),
+            discord_token: Some("test-only-token".into()),
+            ..Config::default()
+        };
+        let mut job = auto_torrent_shutoff_job::JobStruct::<MockClient>::spawn(&config).unwrap();
+        job.assign_media_bundle(MediaBundle::from_client_with_config(
+            MockClient::default(),
+            &config,
+        ));
+        // Do not yield this current-thread runtime to the Discord task: no network is used.
+        std::future::poll_fn(|cx| {
+            for _ in 0..3 {
+                assert!(Pin::new(&mut job).poll(cx).is_pending());
+            }
+            Poll::Ready(())
+        })
+        .await;
     }
 
     fn create_test_config<'a>(mappings: &'a Vec<(String, String)>) -> Config<'a> {
