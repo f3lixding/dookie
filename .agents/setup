@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# Prepares an Amp orb (Debian, Linux x86_64) for this repo using the flake's dev shell.
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$repo_root"
+
+step() {
+	local name="$1"
+	shift
+	local start=$SECONDS
+	echo "==> $name"
+	"$@"
+	echo "==> $name done in $((SECONDS - start))s"
+}
+
+if ! command -v nix >/dev/null 2>&1; then
+	echo "nix is required but was not found on PATH" >&2
+	exit 1
+fi
+
+cache_dir="$HOME/.cache/dookie"
+env_file="$cache_dir/dev-env.sh"
+mkdir -p "$cache_dir"
+
+# Export the flake dev shell once so login shells only need to source a file.
+# The flake's shellHook execs zsh, which would hijack non-interactive shells, so drop it.
+# --profile keeps the shell's store paths alive as a GC root.
+write_dev_env() {
+	nix print-dev-env --profile "$cache_dir/dev-profile" "$repo_root" \
+		| sed '/^eval "\${shellHook:-}"$/d' >"$env_file.tmp"
+	mv "$env_file.tmp" "$env_file"
+}
+step "Export Nix dev shell" write_dev_env
+
+profile_marker="# dookie Nix development shell"
+if ! grep -Fqx "$profile_marker" "$HOME/.bash_profile" 2>/dev/null; then
+	cat >>"$HOME/.bash_profile" <<EOF
+
+$profile_marker
+if [[ -z "\${IN_NIX_SHELL:-}" && -f "$env_file" && ( "\$PWD" == "$repo_root" || "\$PWD" == "$repo_root"/* ) ]]; then
+	source "$env_file"
+fi
+EOF
+fi
+
+# Run the remaining steps inside the exported environment.
+# shellcheck disable=SC1090
+source "$env_file"
+
+step "Fetch crates" cargo fetch --locked
+step "Build workspace" cargo build --workspace --all-targets --locked
