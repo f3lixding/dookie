@@ -9,6 +9,7 @@ pub use discord_bot::*;
 pub enum CommandError {
     GrantAccessError(GrantAccessError),
     MediaCommandError(MediaCommandError),
+    SystemCommandError(String),
 }
 
 impl std::fmt::Display for CommandError {
@@ -16,6 +17,7 @@ impl std::fmt::Display for CommandError {
         match self {
             CommandError::GrantAccessError(err) => err.fmt(f),
             CommandError::MediaCommandError(err) => err.fmt(f),
+            CommandError::SystemCommandError(err) => err.fmt(f),
         }
     }
 }
