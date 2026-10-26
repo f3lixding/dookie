@@ -1,4 +1,4 @@
-use super::commands::{self, media, media::MediaKind};
+use super::commands::{self, media, media::MediaKind, system};
 use super::CommandError;
 use crate::{IBundleClient, MediaBundle};
 /// This is the discord bot that we will use for various purposes.
@@ -467,9 +467,34 @@ where
             return;
         };
 
+        let is_admin = command.guild_id == Some(self.guild_config.guild_id)
+            && command
+                .member
+                .as_ref()
+                .and_then(|member| member.permissions)
+                .is_some_and(|permissions| permissions.administrator());
+        let admin_command = system::is_admin_command(&command.data.name);
+        // Enforce permissions at execution time as well as in Discord's command defaults.
+        if admin_command && !is_admin {
+            let response = CreateInteractionResponse::Message(
+                CreateInteractionResponseMessage::new()
+                    .content(
+                        "This command requires Administrator permission in the configured guild.",
+                    )
+                    .ephemeral(true),
+            );
+            if let Err(why) = command.create_response(&ctx.http, response).await {
+                tracing::error!("Cannot respond to slash command: {why}");
+            }
+            return;
+        }
+
         // Discord only waits 3 seconds for a response and looking media up can take longer, so we
         // acknowledge the command first and fill in the response once it is done.
-        let defer = CreateInteractionResponse::Defer(CreateInteractionResponseMessage::new());
+        let defer = CreateInteractionResponse::Defer(
+            CreateInteractionResponseMessage::new()
+                .ephemeral(admin_command || command.data.name == "help"),
+        );
         if let Err(why) = command.create_response(&ctx.http, defer).await {
             tracing::error!("Cannot respond to slash command: {why}");
             return;
@@ -479,6 +504,12 @@ where
         let media_bundle = &self.media_bundle;
         let response: Result<EditInteractionResponse, CommandError> =
             match command.data.name.as_str() {
+                "docker_ps" | "restart_container" | "restart_services" => {
+                    system::run(&command.data.name, &options)
+                        .await
+                        .map_err(CommandError::SystemCommandError)
+                }
+                "help" => Ok(EditInteractionResponse::new().content(commands::help(is_admin))),
                 "grant_access" => commands::grant_access::run(&options, media_bundle)
                     .await
                     .map(|content| EditInteractionResponse::new().content(content))
@@ -502,7 +533,12 @@ where
 
         let response = response.unwrap_or_else(|why| {
             tracing::error!("/{} failed: {:#?}", command.data.name, why);
-            EditInteractionResponse::new().content(format!("/{} failed: {why}", command.data.name))
+            EditInteractionResponse::new().content(
+                format!("/{} failed: {why}", command.data.name)
+                    .chars()
+                    .take(1900)
+                    .collect::<String>(),
+            )
         });
         if let Err(why) = command.edit_response(&ctx.http, response).await {
             tracing::error!("Cannot respond to slash command: {why}");
