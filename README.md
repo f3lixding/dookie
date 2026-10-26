@@ -25,20 +25,21 @@ The three operational commands require Discord Administrator permission in the c
 ## Intel macOS builds
 
 GitHub Actions builds and tests both `dookie_server` and `dookie_cli_client` on
-`macos-15-intel` for pull requests and pushes to `master`. The workflow pins Rust
-1.90.0, uses `Cargo.lock`, and installs `protoc` through Homebrew. It does not use
-the Linux-only Nix flake.
+`macos-15-intel` for pull requests, pushes to `master`, and version tags. The
+workflow pins Rust 1.90.0, uses `Cargo.lock`, and installs `protoc` through
+Homebrew. It does not use the Linux-only Nix flake.
 
 The current deployment target is **macOS 15.0 on Intel (`x86_64`)**. Older macOS
 versions are not validated. Builds check the architecture and reject dependencies
 on non-system dynamic libraries. The server's `--help` is smoke-tested; the demo
 CLI requires a running server at `/tmp/dookie.sock`, so it is not launched in CI.
 
-After a successful run, open **Actions → macOS build → the run → Artifacts** and
-download `dookie-x86_64-apple-darwin`. GitHub wraps the artifact in a ZIP; extract
-it, then extract the enclosed `.tar.gz` to preserve the binaries' executable bits.
-The `dookie/` directory contains both binaries and this README. These test builds
-are retained for 14 days, not published as GitHub Releases.
+After a successful run, open **Actions → macOS build and release → the run →
+Artifacts** and download `dookie-x86_64-apple-darwin`. GitHub wraps the artifact in
+a ZIP; extract it, then extract the enclosed `.tar.gz` to preserve the binaries'
+executable bits. The `dookie/` directory contains both binaries and this README.
+PR and branch builds use `build-<commit>` in the archive name. Actions artifacts
+are retained for 14 days; only version tags create GitHub Releases.
 
 Builds are not Developer ID signed or notarized, and macOS may require approval
 to run downloaded binaries. Configuration, credentials, automatic installation,
@@ -47,3 +48,37 @@ and daemon startup are not included. To run the server with an existing config:
 ```sh
 ./dookie/dookie_server --config_path /absolute/path/to/config.yaml
 ```
+
+## Making a release
+
+1. Set the same version in `server/Cargo.toml` and `cli_client/Cargo.toml`, update
+   `Cargo.lock` with `cargo check --workspace`, and merge the change to `master`.
+2. Tag that commit with `vMAJOR.MINOR.PATCH` and push the tag. For example, for
+   packages at version `0.1.0`:
+
+   ```sh
+   git tag -a v0.1.0 -m "Release v0.1.0"
+   git push origin v0.1.0
+   ```
+
+3. The workflow validates that the tag matches both package versions, then uses
+   the same build, test, and packaging steps as PR builds. Prerelease tags are not
+   supported yet. A failed build or test prevents release creation.
+4. Open **Releases** and review the new draft, its generated release notes, and
+   its two assets: `dookie-v0.1.0-x86_64-apple-darwin.tar.gz` and the corresponding
+   `.tar.gz.sha256` file. Publish the draft when ready. These release assets are
+   separate from expiring Actions artifacts and remain until deleted.
+
+Download both assets into the same directory, verify the checksum, then extract:
+
+```sh
+shasum -a 256 -c dookie-v0.1.0-x86_64-apple-darwin.tar.gz.sha256
+tar -xzf dookie-v0.1.0-x86_64-apple-darwin.tar.gz
+```
+
+The release job uses GitHub's built-in token with `contents: write`; PR builds
+have read-only repository permissions and cannot create releases. No personal
+access token or external storage is needed. The workflow does not overwrite an
+existing release: if an upload fails after draft creation, inspect the draft
+before retrying and explicitly remove an incomplete draft if appropriate. Do not
+move a published version tag to different source code.

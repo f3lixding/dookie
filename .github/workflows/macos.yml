@@ -1,16 +1,17 @@
-name: macOS build
+name: macOS build and release
 
 on:
   pull_request:
   push:
     branches: [master]
+    tags: ['v*']
 
 permissions:
   contents: read
 
 concurrency:
   group: macos-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref_type != 'tag' }}
 
 jobs:
   build:
@@ -38,6 +39,17 @@ jobs:
           rustc --version
           protoc --version
 
+      - name: Validate release version
+        if: github.ref_type == 'tag'
+        run: |
+          # Only stable vMAJOR.MINOR.PATCH tags matching both packages are released.
+          [[ "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          cargo metadata --locked --no-deps --format-version 1 |
+            jq -e --arg version "${GITHUB_REF_NAME#v}" '
+              [.packages[] | select(.name == "dookie_server" or .name == "dookie_cli_client")]
+              | length == 2 and all(.[]; .version == $version)
+            '
+
       - uses: Swatinem/rust-cache@e9d7b9f1e587218970671bac74e5511ed9506e6a # v2
         with:
           save-if: ${{ github.ref == 'refs/heads/master' }}
@@ -59,17 +71,56 @@ jobs:
       - name: Test workspace
         run: cargo test --release --locked --workspace --target x86_64-apple-darwin
 
-      - name: Archive binaries
+      - name: Package and verify archive
+        working-directory: ${{ runner.temp }}
         run: |
-          mkdir -p "$RUNNER_TEMP/dookie"
-          cp target/x86_64-apple-darwin/release/{dookie_server,dookie_cli_client} "$RUNNER_TEMP/dookie/"
-          cp README.md "$RUNNER_TEMP/dookie/"
-          tar -czf "$RUNNER_TEMP/dookie-x86_64-apple-darwin.tar.gz" -C "$RUNNER_TEMP" dookie
+          version="build-${GITHUB_SHA:0:7}"
+          if [[ "$GITHUB_REF_TYPE" == tag ]]; then
+            version="$GITHUB_REF_NAME"
+          fi
+          archive="dookie-$version-x86_64-apple-darwin.tar.gz"
+          mkdir -p dookie verify
+          cp "$GITHUB_WORKSPACE"/target/x86_64-apple-darwin/release/{dookie_server,dookie_cli_client} dookie/
+          cp "$GITHUB_WORKSPACE/README.md" dookie/
+          tar -czf "$archive" dookie
+          shasum -a 256 "$archive" > "$archive.sha256"
+          shasum -a 256 -c "$archive.sha256"
+          tar -xzf "$archive" -C verify
+          test -x verify/dookie/dookie_server
+          test -x verify/dookie/dookie_cli_client
+          verify/dookie/dookie_server --help
 
-      - name: Upload test build
+      - name: Upload build assets
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: dookie-x86_64-apple-darwin
-          path: ${{ runner.temp }}/dookie-x86_64-apple-darwin.tar.gz
+          path: |
+            ${{ runner.temp }}/dookie-*-x86_64-apple-darwin.tar.gz
+            ${{ runner.temp }}/dookie-*-x86_64-apple-darwin.tar.gz.sha256
           if-no-files-found: error
           retention-days: 14
+
+  release:
+    name: Create draft release
+    if: github.event_name == 'push' && github.ref_type == 'tag'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: dookie-x86_64-apple-darwin
+          path: dist
+
+      - name: Upload assets to a new draft release
+        working-directory: dist
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          sha256sum -c ./*.sha256
+          gh release create "$TAG" ./*.tar.gz ./*.sha256 \
+            --repo "$GITHUB_REPOSITORY" --verify-tag --draft \
+            --title "$TAG" --generate-notes
