@@ -56,13 +56,18 @@ impl IBundleClient for BundleClient {
     ) -> Result<reqwest::Response, Box<dyn Error + Send + Sync>> {
         let url = format!("http://localhost:{}{}", self.port, url);
         let msg_body: reqwest::Body = body.into();
+        let content_type = if url.ends_with("/api/v2/torrents/delete") {
+            "application/x-www-form-urlencoded"
+        } else {
+            "application/json"
+        };
 
         Ok(self
             .client
             .post(&url)
             .header(&self.token_name, &self.token_value)
             .header("Accept", "application/json")
-            .header("Content-Type", "application/json")
+            .header("Content-Type", content_type)
             .body::<reqwest::Body>(msg_body)
             .send()
             .await?)

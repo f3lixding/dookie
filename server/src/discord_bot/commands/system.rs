@@ -6,7 +6,14 @@ use std::{process::Output, time::Duration};
 use tokio::{process::Command, time};
 
 pub fn is_admin_command(name: &str) -> bool {
-    matches!(name, "docker_ps" | "restart_container" | "restart_services")
+    matches!(
+        name,
+        "docker_ps"
+            | "restart_container"
+            | "restart_services"
+            | "torrent_list"
+            | "torrent_delete"
+    )
 }
 
 pub fn register() -> Vec<CreateCommand> {
