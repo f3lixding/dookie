@@ -2,11 +2,13 @@ use serenity::all::CreateCommand;
 
 pub(crate) mod grant_access;
 pub(crate) mod media;
+pub(crate) mod qbit;
 pub(crate) mod system;
 
 pub fn get_create_commands() -> Vec<CreateCommand> {
     let mut commands = vec![grant_access::register()];
     commands.extend(media::register());
+    commands.extend(qbit::register());
     commands.extend(system::register());
     commands.push(CreateCommand::new("help").description("Show available bot commands"));
     commands

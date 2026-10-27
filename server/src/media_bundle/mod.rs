@@ -10,6 +10,8 @@ use qbit::*;
 use radarr::*;
 use sonarr::*;
 
+pub use qbit::TorrentInfo;
+
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
@@ -137,6 +139,7 @@ where
     plex_client: Plex<C>,
     radarr_client: Radarr<C>,
     sonarr_client: Sonarr<C>,
+    qbit_client: Qbit<C>,
 }
 
 unsafe impl<C> Send for MediaBundle<C> where C: IBundleClient {}
@@ -177,6 +180,12 @@ where
                 client.set_port(config.sonarr_port);
                 client.set_token(("X-Api-Key", config.sonarr_api_key.clone()));
                 Sonarr::new(client)
+            },
+            qbit_client: {
+                let mut client = client.clone();
+                client.set_port(config.qbit_torrent_port);
+                client.set_token(("X-Api-Key", config.qbit_torrent_api_key.clone()));
+                Qbit::from_bundle_client(client)
             },
         }
     }
@@ -269,6 +278,30 @@ where
             Ok(PlexOutput::StatusCode(code)) => Ok(reqwest::StatusCode::from_u16(code)?),
             Err(why) => Err(why),
             _ => Err("Unexpected output".into()),
+        }
+    }
+
+    pub async fn list_active_torrents(
+        &self,
+    ) -> Result<Vec<TorrentInfo>, Box<dyn Error + Send + Sync>> {
+        match self.qbit_client.make_call(QbitInput::ListActive).await? {
+            QbitOutput::Torrents(torrents) => Ok(torrents),
+            QbitOutput::Deleted => Err("Unexpected qBittorrent response".into()),
+        }
+    }
+
+    /// Removes the torrent and its downloaded files from disk.
+    pub async fn delete_torrent(
+        &self,
+        hash: &str,
+    ) -> Result<(), Box<dyn Error + Send + Sync>> {
+        match self
+            .qbit_client
+            .make_call(QbitInput::Delete(hash.to_string()))
+            .await?
+        {
+            QbitOutput::Deleted => Ok(()),
+            QbitOutput::Torrents(_) => Err("Unexpected qBittorrent response".into()),
         }
     }
 }

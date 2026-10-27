@@ -1,4 +1,4 @@
-use super::commands::{self, media, media::MediaKind, system};
+use super::commands::{self, media, media::MediaKind, qbit, system};
 use super::CommandError;
 use crate::{IBundleClient, MediaBundle};
 /// This is the discord bot that we will use for various purposes.
@@ -509,6 +509,10 @@ where
                         .await
                         .map_err(CommandError::SystemCommandError)
                 }
+                "torrent_list" => qbit::list(media_bundle).await.map_err(CommandError::from),
+                "torrent_delete" => qbit::delete(&options, media_bundle)
+                    .await
+                    .map_err(CommandError::from),
                 "help" => Ok(EditInteractionResponse::new().content(commands::help(is_admin))),
                 "grant_access" => commands::grant_access::run(&options, media_bundle)
                     .await
