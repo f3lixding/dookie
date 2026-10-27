@@ -8,7 +8,7 @@ use serenity::builder::{
 use serenity::model::application::{CommandOptionType, ResolvedOption, ResolvedValue};
 
 use crate::discord_bot::CommandError;
-use crate::{AddOutcome, IBundleClient, MediaBundle, MediaLookup};
+use crate::{AddOutcome, IBundleClient, MediaBundle, MediaLookup, Quality};
 
 const MAX_RESULTS: usize = 5;
 const MAX_OVERVIEW_CHARS: usize = 300;
@@ -145,10 +145,26 @@ pub async fn add<C: IBundleClient>(
             _ => None,
         })
         .ok_or(MediaCommandError::MissingOption(kind.id_option()))?;
+    let quality = options
+        .iter()
+        .find_map(|option| match option.value {
+            ResolvedValue::String(value) if option.name == "quality" => Some(value),
+            _ => None,
+        })
+        .ok_or(MediaCommandError::MissingOption("quality"))?;
+    let quality = match quality {
+        "HD-1080p" => Quality::Hd1080p,
+        "Ultra-HD" => Quality::UltraHd,
+        _ => {
+            return Err(MediaCommandError::RequestFailed(
+                "quality must be HD-1080p or Ultra-HD".to_string(),
+            ))
+        }
+    };
 
     let outcome = match kind {
-        MediaKind::Movie => media_bundle.add_movie(id).await,
-        MediaKind::Show => media_bundle.add_show(id).await,
+        MediaKind::Movie => media_bundle.add_movie(id, quality).await,
+        MediaKind::Show => media_bundle.add_show(id, quality).await,
     }
     .map_err(|why| MediaCommandError::RequestFailed(why.to_string()))?;
 
@@ -238,6 +254,16 @@ pub fn register() -> Vec<CreateCommand> {
                             ),
                         )
                         .min_int_value(1)
+                        .required(true),
+                    )
+                    .add_option(
+                        CreateCommandOption::new(
+                            CommandOptionType::String,
+                            "quality",
+                            "The quality profile to use",
+                        )
+                        .add_string_choice("HD-1080p", "HD-1080p")
+                        .add_string_choice("Ultra-HD", "Ultra-HD")
                         .required(true),
                     ),
             ]

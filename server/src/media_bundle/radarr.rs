@@ -1,5 +1,5 @@
 use crate::media_bundle::{
-    arr_util, AddOutcome, ArrImage, IBundleClient, MediaLookup, ServerEntity,
+    arr_util, AddOutcome, ArrImage, IBundleClient, MediaLookup, Quality, ServerEntity,
 };
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
@@ -43,7 +43,7 @@ impl From<Movie> for MediaLookup {
 pub(in crate::media_bundle) enum RadarrInput {
     Lookup(String),
     /// Adds (and monitors) the movie with the given tmdb id and starts searching for it.
-    Add(u64),
+    Add(u64, Quality),
 }
 
 pub(in crate::media_bundle) enum RadarrOutput {
@@ -88,7 +88,7 @@ where
                     arr_util::get_json(&self.client, &url).await?,
                 ))
             }
-            RadarrInput::Add(tmdb_id) => {
+            RadarrInput::Add(tmdb_id, quality) => {
                 // Unlike /movie/lookup/tmdb, this marks movies that are already in the library
                 let url = format!("/api/v3/movie/lookup?term=tmdb:{tmdb_id}");
                 let found: Vec<Movie> = arr_util::get_json(&self.client, &url).await?;
@@ -102,7 +102,7 @@ where
                     )));
                 }
 
-                let target = arr_util::default_add_target(&self.client).await?;
+                let target = arr_util::add_target(&self.client, quality).await?;
                 movie.rest.extend([
                     (
                         "qualityProfileId".to_string(),
