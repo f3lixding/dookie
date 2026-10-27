@@ -1156,6 +1156,10 @@ mod tests {
             unimplemented!()
         }
 
+        async fn delete(&self, _url: &str) -> Result<MockResponse, Box<dyn Error + Send + Sync>> {
+            unimplemented!()
+        }
+
         fn from_port(_port: u16) -> Self {
             MockClient::default()
         }

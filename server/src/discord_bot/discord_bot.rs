@@ -524,10 +524,16 @@ where
                 "add_movie" => media::add(MediaKind::Movie, &options, media_bundle)
                     .await
                     .map_err(CommandError::from),
+                "remove_movie" => media::remove(MediaKind::Movie, &options, media_bundle)
+                    .await
+                    .map_err(CommandError::from),
                 "search_show" => media::search(MediaKind::Show, &options, media_bundle)
                     .await
                     .map_err(CommandError::from),
                 "add_show" => media::add(MediaKind::Show, &options, media_bundle)
+                    .await
+                    .map_err(CommandError::from),
+                "remove_show" => media::remove(MediaKind::Show, &options, media_bundle)
                     .await
                     .map_err(CommandError::from),
                 name => {

@@ -22,6 +22,8 @@ pub(in crate::media_bundle) struct Series {
     #[serde(default, skip_serializing_if = "arr_util::is_zero")]
     id: u64,
     #[serde(default)]
+    pub(in crate::media_bundle) path: Option<String>,
+    #[serde(default)]
     images: Vec<ArrImage>,
     #[serde(flatten)]
     rest: Map<String, Value>,
@@ -44,11 +46,14 @@ pub(in crate::media_bundle) enum SonarrInput {
     Lookup(String),
     /// Adds (and monitors) the series with the given tvdb id and starts searching for it.
     Add(u64, Quality),
+    Remove(u64),
 }
 
 pub(in crate::media_bundle) enum SonarrOutput {
     Series(Vec<Series>),
     Added(AddOutcome),
+    Removed(Series),
+    NotTracked(Series),
 }
 
 #[derive(Default, Debug, Clone)]
@@ -119,6 +124,26 @@ where
                     arr_util::post_json(&self.client, "/api/v3/series", &series).await?;
 
                 Ok(SonarrOutput::Added(AddOutcome::Added(added.into())))
+            }
+            SonarrInput::Remove(tvdb_id) => {
+                let url = format!("/api/v3/series/lookup?term=tvdb:{tvdb_id}");
+                let lookup = arr_util::get_json::<C, Vec<Series>>(&self.client, &url)
+                    .await?
+                    .into_iter()
+                    .find(|series| series.tvdb_id == tvdb_id)
+                    .ok_or_else(|| format!("No show found with tvdb id {tvdb_id}"))?;
+                if lookup.id == 0 {
+                    return Ok(SonarrOutput::NotTracked(lookup));
+                }
+                let series: Series =
+                    arr_util::get_json(&self.client, &format!("/api/v3/series/{}", lookup.id))
+                        .await?;
+                arr_util::delete(
+                    &self.client,
+                    &format!("/api/v3/series/{}?deleteFiles=false", series.id),
+                )
+                .await?;
+                Ok(SonarrOutput::Removed(series))
             }
         }
     }

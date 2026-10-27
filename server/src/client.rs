@@ -72,4 +72,16 @@ impl IBundleClient for BundleClient {
             .send()
             .await?)
     }
+
+    #[allow(refining_impl_trait)]
+    async fn delete(&self, url: &str) -> Result<reqwest::Response, Box<dyn Error + Send + Sync>> {
+        let url = format!("http://localhost:{}{}", self.port, url);
+        Ok(self
+            .client
+            .delete(&url)
+            .header(&self.token_name, &self.token_value)
+            .header("Accept", "application/json")
+            .send()
+            .await?)
+    }
 }

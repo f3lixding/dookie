@@ -8,7 +8,7 @@ use serenity::builder::{
 use serenity::model::application::{CommandOptionType, ResolvedOption, ResolvedValue};
 
 use crate::discord_bot::CommandError;
-use crate::{AddOutcome, IBundleClient, MediaBundle, MediaLookup, Quality};
+use crate::{AddOutcome, IBundleClient, MediaBundle, MediaLookup, Quality, RemoveOutcome};
 
 const MAX_RESULTS: usize = 5;
 const MAX_OVERVIEW_CHARS: usize = 300;
@@ -192,6 +192,40 @@ pub async fn add<C: IBundleClient>(
         .embed(embed(kind, lookup)))
 }
 
+pub async fn remove<C: IBundleClient>(
+    kind: MediaKind,
+    options: &[ResolvedOption<'_>],
+    media_bundle: &MediaBundle<C>,
+) -> Result<EditInteractionResponse, MediaCommandError> {
+    let id = options
+        .iter()
+        .find_map(|option| match option.value {
+            ResolvedValue::Integer(id) if option.name == kind.id_option() => u64::try_from(id).ok(),
+            _ => None,
+        })
+        .ok_or(MediaCommandError::MissingOption(kind.id_option()))?;
+
+    let outcome = match kind {
+        MediaKind::Movie => media_bundle.remove_movie(id).await,
+        MediaKind::Show => media_bundle.remove_show(id).await,
+    }
+    .map_err(|why| MediaCommandError::RequestFailed(why.to_string()))?;
+
+    let content = match outcome {
+        RemoveOutcome::Removed(lookup) => format!(
+            "Removed **{}** from {} and cleaned up its files.",
+            display_title(&lookup),
+            kind.app()
+        ),
+        RemoveOutcome::NotTracked(lookup) => format!(
+            "**{}** is not tracked by {}; no files were removed.",
+            display_title(&lookup),
+            kind.app()
+        ),
+    };
+    Ok(EditInteractionResponse::new().content(content))
+}
+
 fn display_title(lookup: &MediaLookup) -> String {
     if lookup.year == 0 {
         lookup.title.clone()
@@ -264,6 +298,23 @@ pub fn register() -> Vec<CreateCommand> {
                         )
                         .add_string_choice("HD-1080p", "HD-1080p")
                         .add_string_choice("Ultra-HD", "Ultra-HD")
+                        .required(true),
+                    ),
+                CreateCommand::new(format!("remove_{noun}"))
+                    .description(format!(
+                        "Remove a {noun} from {} and clean up its files",
+                        kind.app()
+                    ))
+                    .add_option(
+                        CreateCommandOption::new(
+                            CommandOptionType::Integer,
+                            kind.id_option(),
+                            format!(
+                                "The {} of the {noun}, as shown by /search_{noun}",
+                                kind.id_option()
+                            ),
+                        )
+                        .min_int_value(1)
                         .required(true),
                     ),
             ]

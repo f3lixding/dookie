@@ -16,6 +16,7 @@ use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 use std::marker::Unpin;
+use std::path::{Path, PathBuf};
 
 use crate::Config;
 
@@ -51,6 +52,8 @@ pub trait IBundleClient: Unpin + Send + Sync + Clone + 'static {
         url: &str,
         body: impl Into<reqwest::Body> + Send + Sync,
     ) -> Result<impl BundleResponse, Box<dyn Error + Send + Sync>>;
+
+    async fn delete(&self, url: &str) -> Result<impl BundleResponse, Box<dyn Error + Send + Sync>>;
 }
 
 #[async_trait]
@@ -118,6 +121,12 @@ pub enum AddOutcome {
     AlreadyTracked(MediaLookup),
 }
 
+#[derive(Debug, Clone, PartialEq)]
+pub enum RemoveOutcome {
+    Removed(MediaLookup),
+    NotTracked(MediaLookup),
+}
+
 /// An image entry in radarr / sonarr resources.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -140,6 +149,7 @@ where
     radarr_client: Radarr<C>,
     sonarr_client: Sonarr<C>,
     qbit_client: Qbit<C>,
+    move_map: Vec<(PathBuf, PathBuf)>,
 }
 
 unsafe impl<C> Send for MediaBundle<C> where C: IBundleClient {}
@@ -187,6 +197,11 @@ where
                 client.set_token(("X-Api-Key", config.qbit_torrent_api_key.clone()));
                 Qbit::from_bundle_client(client)
             },
+            move_map: config
+                .move_map
+                .iter()
+                .map(|(src, dst)| (PathBuf::from(src.as_ref()), PathBuf::from(dst.as_ref())))
+                .collect(),
         }
     }
 
@@ -248,6 +263,66 @@ where
             SonarrOutput::Added(outcome) => Ok(outcome),
             _ => Err("Unexpected output".into()),
         }
+    }
+
+    pub async fn remove_movie(
+        &self,
+        tmdb_id: u64,
+    ) -> Result<RemoveOutcome, Box<dyn Error + Send + Sync>> {
+        match self
+            .radarr_client
+            .make_call(RadarrInput::Remove(tmdb_id))
+            .await?
+        {
+            RadarrOutput::Removed(lookup) => {
+                self.remove_media_files(lookup.path.as_deref()).await?;
+                Ok(RemoveOutcome::Removed(lookup.into()))
+            }
+            RadarrOutput::NotTracked(lookup) => Ok(RemoveOutcome::NotTracked(lookup.into())),
+            _ => Err("Unexpected output".into()),
+        }
+    }
+
+    pub async fn remove_show(
+        &self,
+        tvdb_id: u64,
+    ) -> Result<RemoveOutcome, Box<dyn Error + Send + Sync>> {
+        match self
+            .sonarr_client
+            .make_call(SonarrInput::Remove(tvdb_id))
+            .await?
+        {
+            SonarrOutput::Removed(lookup) => {
+                self.remove_media_files(lookup.path.as_deref()).await?;
+                Ok(RemoveOutcome::Removed(lookup.into()))
+            }
+            SonarrOutput::NotTracked(lookup) => Ok(RemoveOutcome::NotTracked(lookup.into())),
+            _ => Err("Unexpected output".into()),
+        }
+    }
+
+    async fn remove_media_files(
+        &self,
+        indexed_path: Option<&str>,
+    ) -> Result<(), Box<dyn Error + Send + Sync>> {
+        let Some(indexed_path) = indexed_path.filter(|path| !path.is_empty()) else {
+            return Ok(());
+        };
+        let indexed_path = Path::new(indexed_path);
+        let mut paths = vec![indexed_path.to_path_buf()];
+
+        for (local_root, das_root) in &self.move_map {
+            if let Ok(relative) = indexed_path.strip_prefix(das_root) {
+                if !relative.as_os_str().is_empty() {
+                    paths.push(local_root.join(relative));
+                }
+            }
+        }
+
+        for path in paths {
+            remove_path(&path).await?;
+        }
+        Ok(())
     }
 
     /// Refresh the plex library. Be careful when calling this method as a disconnected DAS would
@@ -397,6 +472,17 @@ pub(in crate::media_bundle) mod arr_util {
         parse_response(url, status, body.await?)
     }
 
+    pub async fn delete<C: IBundleClient>(
+        client: &C,
+        url: &str,
+    ) -> Result<(), Box<dyn Error + Send + Sync>> {
+        let response = client.delete(url).await?;
+        if !(200..300).contains(&response.get_statuscode()) {
+            return Err(format!("{url} responded with {}", response.get_statuscode()).into());
+        }
+        Ok(())
+    }
+
     /// Uses the named quality profile and the first root folder configured in radarr / sonarr.
     pub async fn add_target<C: IBundleClient>(
         client: &C,
@@ -418,6 +504,20 @@ pub(in crate::media_bundle) mod arr_util {
                 .path,
         })
     }
+}
+
+async fn remove_path(path: &Path) -> Result<(), Box<dyn Error + Send + Sync>> {
+    let metadata = match tokio::fs::symlink_metadata(path).await {
+        Ok(metadata) => metadata,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(()),
+        Err(error) => return Err(error.into()),
+    };
+    if metadata.file_type().is_dir() && !metadata.file_type().is_symlink() {
+        tokio::fs::remove_dir_all(path).await?;
+    } else {
+        tokio::fs::remove_file(path).await?;
+    }
+    Ok(())
 }
 
 /// A collection of utility functions for media bundles
@@ -566,6 +666,10 @@ mod arr_tests {
                 .push((url.to_string(), serde_json::from_slice(&body)?));
             Ok(MockResponse(body))
         }
+
+        async fn delete(&self, _url: &str) -> Result<MockResponse, Box<dyn Error + Send + Sync>> {
+            Ok(MockResponse(Vec::new()))
+        }
     }
 
     fn bundle_with(responses: HashMap<String, Value>) -> (MediaBundle<MockClient>, MockClient) {
@@ -639,5 +743,47 @@ mod arr_tests {
             matches!(outcome, AddOutcome::AlreadyTracked(show) if show.id == 81189 && show.tracked)
         );
         assert!(client.posted.lock().unwrap().is_empty());
+    }
+
+    #[tokio::test]
+    async fn remove_movie_deletes_indexer_entry_das_copy_and_local_symlink() {
+        use std::os::unix::fs::symlink;
+
+        let temporary = tempfile::tempdir().unwrap();
+        let local_root = temporary.path().join("local");
+        let das_root = temporary.path().join("das");
+        let movie_path = das_root.join("The Matrix");
+        std::fs::create_dir_all(&local_root).unwrap();
+        std::fs::create_dir_all(&movie_path).unwrap();
+        std::fs::write(movie_path.join("movie.mkv"), b"movie").unwrap();
+        symlink(&movie_path, local_root.join("The Matrix")).unwrap();
+
+        let responses = HashMap::from([
+            (
+                "/api/v3/movie/lookup?term=tmdb:603".to_string(),
+                json!([{ "title": "The Matrix", "tmdbId": 603, "id": 12 }]),
+            ),
+            (
+                "/api/v3/movie/12".to_string(),
+                json!({ "title": "The Matrix", "tmdbId": 603, "id": 12, "path": movie_path }),
+            ),
+        ]);
+        let mut config = Config::default();
+        config.move_map.insert(
+            local_root.to_string_lossy().into_owned().into(),
+            das_root.to_string_lossy().into_owned().into(),
+        );
+        let client = MockClient {
+            responses: Arc::new(responses),
+            ..Default::default()
+        };
+        let bundle = MediaBundle::from_client_with_config(client, &config);
+
+        let outcome = bundle.remove_movie(603).await.unwrap();
+
+        assert!(matches!(outcome, RemoveOutcome::Removed(movie) if movie.id == 603));
+        assert!(!movie_path.exists());
+        assert!(!local_root.join("The Matrix").exists());
+        assert!(std::fs::symlink_metadata(local_root.join("The Matrix")).is_err());
     }
 }

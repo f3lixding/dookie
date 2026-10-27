@@ -22,6 +22,8 @@ pub(in crate::media_bundle) struct Movie {
     #[serde(default, skip_serializing_if = "arr_util::is_zero")]
     id: u64,
     #[serde(default)]
+    pub(in crate::media_bundle) path: Option<String>,
+    #[serde(default)]
     images: Vec<ArrImage>,
     #[serde(flatten)]
     rest: Map<String, Value>,
@@ -44,11 +46,14 @@ pub(in crate::media_bundle) enum RadarrInput {
     Lookup(String),
     /// Adds (and monitors) the movie with the given tmdb id and starts searching for it.
     Add(u64, Quality),
+    Remove(u64),
 }
 
 pub(in crate::media_bundle) enum RadarrOutput {
     Movies(Vec<Movie>),
     Added(AddOutcome),
+    Removed(Movie),
+    NotTracked(Movie),
 }
 
 #[derive(Default, Debug, Clone)]
@@ -117,6 +122,26 @@ where
                     arr_util::post_json(&self.client, "/api/v3/movie", &movie).await?;
 
                 Ok(RadarrOutput::Added(AddOutcome::Added(added.into())))
+            }
+            RadarrInput::Remove(tmdb_id) => {
+                let url = format!("/api/v3/movie/lookup?term=tmdb:{tmdb_id}");
+                let lookup = arr_util::get_json::<C, Vec<Movie>>(&self.client, &url)
+                    .await?
+                    .into_iter()
+                    .find(|movie| movie.tmdb_id == tmdb_id)
+                    .ok_or_else(|| format!("No movie found with tmdb id {tmdb_id}"))?;
+                if lookup.id == 0 {
+                    return Ok(RadarrOutput::NotTracked(lookup));
+                }
+                let movie: Movie =
+                    arr_util::get_json(&self.client, &format!("/api/v3/movie/{}", lookup.id))
+                        .await?;
+                arr_util::delete(
+                    &self.client,
+                    &format!("/api/v3/movie/{}?deleteFiles=false", movie.id),
+                )
+                .await?;
+                Ok(RadarrOutput::Removed(movie))
             }
         }
     }

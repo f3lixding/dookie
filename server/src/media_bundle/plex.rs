@@ -340,6 +340,10 @@ mod tests {
         ) -> Result<reqwest::Response, Box<dyn Error + Send + Sync>> {
             todo!()
         }
+
+        async fn delete(&self, _url: &str) -> Result<MockResponse, Box<dyn Error + Send + Sync>> {
+            todo!()
+        }
     }
 
     #[test]

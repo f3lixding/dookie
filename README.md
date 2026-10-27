@@ -20,6 +20,8 @@ In the future, I want it to also do the following:
 - `/torrent_list` lists active qBittorrent items with progress and transfer speeds. `/torrent_delete hash:<hash>` removes an item and always deletes its files from disk; both commands require Discord Administrator permission.
 - `/restart_services` shuts down and reopens the native macOS Plex Media Server, Sonarr, Radarr, and Prowlarr apps. It sends SIGTERM, waits up to 30 seconds for each app to exit, then runs `open /Applications/<app>.app`. If an app is already stopped it is opened; if shutdown fails it is not opened again. Each app's outcome is reported separately, and failures do not prevent the remaining apps from being attempted. Reopening confirms launch, not API readiness.
 - `/help` lists the registered commands and their arguments, including the media search/add and access commands. Admin-only commands are shown only to administrators.
+- `/remove_movie tmdb_id:<ID>` removes a movie from Radarr and deletes its DAS copy plus its local symlink (or local, not-yet-moved copy).
+- `/remove_show tvdb_id:<ID>` removes the entire series from Sonarr and performs the same filesystem cleanup.
 
 The operational commands require Discord Administrator permission in the configured guild. Their replies and help are private. The bot must run as the macOS user who owns the apps and have `docker`, `pkill`, `pgrep`, and `open` on its PATH, with access to Docker Desktop. Restarts interrupt active streams or downloads; these commands do not use sudo or force-kill a service that refuses to shut down.
 
