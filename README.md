@@ -42,8 +42,8 @@ PR and branch builds use `build-<commit>` in the archive name. Actions artifacts
 are retained for 14 days; only version tags create GitHub Releases.
 
 Builds are not Developer ID signed or notarized, and macOS may require approval
-to run downloaded binaries. Configuration, credentials, automatic installation,
-and daemon startup are not included. To run the server with an existing config:
+to run downloaded binaries. Configuration, credentials, initial installation,
+and service-manager setup are not included. To run the server with an existing config:
 
 ```sh
 ./dookie/dookie_server --config_path /absolute/path/to/config.yaml
@@ -82,3 +82,46 @@ access token or external storage is needed. The workflow does not overwrite an
 existing release: if an upload fails after draft creation, inspect the draft
 before retrying and explicitly remove an incomplete draft if appropriate. Do not
 move a published version tag to different source code.
+
+## Automatic updates and restarts
+
+On Intel macOS, a server installed as a regular executable at
+`/usr/local/bin/dookie_server` checks this repository's **latest published stable
+GitHub Release** at startup and every 24 hours thereafter. Drafts, prereleases,
+equal versions, and downgrades are not installed. Running from another path or
+on another platform disables automatic updates; `--no-auto-update` disables them
+explicitly. The first installation of a version containing the updater is manual.
+
+The daemon's user needs write access to `/usr/local/bin` and its installed files;
+it never invokes `sudo`. The archive's `dookie_cli_client` is installed as
+`/usr/local/bin/dookiec`. The release asset names stay unchanged.
+
+An update verifies the SHA-256 checksum and Intel Mach-O binaries, stages both
+executables on the installation filesystem, and runs the new server's `--version`
+and `--check-config` against the current arguments. Only then does it wait for the
+move job to finish its current batch and stop. It renames the old executables to
+`dookie_server_bak` and `dookiec_bak`, installs the new pair, and uses Unix `exec`
+to replace itself. The PID, command-line arguments, environment, and working
+directory are preserved; there is no period with two daemons running jobs.
+
+The old socket and lock descriptors close on `exec`. Startup claims
+`/tmp/dookie.sock.lock` before starting any jobs and reclaims `/tmp/dookie.sock`
+only if it is a stale socket. On macOS, reclamation also requires the ownership
+record written by this version: a socket left by an older daemon may need one
+final manual removal **after stopping that daemon**. Subsequent restarts recover
+automatically. Live servers, regular files, and symlinks are preserved. Do not
+delete the lock file; it holds the ownership record and coordinates instances.
+
+Download, checksum, and preflight failures leave the current server untouched.
+Installation or `exec` failures roll back the binaries; after stopping the move
+job, the old server is restarted with a one-day update backoff. If filesystem
+errors prevent complete rollback, the daemon exits with a recovery error rather
+than starting a mismatched pair; restore the retained backups manually. Backups retain
+one generation. They are not a health-monitoring system: a crash after a successful
+`exec`, or a power loss between filesystem operations, can still require manual
+recovery. Stop the daemon, restore the `_bak` files, and restart with
+`--no-auto-update` while investigating a bad release. SHA-256 detects corruption;
+the updater trusts the repository's release publishers, not a separate signing key.
+
+`dookie_server --config_path /path/to/config.yaml --check-config` validates YAML
+without opening the socket or starting background jobs.

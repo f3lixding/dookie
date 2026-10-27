@@ -424,6 +424,7 @@ pub(in crate::media_bundle) mod bundle_util {
         const PROCESS_NAME: &'static str = "Application";
 
         #[test]
+        #[serial_test::serial(socket_lock_lifetime)]
         fn test_get_process_id() {
             let pid = get_process_id(PROCESS_NAME);
             assert!(pid.is_ok());

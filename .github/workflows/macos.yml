@@ -82,7 +82,7 @@ jobs:
           mkdir -p dookie verify
           cp "$GITHUB_WORKSPACE"/target/x86_64-apple-darwin/release/{dookie_server,dookie_cli_client} dookie/
           cp "$GITHUB_WORKSPACE/README.md" dookie/
-          tar -czf "$archive" dookie
+          COPYFILE_DISABLE=1 tar -czf "$archive" dookie
           shasum -a 256 "$archive" > "$archive.sha256"
           shasum -a 256 -c "$archive.sha256"
           tar -xzf "$archive" -C verify

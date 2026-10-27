@@ -29,6 +29,13 @@ tracing-subscriber = { workspace = true }
 tracing-appender = { workspace = true }
 notify = { workspace = true }
 serenity = { workspace = true }
+flate2 = { workspace = true }
+tar = { workspace = true }
+sha2 = { workspace = true }
+semver = { workspace = true }
+tempfile = { workspace = true }
+libc = { workspace = true }
+socket2 = { workspace = true }
 
 [build-dependencies]
 prost-build = { workspace = true }
