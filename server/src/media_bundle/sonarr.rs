@@ -1,5 +1,5 @@
 use crate::media_bundle::{
-    arr_util, AddOutcome, ArrImage, IBundleClient, MediaLookup, ServerEntity,
+    arr_util, AddOutcome, ArrImage, IBundleClient, MediaLookup, Quality, ServerEntity,
 };
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
@@ -43,7 +43,7 @@ impl From<Series> for MediaLookup {
 pub(in crate::media_bundle) enum SonarrInput {
     Lookup(String),
     /// Adds (and monitors) the series with the given tvdb id and starts searching for it.
-    Add(u64),
+    Add(u64, Quality),
 }
 
 pub(in crate::media_bundle) enum SonarrOutput {
@@ -88,7 +88,7 @@ where
                     arr_util::get_json(&self.client, &url).await?,
                 ))
             }
-            SonarrInput::Add(tvdb_id) => {
+            SonarrInput::Add(tvdb_id, quality) => {
                 let url = format!("/api/v3/series/lookup?term=tvdb:{tvdb_id}");
                 let found: Vec<Series> = arr_util::get_json(&self.client, &url).await?;
                 let mut series = found
@@ -101,7 +101,7 @@ where
                     )));
                 }
 
-                let target = arr_util::default_add_target(&self.client).await?;
+                let target = arr_util::add_target(&self.client, quality).await?;
                 series.rest.extend([
                     (
                         "qualityProfileId".to_string(),

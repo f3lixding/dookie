@@ -95,6 +95,21 @@ pub struct MediaLookup {
     pub tracked: bool,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Quality {
+    Hd1080p,
+    UltraHd,
+}
+
+impl Quality {
+    pub fn profile_name(self) -> &'static str {
+        match self {
+            Quality::Hd1080p => "HD-1080p",
+            Quality::UltraHd => "Ultra-HD",
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum AddOutcome {
     Added(MediaLookup),
@@ -184,10 +199,11 @@ where
     pub async fn add_movie(
         &self,
         tmdb_id: u64,
+        quality: Quality,
     ) -> Result<AddOutcome, Box<dyn Error + Send + Sync>> {
         match self
             .radarr_client
-            .make_call(RadarrInput::Add(tmdb_id))
+            .make_call(RadarrInput::Add(tmdb_id, quality))
             .await?
         {
             RadarrOutput::Added(outcome) => Ok(outcome),
@@ -210,10 +226,14 @@ where
     }
 
     /// Adds the show to sonarr (all seasons monitored) and kicks off a search for it.
-    pub async fn add_show(&self, tvdb_id: u64) -> Result<AddOutcome, Box<dyn Error + Send + Sync>> {
+    pub async fn add_show(
+        &self,
+        tvdb_id: u64,
+        quality: Quality,
+    ) -> Result<AddOutcome, Box<dyn Error + Send + Sync>> {
         match self
             .sonarr_client
-            .make_call(SonarrInput::Add(tvdb_id))
+            .make_call(SonarrInput::Add(tvdb_id, quality))
             .await?
         {
             SonarrOutput::Added(outcome) => Ok(outcome),
@@ -255,7 +275,7 @@ where
 
 /// Helpers shared by radarr and sonarr, which have near identical v3 APIs.
 pub(in crate::media_bundle) mod arr_util {
-    use super::{ArrImage, BundleResponse, IBundleClient};
+    use super::{ArrImage, BundleResponse, IBundleClient, Quality};
     use serde::{de::DeserializeOwned, Deserialize, Serialize};
     use std::error::Error;
 
@@ -268,6 +288,7 @@ pub(in crate::media_bundle) mod arr_util {
     #[derive(Deserialize)]
     struct QualityProfile {
         id: u64,
+        name: String,
     }
 
     #[derive(Deserialize)]
@@ -343,15 +364,20 @@ pub(in crate::media_bundle) mod arr_util {
         parse_response(url, status, body.await?)
     }
 
-    /// Uses the first quality profile and the first root folder configured in radarr / sonarr.
-    pub async fn default_add_target<C: IBundleClient>(
+    /// Uses the named quality profile and the first root folder configured in radarr / sonarr.
+    pub async fn add_target<C: IBundleClient>(
         client: &C,
+        quality: Quality,
     ) -> Result<AddTarget, Box<dyn Error + Send + Sync>> {
         let profiles: Vec<QualityProfile> = get_json(client, "/api/v3/qualityprofile").await?;
         let folders: Vec<RootFolder> = get_json(client, "/api/v3/rootfolder").await?;
 
         Ok(AddTarget {
-            quality_profile_id: profiles.first().ok_or("No quality profile configured")?.id,
+            quality_profile_id: profiles
+                .into_iter()
+                .find(|profile| profile.name == quality.profile_name())
+                .ok_or_else(|| format!("No {} quality profile configured", quality.profile_name()))?
+                .id,
             root_folder_path: folders
                 .into_iter()
                 .next()
@@ -522,7 +548,11 @@ mod arr_tests {
         HashMap::from([
             (
                 "/api/v3/qualityprofile".to_string(),
-                json!([{ "id": 4, "name": "HD-1080p" }, { "id": 1, "name": "Any" }]),
+                json!([
+                    { "id": 9, "name": "Ultra-HD" },
+                    { "id": 4, "name": "HD-1080p" },
+                    { "id": 1, "name": "Any" }
+                ]),
             ),
             (
                 "/api/v3/rootfolder".to_string(),
@@ -543,7 +573,7 @@ mod arr_tests {
         );
         let (bundle, client) = bundle_with(responses);
 
-        let outcome = bundle.add_movie(604).await.unwrap();
+        let outcome = bundle.add_movie(604, Quality::Hd1080p).await.unwrap();
 
         assert!(
             matches!(&outcome, AddOutcome::Added(movie) if movie.id == 604 && movie.year == 2003)
@@ -570,7 +600,7 @@ mod arr_tests {
         );
         let (bundle, client) = bundle_with(responses);
 
-        let outcome = bundle.add_show(81189).await.unwrap();
+        let outcome = bundle.add_show(81189, Quality::UltraHd).await.unwrap();
 
         assert!(
             matches!(outcome, AddOutcome::AlreadyTracked(show) if show.id == 81189 && show.tracked)
