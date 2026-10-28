@@ -11,6 +11,7 @@ pub fn get_create_commands() -> Vec<CreateCommand> {
     commands.extend(qbit::register());
     commands.extend(system::register());
     commands.push(CreateCommand::new("help").description("Show available bot commands"));
+    commands.push(CreateCommand::new("version").description("Show the current Dookie version"));
     commands
 }
 

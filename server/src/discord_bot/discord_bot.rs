@@ -290,6 +290,8 @@ where
                     .await
                     .map_err(CommandError::from),
                 "help" => Ok(EditInteractionResponse::new().content(commands::help(is_admin))),
+                "version" => Ok(EditInteractionResponse::new()
+                    .content(format!("Dookie version {}", env!("CARGO_PKG_VERSION")))),
                 "grant_access" => commands::grant_access::run(&options, media_bundle)
                     .await
                     .map(|content| EditInteractionResponse::new().content(content))
