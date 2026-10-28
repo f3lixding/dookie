@@ -425,6 +425,14 @@ where
         missing_movies: &mut std::collections::HashMap<u64, u8>,
         missing_shows: &mut std::collections::HashMap<u64, u8>,
     ) -> Result<(), Box<dyn Error + Send + Sync>> {
+        match self.plex_client.make_call(PlexInput::CheckAvailable).await? {
+            PlexOutput::StatusCode(status) if (200..300).contains(&status) => {}
+            PlexOutput::StatusCode(status) => {
+                return Err(format!("Plex availability check returned HTTP {status}").into())
+            }
+            _ => return Err("Unexpected Plex availability response".into()),
+        }
+
         let plex_movies = match self.plex_client.make_call(PlexInput::GetAllMovies).await? {
             PlexOutput::MovieList(items) => items
                 .into_iter()

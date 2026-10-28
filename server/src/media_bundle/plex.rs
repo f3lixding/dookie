@@ -61,6 +61,7 @@ pub(in crate::media_bundle) enum MediaType {
 }
 
 pub(in crate::media_bundle) enum PlexInput {
+    CheckAvailable,
     GetSessionHistory(usize),
     GetAllShows,
     GetAllMovies,
@@ -188,6 +189,10 @@ where
         input: Self::Input,
     ) -> Result<Self::Output, Box<dyn Error + Send + Sync>> {
         match input {
+            PlexInput::CheckAvailable => {
+                let response = self.client.get("/identity").await?;
+                Ok(PlexOutput::StatusCode(response.get_statuscode()))
+            }
             PlexInput::GetSessionHistory(id) => {
                 static url: &'static str = "/status/sessions/history/all";
                 let resp = self.client.get(url).await?;
