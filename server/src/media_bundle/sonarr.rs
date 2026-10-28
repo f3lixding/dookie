@@ -21,35 +21,12 @@ pub(in crate::media_bundle) struct Series {
     /// Sonarr's own id. It is only non zero when the series is already in the library.
     #[serde(default, skip_serializing_if = "arr_util::is_zero")]
     id: u64,
-    #[serde(default, skip_serializing)]
-    statistics: Option<SeriesStatistics>,
     #[serde(default)]
     pub(in crate::media_bundle) path: Option<String>,
     #[serde(default)]
     images: Vec<ArrImage>,
     #[serde(flatten)]
     rest: Map<String, Value>,
-}
-
-impl Series {
-    pub(in crate::media_bundle) fn tvdb_id(&self) -> u64 {
-        self.tvdb_id
-    }
-
-    pub(in crate::media_bundle) fn has_files(&self) -> bool {
-        self.statistics
-            .as_ref()
-            .is_some_and(|stats| stats.episode_file_count > 0 || stats.size_on_disk > 0)
-    }
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct SeriesStatistics {
-    #[serde(default)]
-    episode_file_count: u64,
-    #[serde(default)]
-    size_on_disk: u64,
 }
 
 impl From<Series> for MediaLookup {
@@ -67,7 +44,6 @@ impl From<Series> for MediaLookup {
 
 pub(in crate::media_bundle) enum SonarrInput {
     Lookup(String),
-    List,
     /// Adds (and monitors) the series with the given tvdb id and starts searching for it.
     Add(u64, Quality),
     Remove(u64),
@@ -111,9 +87,6 @@ where
         input: Self::Input,
     ) -> Result<Self::Output, Box<dyn Error + Send + Sync>> {
         match input {
-            SonarrInput::List => Ok(SonarrOutput::Series(
-                arr_util::get_json(&self.client, "/api/v3/series").await?,
-            )),
             SonarrInput::Lookup(term) => {
                 let url = arr_util::with_query("/api/v3/series/lookup", "term", &term)?;
                 Ok(SonarrOutput::Series(

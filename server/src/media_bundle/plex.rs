@@ -61,10 +61,7 @@ pub(in crate::media_bundle) enum MediaType {
 }
 
 pub(in crate::media_bundle) enum PlexInput {
-    CheckAvailable,
     GetSessionHistory(usize),
-    GetAllShows,
-    GetAllMovies,
     RefreshLibrary(usize),
     GrantLibAccess(PlexAccessMainBody),
 }
@@ -95,8 +92,6 @@ impl PlexInput {
 pub(in crate::media_bundle) enum PlexOutput {
     // TODO: introduce a real struct for various objects
     SessionHistory(Vec<Metadata>),
-    ShowList(Vec<Metadata>),
-    MovieList(Vec<Metadata>),
     StatusCode(u16),
 }
 
@@ -189,10 +184,6 @@ where
         input: Self::Input,
     ) -> Result<Self::Output, Box<dyn Error + Send + Sync>> {
         match input {
-            PlexInput::CheckAvailable => {
-                let response = self.client.get("/identity").await?;
-                Ok(PlexOutput::StatusCode(response.get_statuscode()))
-            }
             PlexInput::GetSessionHistory(id) => {
                 static url: &'static str = "/status/sessions/history/all";
                 let resp = self.client.get(url).await?;
@@ -200,18 +191,6 @@ where
                 let container: MediaContainer = serde_json::from_slice(&body_as_bytes)?;
 
                 Ok(PlexOutput::SessionHistory(vec![]))
-            }
-            PlexInput::GetAllShows => {
-                let container: OuterMediaContainer =
-                    crate::media_bundle::arr_util::get_json(&self.client, "/library/sections/2/all")
-                        .await?;
-                Ok(PlexOutput::ShowList(container.media_container.metadata))
-            }
-            PlexInput::GetAllMovies => {
-                let container: OuterMediaContainer =
-                    crate::media_bundle::arr_util::get_json(&self.client, "/library/sections/1/all")
-                        .await?;
-                Ok(PlexOutput::MovieList(container.media_container.metadata))
             }
             PlexInput::RefreshLibrary(id) => {
                 let url = format!("/library/sections/{}/refresh", id);

@@ -21,24 +21,12 @@ pub(in crate::media_bundle) struct Movie {
     /// Radarr's own id. It is only non zero when the movie is already in the library.
     #[serde(default, skip_serializing_if = "arr_util::is_zero")]
     id: u64,
-    #[serde(default, skip_serializing)]
-    has_file: bool,
     #[serde(default)]
     pub(in crate::media_bundle) path: Option<String>,
     #[serde(default)]
     images: Vec<ArrImage>,
     #[serde(flatten)]
     rest: Map<String, Value>,
-}
-
-impl Movie {
-    pub(in crate::media_bundle) fn tmdb_id(&self) -> u64 {
-        self.tmdb_id
-    }
-
-    pub(in crate::media_bundle) fn has_file(&self) -> bool {
-        self.has_file
-    }
 }
 
 impl From<Movie> for MediaLookup {
@@ -56,7 +44,6 @@ impl From<Movie> for MediaLookup {
 
 pub(in crate::media_bundle) enum RadarrInput {
     Lookup(String),
-    List,
     /// Adds (and monitors) the movie with the given tmdb id and starts searching for it.
     Add(u64, Quality),
     Remove(u64),
@@ -100,9 +87,6 @@ where
         input: Self::Input,
     ) -> Result<Self::Output, Box<dyn Error + Send + Sync>> {
         match input {
-            RadarrInput::List => Ok(RadarrOutput::Movies(
-                arr_util::get_json(&self.client, "/api/v3/movie").await?,
-            )),
             RadarrInput::Lookup(term) => {
                 let url = arr_util::with_query("/api/v3/movie/lookup", "term", &term)?;
                 Ok(RadarrOutput::Movies(

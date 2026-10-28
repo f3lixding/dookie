@@ -14,7 +14,6 @@ pub use qbit::TorrentInfo;
 
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
-use std::collections::HashSet;
 use std::error::Error;
 use std::marker::Unpin;
 use std::path::{Path, PathBuf};
@@ -172,8 +171,6 @@ impl<C> MediaBundle<C>
 where
     C: IBundleClient,
 {
-    const DELETION_CONFIRMATIONS: u8 = 2;
-
     pub fn from_client_with_config(client: C, config: &Config) -> Self {
         let Config {
             plex_api_key,
@@ -402,197 +399,6 @@ where
         }
     }
 
-    /// Reconciles Plex against the indexers. Plex has no deletion webhook, so a missing item must
-    /// be observed twice before the existing indexer and filesystem removal routine is invoked.
-    pub async fn run_deletion_poller(self) -> ! {
-        let mut interval = tokio::time::interval(std::time::Duration::from_secs(60));
-        let mut missing_movies = std::collections::HashMap::new();
-        let mut missing_shows = std::collections::HashMap::new();
-        let mut known_movies_with_files = HashSet::new();
-        let mut known_shows_with_files = HashSet::new();
-
-        loop {
-            interval.tick().await;
-            if let Err(error) = self
-                .reconcile_deleted_media(
-                    &mut missing_movies,
-                    &mut missing_shows,
-                    &mut known_movies_with_files,
-                    &mut known_shows_with_files,
-                )
-                .await
-            {
-                tracing::error!("Plex deletion reconciliation failed: {error}");
-            }
-        }
-    }
-
-    async fn reconcile_deleted_media(
-        &self,
-        missing_movies: &mut std::collections::HashMap<u64, u8>,
-        missing_shows: &mut std::collections::HashMap<u64, u8>,
-        known_movies_with_files: &mut HashSet<u64>,
-        known_shows_with_files: &mut HashSet<u64>,
-    ) -> Result<(), Box<dyn Error + Send + Sync>> {
-        match self.plex_client.make_call(PlexInput::CheckAvailable).await? {
-            PlexOutput::StatusCode(status) if (200..300).contains(&status) => {}
-            PlexOutput::StatusCode(status) => {
-                return Err(format!("Plex availability check returned HTTP {status}").into())
-            }
-            _ => return Err("Unexpected Plex availability response".into()),
-        }
-
-        let plex_movies = match self.plex_client.make_call(PlexInput::GetAllMovies).await? {
-            PlexOutput::MovieList(items) => items
-                .into_iter()
-                .flat_map(|item| {
-                    item.external_ids
-                        .into_iter()
-                        .filter_map(|id| id.id.strip_prefix("tmdb://").and_then(|id| id.parse().ok()))
-                        .collect::<Vec<u64>>()
-                })
-                .collect::<HashSet<_>>(),
-            _ => return Err("Unexpected Plex movie response".into()),
-        };
-        let radarr_movies = match self.radarr_client.make_call(RadarrInput::List).await? {
-            RadarrOutput::Movies(items) => items,
-            _ => return Err("Unexpected Radarr movie response".into()),
-        };
-
-        let mut missing_movie_ids = HashSet::new();
-        let current_movie_ids = radarr_movies
-            .iter()
-            .map(Movie::tmdb_id)
-            .collect::<HashSet<_>>();
-        known_movies_with_files.retain(|id| current_movie_ids.contains(id));
-        for movie in &radarr_movies {
-            let has_files = movie.has_file()
-                || self.has_media_files(movie.path.as_deref()).await;
-            if has_files {
-                known_movies_with_files.insert(movie.tmdb_id());
-            }
-            if !plex_movies.contains(&movie.tmdb_id())
-                && known_movies_with_files.contains(&movie.tmdb_id())
-            {
-                missing_movie_ids.insert(movie.tmdb_id());
-            }
-        }
-
-        let plex_shows = match self.plex_client.make_call(PlexInput::GetAllShows).await? {
-            PlexOutput::ShowList(items) => items
-                .into_iter()
-                .flat_map(|item| {
-                    item.external_ids
-                        .into_iter()
-                        .filter_map(|id| id.id.strip_prefix("tvdb://").and_then(|id| id.parse().ok()))
-                        .collect::<Vec<u64>>()
-                })
-                .collect::<HashSet<_>>(),
-            _ => return Err("Unexpected Plex show response".into()),
-        };
-        let sonarr_shows = match self.sonarr_client.make_call(SonarrInput::List).await? {
-            SonarrOutput::Series(items) => items,
-            _ => return Err("Unexpected Sonarr show response".into()),
-        };
-
-        let mut missing_show_ids = HashSet::new();
-        let current_show_ids = sonarr_shows
-            .iter()
-            .map(Series::tvdb_id)
-            .collect::<HashSet<_>>();
-        known_shows_with_files.retain(|id| current_show_ids.contains(id));
-        for show in &sonarr_shows {
-            let has_files = show.has_files()
-                || self.has_media_files(show.path.as_deref()).await;
-            if has_files {
-                known_shows_with_files.insert(show.tvdb_id());
-            }
-            if !plex_shows.contains(&show.tvdb_id())
-                && known_shows_with_files.contains(&show.tvdb_id())
-            {
-                missing_show_ids.insert(show.tvdb_id());
-            }
-        }
-
-        // Only update confirmation state after every source has been read successfully. A
-        // transient failure must not turn a partial snapshot into a deletion decision.
-        self.reconcile_missing_movies(&missing_movie_ids, missing_movies).await;
-        missing_movies.retain(|id, _| missing_movie_ids.contains(id));
-        self.reconcile_missing_shows(&missing_show_ids, missing_shows).await;
-        missing_shows.retain(|id, _| missing_show_ids.contains(id));
-        Ok(())
-    }
-
-    async fn has_media_files(&self, indexed_path: Option<&str>) -> bool {
-        let Some(indexed_path) = indexed_path.filter(|path| !path.is_empty()) else {
-            return false;
-        };
-        let indexed_path = Path::new(indexed_path);
-        let mut paths = vec![indexed_path.to_path_buf()];
-
-        for (local_root, das_root) in &self.move_map {
-            if let Ok(relative) = indexed_path.strip_prefix(local_root) {
-                if !relative.as_os_str().is_empty() {
-                    paths.push(das_root.join(relative));
-                }
-            } else if let Ok(relative) = indexed_path.strip_prefix(das_root) {
-                if !relative.as_os_str().is_empty() {
-                    paths.push(local_root.join(relative));
-                }
-            }
-        }
-
-        for path in paths {
-            if contains_media_file(&path).await {
-                return true;
-            }
-        }
-        false
-    }
-
-    async fn reconcile_missing_movies(
-        &self,
-        missing_ids: &HashSet<u64>,
-        confirmations: &mut std::collections::HashMap<u64, u8>,
-    ) {
-        for id in missing_ids {
-            let count = confirmations.entry(*id).or_default();
-            *count = count.saturating_add(1);
-            if *count >= Self::DELETION_CONFIRMATIONS {
-                match self.remove_movie(*id).await {
-                    Ok(_) => {
-                        tracing::info!("Removed Plex-deleted movie with TMDB id {id}");
-                        confirmations.remove(id);
-                    }
-                    Err(error) => tracing::error!(
-                        "Failed to remove Plex-deleted movie with TMDB id {id}: {error}"
-                    ),
-                }
-            }
-        }
-    }
-
-    async fn reconcile_missing_shows(
-        &self,
-        missing_ids: &HashSet<u64>,
-        confirmations: &mut std::collections::HashMap<u64, u8>,
-    ) {
-        for id in missing_ids {
-            let count = confirmations.entry(*id).or_default();
-            *count = count.saturating_add(1);
-            if *count >= Self::DELETION_CONFIRMATIONS {
-                match self.remove_show(*id).await {
-                    Ok(_) => {
-                        tracing::info!("Removed Plex-deleted series with TVDB id {id}");
-                        confirmations.remove(id);
-                    }
-                    Err(error) => tracing::error!(
-                        "Failed to remove Plex-deleted series with TVDB id {id}: {error}"
-                    ),
-                }
-            }
-        }
-    }
 }
 
 /// Helpers shared by radarr and sonarr, which have near identical v3 APIs.
@@ -732,29 +538,6 @@ async fn remove_path(path: &Path) -> Result<(), Box<dyn Error + Send + Sync>> {
         tokio::fs::remove_file(path).await?;
     }
     Ok(())
-}
-
-async fn contains_media_file(path: &Path) -> bool {
-    let mut paths = vec![path.to_path_buf()];
-    while let Some(path) = paths.pop() {
-        let Ok(metadata) = tokio::fs::metadata(&path).await else {
-            continue;
-        };
-        if metadata.is_file() {
-            return true;
-        }
-        if !metadata.is_dir() {
-            continue;
-        }
-
-        let Ok(mut entries) = tokio::fs::read_dir(path).await else {
-            continue;
-        };
-        while let Ok(Some(entry)) = entries.next_entry().await {
-            paths.push(entry.path());
-        }
-    }
-    false
 }
 
 /// A collection of utility functions for media bundles
@@ -1033,84 +816,4 @@ mod arr_tests {
         assert!(!movie_path.exists());
     }
 
-    #[tokio::test]
-    async fn empty_indexer_path_is_not_considered_media() {
-        let temporary = tempfile::tempdir().unwrap();
-        assert!(!contains_media_file(temporary.path()).await);
-
-        std::fs::write(temporary.path().join("movie.mkv"), b"movie").unwrap();
-        assert!(contains_media_file(temporary.path()).await);
-    }
-
-    fn reconciliation_responses(plex_shows: Value) -> HashMap<String, Value> {
-        HashMap::from([
-            ("/identity".to_string(), json!({})),
-            (
-                "/library/sections/1/all".to_string(),
-                json!({ "MediaContainer": { "size": 0, "Metadata": [] } }),
-            ),
-            (
-                "/library/sections/2/all".to_string(),
-                json!({ "MediaContainer": { "size": plex_shows.as_array().map_or(0, Vec::len), "Metadata": plex_shows } }),
-            ),
-            ("/api/v3/movie".to_string(), json!([])),
-            (
-                "/api/v3/series".to_string(),
-                json!([{
-                    "title": "Example Show",
-                    "year": 2020,
-                    "tvdbId": 81189,
-                    "id": 7,
-                    "statistics": { "episodeFileCount": 3, "sizeOnDisk": 100 }
-                }]),
-            ),
-        ])
-    }
-
-    #[tokio::test]
-    async fn episode_deletion_does_not_mark_the_series_missing() {
-        let plex_show = json!([{
-            "title": "Example Show",
-            "type": "show",
-            "Guid": [{ "id": "tvdb://81189" }]
-        }]);
-        let (bundle, _) = bundle_with(reconciliation_responses(plex_show));
-        let mut missing_movies = HashMap::new();
-        let mut missing_shows = HashMap::new();
-        let mut known_movies_with_files = HashSet::new();
-        let mut known_shows_with_files = HashSet::new();
-
-        bundle
-            .reconcile_deleted_media(
-                &mut missing_movies,
-                &mut missing_shows,
-                &mut known_movies_with_files,
-                &mut known_shows_with_files,
-            )
-            .await
-            .unwrap();
-
-        assert!(missing_shows.is_empty());
-    }
-
-    #[tokio::test]
-    async fn whole_series_deletion_marks_the_series_missing() {
-        let (bundle, _) = bundle_with(reconciliation_responses(json!([])));
-        let mut missing_movies = HashMap::new();
-        let mut missing_shows = HashMap::new();
-        let mut known_movies_with_files = HashSet::new();
-        let mut known_shows_with_files = HashSet::new();
-
-        bundle
-            .reconcile_deleted_media(
-                &mut missing_movies,
-                &mut missing_shows,
-                &mut known_movies_with_files,
-                &mut known_shows_with_files,
-            )
-            .await
-            .unwrap();
-
-        assert_eq!(missing_shows.get(&81189), Some(&1));
-    }
 }

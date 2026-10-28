@@ -1033,8 +1033,6 @@ pub mod auto_torrent_shutoff_job {
             assert!(media_bundle.is_some()); // for now we would assume that this is a must
             let media_bundle = media_bundle.unwrap();
 
-            tokio::spawn(media_bundle.clone().run_deletion_poller());
-
             let mut dh_builder = DiscordHandlerBuilder::<M>::default();
             dh_builder.set_permitted_guilds(this.permitted_guilds.clone());
             dh_builder.set_guild_config(this.guild_config.take().expect("No guild config found"));
