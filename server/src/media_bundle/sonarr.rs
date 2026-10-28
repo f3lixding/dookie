@@ -21,6 +21,8 @@ pub(in crate::media_bundle) struct Series {
     /// Sonarr's own id. It is only non zero when the series is already in the library.
     #[serde(default, skip_serializing_if = "arr_util::is_zero")]
     id: u64,
+    #[serde(default, skip_serializing)]
+    statistics: Option<SeriesStatistics>,
     #[serde(default)]
     pub(in crate::media_bundle) path: Option<String>,
     #[serde(default)]
@@ -33,6 +35,21 @@ impl Series {
     pub(in crate::media_bundle) fn tvdb_id(&self) -> u64 {
         self.tvdb_id
     }
+
+    pub(in crate::media_bundle) fn has_files(&self) -> bool {
+        self.statistics
+            .as_ref()
+            .is_some_and(|stats| stats.episode_file_count > 0 || stats.size_on_disk > 0)
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct SeriesStatistics {
+    #[serde(default)]
+    episode_file_count: u64,
+    #[serde(default)]
+    size_on_disk: u64,
 }
 
 impl From<Series> for MediaLookup {

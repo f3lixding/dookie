@@ -408,11 +408,18 @@ where
         let mut interval = tokio::time::interval(std::time::Duration::from_secs(60));
         let mut missing_movies = std::collections::HashMap::new();
         let mut missing_shows = std::collections::HashMap::new();
+        let mut known_movies_with_files = HashSet::new();
+        let mut known_shows_with_files = HashSet::new();
 
         loop {
             interval.tick().await;
             if let Err(error) = self
-                .reconcile_deleted_media(&mut missing_movies, &mut missing_shows)
+                .reconcile_deleted_media(
+                    &mut missing_movies,
+                    &mut missing_shows,
+                    &mut known_movies_with_files,
+                    &mut known_shows_with_files,
+                )
                 .await
             {
                 tracing::error!("Plex deletion reconciliation failed: {error}");
@@ -424,6 +431,8 @@ where
         &self,
         missing_movies: &mut std::collections::HashMap<u64, u8>,
         missing_shows: &mut std::collections::HashMap<u64, u8>,
+        known_movies_with_files: &mut HashSet<u64>,
+        known_shows_with_files: &mut HashSet<u64>,
     ) -> Result<(), Box<dyn Error + Send + Sync>> {
         match self.plex_client.make_call(PlexInput::CheckAvailable).await? {
             PlexOutput::StatusCode(status) if (200..300).contains(&status) => {}
@@ -451,9 +460,19 @@ where
         };
 
         let mut missing_movie_ids = HashSet::new();
+        let current_movie_ids = radarr_movies
+            .iter()
+            .map(Movie::tmdb_id)
+            .collect::<HashSet<_>>();
+        known_movies_with_files.retain(|id| current_movie_ids.contains(id));
         for movie in &radarr_movies {
+            let has_files = movie.has_file()
+                || self.has_media_files(movie.path.as_deref()).await;
+            if has_files {
+                known_movies_with_files.insert(movie.tmdb_id());
+            }
             if !plex_movies.contains(&movie.tmdb_id())
-                && self.has_media_files(movie.path.as_deref()).await
+                && known_movies_with_files.contains(&movie.tmdb_id())
             {
                 missing_movie_ids.insert(movie.tmdb_id());
             }
@@ -477,9 +496,19 @@ where
         };
 
         let mut missing_show_ids = HashSet::new();
+        let current_show_ids = sonarr_shows
+            .iter()
+            .map(Series::tvdb_id)
+            .collect::<HashSet<_>>();
+        known_shows_with_files.retain(|id| current_show_ids.contains(id));
         for show in &sonarr_shows {
+            let has_files = show.has_files()
+                || self.has_media_files(show.path.as_deref()).await;
+            if has_files {
+                known_shows_with_files.insert(show.tvdb_id());
+            }
             if !plex_shows.contains(&show.tvdb_id())
-                && self.has_media_files(show.path.as_deref()).await
+                && known_shows_with_files.contains(&show.tvdb_id())
             {
                 missing_show_ids.insert(show.tvdb_id());
             }

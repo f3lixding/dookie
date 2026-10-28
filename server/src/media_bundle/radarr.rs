@@ -21,6 +21,8 @@ pub(in crate::media_bundle) struct Movie {
     /// Radarr's own id. It is only non zero when the movie is already in the library.
     #[serde(default, skip_serializing_if = "arr_util::is_zero")]
     id: u64,
+    #[serde(default, skip_serializing)]
+    has_file: bool,
     #[serde(default)]
     pub(in crate::media_bundle) path: Option<String>,
     #[serde(default)]
@@ -32,6 +34,10 @@ pub(in crate::media_bundle) struct Movie {
 impl Movie {
     pub(in crate::media_bundle) fn tmdb_id(&self) -> u64 {
         self.tmdb_id
+    }
+
+    pub(in crate::media_bundle) fn has_file(&self) -> bool {
+        self.has_file
     }
 }
 
