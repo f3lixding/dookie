@@ -444,7 +444,9 @@ where
 
         let mut missing_movie_ids = HashSet::new();
         for movie in &radarr_movies {
-            if self.has_media_files(movie.path.as_deref()).await && !plex_movies.contains(&movie.tmdb_id()) {
+            if !plex_movies.contains(&movie.tmdb_id())
+                && self.has_media_files(movie.path.as_deref()).await
+            {
                 missing_movie_ids.insert(movie.tmdb_id());
             }
         }
@@ -468,7 +470,9 @@ where
 
         let mut missing_show_ids = HashSet::new();
         for show in &sonarr_shows {
-            if self.has_media_files(show.path.as_deref()).await && !plex_shows.contains(&show.tvdb_id()) {
+            if !plex_shows.contains(&show.tvdb_id())
+                && self.has_media_files(show.path.as_deref()).await
+            {
                 missing_show_ids.insert(show.tvdb_id());
             }
         }
