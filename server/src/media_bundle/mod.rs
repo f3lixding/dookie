@@ -312,7 +312,11 @@ where
         let mut paths = vec![indexed_path.to_path_buf()];
 
         for (local_root, das_root) in &self.move_map {
-            if let Ok(relative) = indexed_path.strip_prefix(das_root) {
+            if let Ok(relative) = indexed_path.strip_prefix(local_root) {
+                if !relative.as_os_str().is_empty() {
+                    paths.push(das_root.join(relative));
+                }
+            } else if let Ok(relative) = indexed_path.strip_prefix(das_root) {
                 if !relative.as_os_str().is_empty() {
                     paths.push(local_root.join(relative));
                 }
@@ -785,5 +789,48 @@ mod arr_tests {
         assert!(!movie_path.exists());
         assert!(!local_root.join("The Matrix").exists());
         assert!(std::fs::symlink_metadata(local_root.join("The Matrix")).is_err());
+    }
+
+    #[tokio::test]
+    async fn remove_movie_deletes_das_copy_when_indexer_reports_local_symlink() {
+        use std::os::unix::fs::symlink;
+
+        let temporary = tempfile::tempdir().unwrap();
+        let local_root = temporary.path().join("local");
+        let das_root = temporary.path().join("das");
+        let movie_path = das_root.join("The Matrix");
+        let local_path = local_root.join("The Matrix");
+        std::fs::create_dir_all(&movie_path).unwrap();
+        std::fs::write(movie_path.join("movie.mkv"), b"movie").unwrap();
+        std::fs::create_dir_all(&local_root).unwrap();
+        symlink(&movie_path, &local_path).unwrap();
+
+        let responses = HashMap::from([
+            (
+                "/api/v3/movie/lookup?term=tmdb:603".to_string(),
+                json!([{ "title": "The Matrix", "tmdbId": 603, "id": 12 }]),
+            ),
+            (
+                "/api/v3/movie/12".to_string(),
+                json!({ "title": "The Matrix", "tmdbId": 603, "id": 12, "path": local_path }),
+            ),
+        ]);
+        let mut config = Config::default();
+        config.move_map.insert(
+            local_root.to_string_lossy().into_owned().into(),
+            das_root.to_string_lossy().into_owned().into(),
+        );
+        let bundle = MediaBundle::from_client_with_config(
+            MockClient {
+                responses: Arc::new(responses),
+                ..Default::default()
+            },
+            &config,
+        );
+
+        bundle.remove_movie(603).await.unwrap();
+
+        assert!(std::fs::symlink_metadata(&local_path).is_err());
+        assert!(!movie_path.exists());
     }
 }
