@@ -62,6 +62,8 @@ enum MediaType {
     Movie,
     #[serde(rename = "show")]
     Show,
+    #[serde(rename = "episode")]
+    Episode,
 }
 
 impl std::fmt::Display for MediaType {
@@ -69,6 +71,7 @@ impl std::fmt::Display for MediaType {
         match self {
             MediaType::Movie => write!(f, "movie"),
             MediaType::Show => write!(f, "show"),
+            MediaType::Episode => write!(f, "episode"),
         }
     }
 }
@@ -85,6 +88,8 @@ enum EventType {
     Pause,
     #[serde(rename = "library.new")]
     New,
+    #[serde(rename = "library.delete", alias = "media.delete")]
+    Delete,
 }
 
 impl std::fmt::Display for EventType {
@@ -95,6 +100,7 @@ impl std::fmt::Display for EventType {
             EventType::Stop => write!(f, "stop"),
             EventType::Pause => write!(f, "pause"),
             EventType::New => write!(f, "new"),
+            EventType::Delete => write!(f, "delete"),
         }
     }
 }
@@ -103,6 +109,7 @@ impl std::fmt::Display for EventType {
 struct SessionInfo {
     media_type: MediaType,
     title: String,
+    external_ids: Vec<String>,
 }
 
 #[derive(Debug)]
@@ -142,7 +149,8 @@ impl<'de> Deserialize<'de> for WebhookEnvelope {
 
         let media_type: MediaType = serde_json::from_value(
             metadata
-                .get("librarySectionType")
+                .get("type")
+                .or_else(|| metadata.get("librarySectionType"))
                 .ok_or_else(|| serde::de::Error::missing_field("librarySectionType"))?
                 .clone(),
         )
@@ -151,19 +159,45 @@ impl<'de> Deserialize<'de> for WebhookEnvelope {
         let session_info = match media_type {
             MediaType::Show => {
                 let title = metadata
-                    .get("grandparentSlug")
-                    .ok_or_else(|| serde::de::Error::missing_field("grandparentSlug"))?
-                    .to_string();
+                    .get("title")
+                    .or_else(|| metadata.get("grandparentSlug"))
+                    .and_then(Value::as_str)
+                    .ok_or_else(|| serde::de::Error::missing_field("title"))?
+                    .to_owned();
 
-                SessionInfo { title, media_type }
+                SessionInfo {
+                    title,
+                    media_type,
+                    external_ids: external_ids(&metadata),
+                }
             }
             MediaType::Movie => {
                 let title = metadata
                     .get("title")
-                    .ok_or_else(|| serde::de::Error::missing_field("grandparentSlug"))?
-                    .to_string();
+                    .and_then(Value::as_str)
+                    .ok_or_else(|| serde::de::Error::missing_field("title"))?
+                    .to_owned();
 
-                SessionInfo { title, media_type }
+                SessionInfo {
+                    title,
+                    media_type,
+                    external_ids: external_ids(&metadata),
+                }
+            }
+            MediaType::Episode => {
+                let title = metadata
+                    .get("grandparentTitle")
+                    .or_else(|| metadata.get("grandparentSlug"))
+                    .or_else(|| metadata.get("title"))
+                    .and_then(Value::as_str)
+                    .ok_or_else(|| serde::de::Error::missing_field("title"))?
+                    .to_owned();
+
+                SessionInfo {
+                    title,
+                    media_type,
+                    external_ids: external_ids(&metadata),
+                }
             }
         };
 
@@ -173,6 +207,59 @@ impl<'de> Deserialize<'de> for WebhookEnvelope {
             session_info,
         })
     }
+}
+
+fn external_ids(metadata: &Value) -> Vec<String> {
+    metadata
+        .get("Guid")
+        .or_else(|| metadata.get("guid"))
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .filter_map(|guid| guid.get("id").and_then(Value::as_str).map(str::to_owned))
+        .collect()
+}
+
+fn external_id(ids: &[String], provider: &str) -> Option<u64> {
+    ids.iter().find_map(|id| {
+        let (prefix, value) = id.split_once("://")?;
+        (prefix == provider).then(|| value.parse().ok()).flatten()
+    })
+}
+
+async fn process_plex_delete<C>(
+    media_bundle: &MediaBundle<C>,
+    payload: &WebhookEnvelope,
+) -> Result<(), Box<dyn std::error::Error + Send + Sync>>
+where
+    C: IBundleClient,
+{
+    match &payload.session_info.media_type {
+        MediaType::Movie => {
+            let Some(tmdb_id) = external_id(&payload.session_info.external_ids, "tmdb") else {
+                tracing::warn!(
+                    "Plex movie deletion has no tmdb id: {}",
+                    payload.session_info.title
+                );
+                return Ok(());
+            };
+            media_bundle.remove_movie(tmdb_id).await?;
+        }
+        // Plex sends episode deletions as type=episode. Only a type=show deletion removes the
+        // entire Sonarr series.
+        MediaType::Show => {
+            let Some(tvdb_id) = external_id(&payload.session_info.external_ids, "tvdb") else {
+                tracing::warn!(
+                    "Plex show deletion has no tvdb id: {}",
+                    payload.session_info.title
+                );
+                return Ok(());
+            };
+            media_bundle.remove_show(tvdb_id).await?;
+        }
+        MediaType::Episode => {}
+    }
+    Ok(())
 }
 
 pub struct DiscordHandler<C: IBundleClient> {
@@ -381,85 +468,65 @@ where
             .map(|(channel_id, _)| *channel_id);
         let webhook_port = self.webhook_port;
         let cache_http = ctx.http.clone();
+        let media_bundle = self.media_bundle.clone();
 
-        if let Some(admin_channel_id) = admin_channel_id {
-            // TODO: give a handle to the spawned task so we can kill it later
-            tokio::spawn(async move {
-                let app = Router::new().route(
-                    "/",
-                    post(move |mut multipart: axum::extract::Multipart| async move {
+        // TODO: give a handle to the spawned task so we can kill it later
+        tokio::spawn(async move {
+            let app = Router::new().route(
+                "/",
+                post(move |mut multipart: axum::extract::Multipart| {
+                    let media_bundle = media_bundle.clone();
+                    let cache_http = cache_http.clone();
+                    async move {
                         while let Ok(Some(field)) = multipart.next_field().await {
-                            if field.name() == Some("payload") {
-                                if let Ok(json_str) = field.text().await {
-                                    match serde_json::from_str::<WebhookEnvelope>(&json_str) {
-                                        Ok(payload) => {
-                                            match payload.event {
-                                                EventType::Play
-                                                | EventType::Pause
-                                                | EventType::Stop
-                                                | EventType::Resume => {
-                                                    if let Err(why) = admin_channel_id
-                                                        .say(
-                                                            &cache_http,
-                                                            format!(
-                                                                "{} {}ed session with {}",
-                                                                payload.account.title,
-                                                                payload.event,
-                                                                payload.session_info.title
-                                                            ),
-                                                        )
-                                                        .await
-                                                    {
-                                                        tracing::error!(
-                                                            "Failed to parse JSON: {}",
-                                                            why
-                                                        );
-                                                        return axum::http::StatusCode::BAD_REQUEST;
-                                                    }
-                                                }
-                                                EventType::New => {
-                                                    if let Err(why) = admin_channel_id
-                                                        .say(
-                                                            &cache_http,
-                                                            format!(
-                                                                "{} {}ed session with {}",
-                                                                payload.account.title,
-                                                                payload.event,
-                                                                payload.session_info.title
-                                                            ),
-                                                        )
-                                                        .await
-                                                    {
-                                                        tracing::error!(
-                                                            "Failed to parse JSON: {}",
-                                                            why
-                                                        );
-                                                        return axum::http::StatusCode::BAD_REQUEST;
-                                                    }
-                                                }
-                                            }
-                                            return axum::http::StatusCode::OK;
-                                        }
-                                        Err(err) => {
-                                            tracing::error!("Failed to parse JSON: {}", err);
-                                            return axum::http::StatusCode::BAD_REQUEST;
-                                        }
-                                    }
+                            if field.name() != Some("payload") {
+                                continue;
+                            }
+                            let Ok(json_str) = field.text().await else {
+                                return axum::http::StatusCode::BAD_REQUEST;
+                            };
+                            let Ok(payload) = serde_json::from_str::<WebhookEnvelope>(&json_str)
+                            else {
+                                tracing::error!("Failed to parse Plex webhook payload");
+                                return axum::http::StatusCode::BAD_REQUEST;
+                            };
+
+                            if matches!(payload.event, EventType::Delete) {
+                                if let Err(why) = process_plex_delete(&media_bundle, &payload).await
+                                {
+                                    tracing::error!("Failed to process Plex deletion: {why}");
+                                    return axum::http::StatusCode::INTERNAL_SERVER_ERROR;
+                                }
+                            } else if let Some(admin_channel_id) = admin_channel_id {
+                                if let Err(why) = admin_channel_id
+                                    .say(
+                                        &cache_http,
+                                        format!(
+                                            "{} {}ed session with {}",
+                                            payload.account.title,
+                                            payload.event,
+                                            payload.session_info.title
+                                        ),
+                                    )
+                                    .await
+                                {
+                                    tracing::error!("Failed to send webhook notification: {why}");
+                                    return axum::http::StatusCode::INTERNAL_SERVER_ERROR;
                                 }
                             }
+                            return axum::http::StatusCode::OK;
                         }
-                        #[warn(clippy::needless_return)]
-                        return axum::http::StatusCode::BAD_REQUEST;
-                    }),
-                );
-                let listener = tokio::net::TcpListener::bind(format!("127.0.0.1:{}", webhook_port))
-                    .await
-                    .expect("Failed to bind to webhook port");
-                axum::serve(listener, app).await.unwrap();
-            });
-            self.has_ready_been_called
-                .store(true, std::sync::atomic::Ordering::Relaxed);
-        }
+                        axum::http::StatusCode::BAD_REQUEST
+                    }
+                }),
+            );
+            let listener = tokio::net::TcpListener::bind(format!("127.0.0.1:{}", webhook_port))
+                .await
+                .expect("Failed to bind to webhook port");
+            axum::serve(listener, app).await.unwrap();
+        });
+        self.has_ready_been_called
+            .store(true, std::sync::atomic::Ordering::Relaxed);
     }
 
     async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
@@ -576,6 +643,57 @@ mod tests {
     fn test_de_for_webhook_body() {
         let envelope = serde_json::from_str::<WebhookEnvelope>(BODY);
         assert!(envelope.is_ok());
+    }
+
+    #[test]
+    fn parses_plex_delete_ids_and_distinguishes_series_from_episode() {
+        let delete_movie = serde_json::json!({
+            "event": "library.delete",
+            "Account": {"id": 1, "title": "owner"},
+            "Metadata": {
+                "type": "movie",
+                "title": "The Matrix",
+                "Guid": [{"id": "tmdb://603"}]
+            }
+        });
+        let movie = serde_json::from_value::<WebhookEnvelope>(delete_movie).unwrap();
+        assert!(matches!(movie.event, EventType::Delete));
+        assert!(matches!(movie.session_info.media_type, MediaType::Movie));
+        assert_eq!(
+            external_id(&movie.session_info.external_ids, "tmdb"),
+            Some(603)
+        );
+
+        let delete_episode = serde_json::json!({
+            "event": "library.delete",
+            "Account": {"id": 1, "title": "owner"},
+            "Metadata": {
+                "type": "episode",
+                "grandparentTitle": "Example Show",
+                "Guid": [{"id": "tvdb://81189"}]
+            }
+        });
+        let episode = serde_json::from_value::<WebhookEnvelope>(delete_episode).unwrap();
+        assert!(matches!(
+            episode.session_info.media_type,
+            MediaType::Episode
+        ));
+
+        let delete_series = serde_json::json!({
+            "event": "library.delete",
+            "Account": {"id": 1, "title": "owner"},
+            "Metadata": {
+                "type": "show",
+                "title": "Example Show",
+                "Guid": [{"id": "tvdb://81189"}]
+            }
+        });
+        let series = serde_json::from_value::<WebhookEnvelope>(delete_series).unwrap();
+        assert!(matches!(series.session_info.media_type, MediaType::Show));
+        assert_eq!(
+            external_id(&series.session_info.external_ids, "tvdb"),
+            Some(81189)
+        );
     }
 
     #[test]
