@@ -1207,6 +1207,8 @@ mod tests {
             plex_port: 32400,
             webhook_port: Some(1025),
             qbit_torrent_port: 9090,
+            qbit_torrent_username: Cow::from(""),
+            qbit_torrent_password: Cow::from(""),
             radarr_api_key: Cow::from(""),
             sonarr_api_key: Cow::from(""),
             prowlarr_api_key: Cow::from(""),

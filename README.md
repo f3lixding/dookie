@@ -27,6 +27,8 @@ In the future, I want it to also do the following:
 
 The operational commands require Discord Administrator permission in the configured guild. Their replies and help are private. The bot must run as the macOS user who owns the apps and have `docker`, `pkill`, `pgrep`, and `open` on its PATH, with access to Docker Desktop. Restarts interrupt active streams or downloads; these commands do not use sudo or force-kill a service that refuses to shut down.
 
+qBittorrent commands authenticate through its Web API login. Configure `qbit_torrent_username` and `qbit_torrent_password` alongside `qbit_torrent_port`; the older `qbit_torrent_api_key` setting is ignored.
+
 ## Intel macOS builds
 
 GitHub Actions builds and tests both `dookie_server` and `dookie_cli_client` on

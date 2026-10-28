@@ -26,6 +26,9 @@ use crate::Config;
 pub trait BundleResponse {
     async fn as_bytes(self) -> Result<Vec<u8>, Box<dyn Error + Send + Sync>>;
     fn get_statuscode(&self) -> u16;
+    fn get_cookie(&self) -> Option<String> {
+        None
+    }
 }
 
 #[async_trait]
@@ -39,6 +42,14 @@ impl BundleResponse for reqwest::Response {
     fn get_statuscode(&self) -> u16 {
         self.status().as_u16()
     }
+
+    fn get_cookie(&self) -> Option<String> {
+        self.headers()
+            .get(reqwest::header::SET_COOKIE)
+            .and_then(|value| value.to_str().ok())
+            .and_then(|value| value.split(';').next())
+            .map(str::to_owned)
+    }
 }
 
 #[async_trait]
@@ -46,6 +57,7 @@ pub trait IBundleClient: Unpin + Send + Sync + Clone + 'static {
     fn from_port(port: u16) -> Self;
     fn set_port(&mut self, port: u16);
     fn set_token(&mut self, token: (impl AsRef<str>, impl AsRef<str>));
+    fn set_cookie(&mut self, _cookie: impl AsRef<str>) {}
     async fn get(&self, url: &str) -> Result<impl BundleResponse, Box<dyn Error + Send + Sync>>;
     async fn post(
         &self,
@@ -194,8 +206,11 @@ where
             qbit_client: {
                 let mut client = client.clone();
                 client.set_port(config.qbit_torrent_port);
-                client.set_token(("X-Api-Key", config.qbit_torrent_api_key.clone()));
-                Qbit::from_bundle_client(client)
+                Qbit::new(
+                    client,
+                    config.qbit_torrent_username.to_string(),
+                    config.qbit_torrent_password.to_string(),
+                )
             },
             move_map: config
                 .move_map

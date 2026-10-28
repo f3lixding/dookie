@@ -16,9 +16,16 @@ pub struct Config<'a> {
     pub plex_port: u16,
     pub webhook_port: Option<u16>,
     pub qbit_torrent_port: u16,
+    #[serde(default)]
+    pub qbit_torrent_username: Cow<'a, str>,
+    #[serde(default)]
+    pub qbit_torrent_password: Cow<'a, str>,
+    #[serde(default)]
     pub radarr_api_key: Cow<'a, str>,
     pub sonarr_api_key: Cow<'a, str>,
     pub prowlarr_api_key: Cow<'a, str>,
+    /// Retained for config-file compatibility; qBittorrent uses username/password login instead.
+    #[serde(default)]
     pub qbit_torrent_api_key: Cow<'a, str>,
     pub plex_api_key: Cow<'a, str>,
     pub plex_client_id: Cow<'a, str>,
@@ -46,6 +53,8 @@ impl<'a> Default for Config<'a> {
             sonarr_port: 8989,
             prowlarr_port: 8888,
             qbit_torrent_port: 9090,
+            qbit_torrent_username: "".into(),
+            qbit_torrent_password: "".into(),
             plex_port: 32400,
             webhook_port: Some(1025),
             radarr_api_key: "".into(),
@@ -81,6 +90,8 @@ mod tests {
             sonarr_api_key: "some_key"
             prowlarr_api_key: "some_key"
             qbit_torrent_api_key: "some_key"
+            qbit_torrent_username: "qbit_user"
+            qbit_torrent_password: "qbit_password"
             plex_api_key: "some_key"
             plex_client_id: "some_key"
             plex_machine_id: "some_key"

@@ -10,6 +10,7 @@ pub struct BundleClient {
     client: reqwest::Client,
     token_name: String,
     token_value: String,
+    cookie: String,
     port: u16,
 }
 
@@ -20,6 +21,7 @@ impl IBundleClient for BundleClient {
             client: reqwest::Client::new(),
             token_name: String::default(),
             token_value: String::default(),
+            cookie: String::default(),
             port,
         }
     }
@@ -33,19 +35,26 @@ impl IBundleClient for BundleClient {
         self.token_value = token.1.as_ref().to_string();
     }
 
+    fn set_cookie(&mut self, cookie: impl AsRef<str>) {
+        self.cookie = cookie.as_ref().to_string();
+    }
+
     #[allow(refining_impl_trait)]
     async fn get(&self, url: &str) -> Result<reqwest::Response, Box<dyn Error + Send + Sync>> {
         // Eventually we are going to have to support adding headers but for now let's just leave
         // it with the standardard headers
         let url = format!("http://localhost:{}{}", self.port, url);
-        Ok(self
+        let request = self
             .client
             .get(&url)
             .header(&self.token_name, &self.token_value)
             .header("Accept", "application/json")
-            .header("Content-Type", "application/json")
-            .send()
-            .await?)
+            .header("Content-Type", "application/json");
+        Ok(if self.cookie.is_empty() {
+            request.send().await?
+        } else {
+            request.header("Cookie", &self.cookie).send().await?
+        })
     }
 
     #[allow(refining_impl_trait)]
@@ -56,21 +65,26 @@ impl IBundleClient for BundleClient {
     ) -> Result<reqwest::Response, Box<dyn Error + Send + Sync>> {
         let url = format!("http://localhost:{}{}", self.port, url);
         let msg_body: reqwest::Body = body.into();
-        let content_type = if url.ends_with("/api/v2/torrents/delete") {
+        let content_type = if url.ends_with("/api/v2/torrents/delete")
+            || url.ends_with("/api/v2/auth/login")
+        {
             "application/x-www-form-urlencoded"
         } else {
             "application/json"
         };
 
-        Ok(self
+        let request = self
             .client
             .post(&url)
             .header(&self.token_name, &self.token_value)
             .header("Accept", "application/json")
             .header("Content-Type", content_type)
-            .body::<reqwest::Body>(msg_body)
-            .send()
-            .await?)
+            .body::<reqwest::Body>(msg_body);
+        Ok(if self.cookie.is_empty() {
+            request.send().await?
+        } else {
+            request.header("Cookie", &self.cookie).send().await?
+        })
     }
 
     #[allow(refining_impl_trait)]
