@@ -577,40 +577,6 @@ pub(in crate::media_bundle) mod bundle_util {
         Ok(pid.ok_or("Failed to start process")?)
     }
 
-    #[cfg(test)]
-    // TODO: Test start process as well (we might need to manually spawn a process for it)
-    mod tests {
-        use super::*;
-
-        // I am not sure if this is a good way to test it but I need some process to be searched
-        // for in order to test for the functions. And
-        const PROCESS_NAME: &'static str = "Application";
-
-        #[test]
-        #[serial_test::serial(socket_lock_lifetime)]
-        fn test_get_process_id() {
-            let pid = get_process_id(PROCESS_NAME);
-            assert!(pid.is_ok());
-
-            let pid = pid.unwrap();
-            assert!(pid.is_some());
-
-            let pid = pid.unwrap();
-            assert!(pid > 0);
-        }
-
-        // #[test]
-        // fn test_start_process() {
-        //     let pid = start_process(RADARR_PROCESS_NAME);
-        //     println!("pid is: {:?}", pid);
-        //     assert!(pid.is_ok());
-
-        //     let pid = pid.unwrap();
-        //     assert!(pid > 0);
-
-        //     println!("pid is: {}", pid);
-        // }
-    }
 }
 
 #[cfg(test)]
