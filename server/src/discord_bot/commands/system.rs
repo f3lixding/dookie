@@ -9,6 +9,7 @@ pub fn is_admin_command(name: &str) -> bool {
     matches!(
         name,
         "docker_ps"
+            | "disk_space"
             | "restart_container"
             | "restart_services"
             | "torrent_list"
@@ -19,6 +20,7 @@ pub fn is_admin_command(name: &str) -> bool {
 pub fn register() -> Vec<CreateCommand> {
     vec![
         CreateCommand::new("docker_ps").description("List running Docker containers"),
+        CreateCommand::new("disk_space").description("Show available disk space"),
         CreateCommand::new("restart_container")
             .description("Stop and restart a Docker container")
             .add_option(
@@ -88,6 +90,20 @@ pub async fn run(
                     .new_attachment(CreateAttachment::bytes(
                         output.into_bytes(),
                         "containers.txt",
+                    )))
+            }
+        }
+        "disk_space" => {
+            let output = checked_output("df", execute("df", &["-h"]).await?)?;
+            if output.encode_utf16().count() <= 1900 && !output.contains("```") {
+                Ok(EditInteractionResponse::new()
+                    .content(format!("Disk space:\n```text\n{output}\n```")))
+            } else {
+                Ok(EditInteractionResponse::new()
+                    .content("Disk space (full listing attached):")
+                    .new_attachment(CreateAttachment::bytes(
+                        output.into_bytes(),
+                        "disk-space.txt",
                     )))
             }
         }

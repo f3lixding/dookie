@@ -16,6 +16,7 @@ In the future, I want it to also do the following:
 ## Discord operations
 
 - `/docker_ps` lists running containers, like `docker container ls`. Long listings are attached as a text file.
+- `/disk_space` shows mounted filesystem space in human-readable form, like `df -h`.
 - `/restart_container container_id:<ID or name>` runs `docker container restart` for one container (for example, qBittorrent).
 - `/torrent_list` lists active qBittorrent items with progress and transfer speeds. `/torrent_delete hash:<hash>` removes an item and always deletes its files from disk; both commands require Discord Administrator permission.
 - `/restart_services` shuts down and reopens the native macOS Plex Media Server, Sonarr, Radarr, and Prowlarr apps. It sends SIGTERM, waits up to 30 seconds for each app to exit, then runs `open /Applications/<app>.app`. If an app is already stopped it is opened; if shutdown fails it is not opened again. Each app's outcome is reported separately, and failures do not prevent the remaining apps from being attempted. Reopening confirms launch, not API readiness.

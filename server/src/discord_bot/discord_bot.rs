@@ -504,7 +504,7 @@ where
         let media_bundle = &self.media_bundle;
         let response: Result<EditInteractionResponse, CommandError> =
             match command.data.name.as_str() {
-                "docker_ps" | "restart_container" | "restart_services" => {
+                "docker_ps" | "disk_space" | "restart_container" | "restart_services" => {
                     system::run(&command.data.name, &options)
                         .await
                         .map_err(CommandError::SystemCommandError)
