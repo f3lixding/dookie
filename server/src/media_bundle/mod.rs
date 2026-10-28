@@ -1041,4 +1041,76 @@ mod arr_tests {
         std::fs::write(temporary.path().join("movie.mkv"), b"movie").unwrap();
         assert!(contains_media_file(temporary.path()).await);
     }
+
+    fn reconciliation_responses(plex_shows: Value) -> HashMap<String, Value> {
+        HashMap::from([
+            ("/identity".to_string(), json!({})),
+            (
+                "/library/sections/1/all".to_string(),
+                json!({ "MediaContainer": { "size": 0, "Metadata": [] } }),
+            ),
+            (
+                "/library/sections/2/all".to_string(),
+                json!({ "MediaContainer": { "size": plex_shows.as_array().map_or(0, Vec::len), "Metadata": plex_shows } }),
+            ),
+            ("/api/v3/movie".to_string(), json!([])),
+            (
+                "/api/v3/series".to_string(),
+                json!([{
+                    "title": "Example Show",
+                    "year": 2020,
+                    "tvdbId": 81189,
+                    "id": 7,
+                    "statistics": { "episodeFileCount": 3, "sizeOnDisk": 100 }
+                }]),
+            ),
+        ])
+    }
+
+    #[tokio::test]
+    async fn episode_deletion_does_not_mark_the_series_missing() {
+        let plex_show = json!([{
+            "title": "Example Show",
+            "type": "show",
+            "Guid": [{ "id": "tvdb://81189" }]
+        }]);
+        let (bundle, _) = bundle_with(reconciliation_responses(plex_show));
+        let mut missing_movies = HashMap::new();
+        let mut missing_shows = HashMap::new();
+        let mut known_movies_with_files = HashSet::new();
+        let mut known_shows_with_files = HashSet::new();
+
+        bundle
+            .reconcile_deleted_media(
+                &mut missing_movies,
+                &mut missing_shows,
+                &mut known_movies_with_files,
+                &mut known_shows_with_files,
+            )
+            .await
+            .unwrap();
+
+        assert!(missing_shows.is_empty());
+    }
+
+    #[tokio::test]
+    async fn whole_series_deletion_marks_the_series_missing() {
+        let (bundle, _) = bundle_with(reconciliation_responses(json!([])));
+        let mut missing_movies = HashMap::new();
+        let mut missing_shows = HashMap::new();
+        let mut known_movies_with_files = HashSet::new();
+        let mut known_shows_with_files = HashSet::new();
+
+        bundle
+            .reconcile_deleted_media(
+                &mut missing_movies,
+                &mut missing_shows,
+                &mut known_movies_with_files,
+                &mut known_shows_with_files,
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(missing_shows.get(&81189), Some(&1));
+    }
 }
