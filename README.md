@@ -23,7 +23,7 @@ In the future, I want it to also do the following:
 - `/help` lists the registered commands and their arguments, including the media search/add and access commands. Admin-only commands are shown only to administrators.
 - `/remove_movie tmdb_id:<ID>` removes a movie from Radarr and deletes its DAS copy plus its local symlink (or local, not-yet-moved copy).
 - `/remove_show tvdb_id:<ID>` removes the entire series from Sonarr and performs the same filesystem cleanup.
-- The configured Plex webhook also handles `library.delete`: movie deletions remove the matching Radarr movie, and whole-series deletions remove the matching Sonarr series. Episode deletions are ignored. The existing local/DAS cleanup is reused, and Plex is expected to have already removed the local file or symlink.
+- A background Plex reconciliation poller detects items removed from the Plex library, removes the matching Radarr movie or whole Sonarr series, and reuses the existing local/DAS cleanup. It requires two consecutive missing observations before removing an item.
 
 The operational commands require Discord Administrator permission in the configured guild. Their replies and help are private. The bot must run as the macOS user who owns the apps and have `docker`, `pkill`, `pgrep`, and `open` on its PATH, with access to Docker Desktop. Restarts interrupt active streams or downloads; these commands do not use sudo or force-kill a service that refuses to shut down.
 

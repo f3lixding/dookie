@@ -29,6 +29,12 @@ pub(in crate::media_bundle) struct Movie {
     rest: Map<String, Value>,
 }
 
+impl Movie {
+    pub(in crate::media_bundle) fn tmdb_id(&self) -> u64 {
+        self.tmdb_id
+    }
+}
+
 impl From<Movie> for MediaLookup {
     fn from(movie: Movie) -> Self {
         MediaLookup {
@@ -44,6 +50,7 @@ impl From<Movie> for MediaLookup {
 
 pub(in crate::media_bundle) enum RadarrInput {
     Lookup(String),
+    List,
     /// Adds (and monitors) the movie with the given tmdb id and starts searching for it.
     Add(u64, Quality),
     Remove(u64),
@@ -87,6 +94,9 @@ where
         input: Self::Input,
     ) -> Result<Self::Output, Box<dyn Error + Send + Sync>> {
         match input {
+            RadarrInput::List => Ok(RadarrOutput::Movies(
+                arr_util::get_json(&self.client, "/api/v3/movie").await?,
+            )),
             RadarrInput::Lookup(term) => {
                 let url = arr_util::with_query("/api/v3/movie/lookup", "term", &term)?;
                 Ok(RadarrOutput::Movies(

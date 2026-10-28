@@ -29,6 +29,12 @@ pub(in crate::media_bundle) struct Series {
     rest: Map<String, Value>,
 }
 
+impl Series {
+    pub(in crate::media_bundle) fn tvdb_id(&self) -> u64 {
+        self.tvdb_id
+    }
+}
+
 impl From<Series> for MediaLookup {
     fn from(series: Series) -> Self {
         MediaLookup {
@@ -44,6 +50,7 @@ impl From<Series> for MediaLookup {
 
 pub(in crate::media_bundle) enum SonarrInput {
     Lookup(String),
+    List,
     /// Adds (and monitors) the series with the given tvdb id and starts searching for it.
     Add(u64, Quality),
     Remove(u64),
@@ -87,6 +94,9 @@ where
         input: Self::Input,
     ) -> Result<Self::Output, Box<dyn Error + Send + Sync>> {
         match input {
+            SonarrInput::List => Ok(SonarrOutput::Series(
+                arr_util::get_json(&self.client, "/api/v3/series").await?,
+            )),
             SonarrInput::Lookup(term) => {
                 let url = arr_util::with_query("/api/v3/series/lookup", "term", &term)?;
                 Ok(SonarrOutput::Series(

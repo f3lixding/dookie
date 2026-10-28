@@ -929,14 +929,10 @@ pub mod auto_torrent_shutoff_job {
     use crate::discord_bot::DiscordHandlerBuilder;
 
     use super::*;
-    use axum::http::StatusCode;
-    use axum::routing::get;
-    use axum::Router;
-    use serenity::all::{ChannelId, EventHandler, GatewayIntents, Message, Ready};
-    use std::collections::HashSet;
+    use serenity::all::GatewayIntents;
     use std::future::Future;
     use std::pin::Pin;
-    use std::task::{Context, Poll};
+    use std::task::Poll;
     use tokio::task::JoinHandle;
 
     #[derive(Debug, PartialEq, Eq)]
@@ -972,7 +968,6 @@ pub mod auto_torrent_shutoff_job {
             >,
         ) -> Result<Self::SpawnedJob, Box<dyn Error>> {
             let mut spawned_job = Self::SpawnedJob {
-                webhook_port: None,
                 token: None,
                 permitted_guilds: Vec::new(),
                 media_bundle: None,
@@ -985,7 +980,6 @@ pub mod auto_torrent_shutoff_job {
     }
 
     pub struct SpawnedJob<C: IBundleClient> {
-        webhook_port: Option<u16>,
         token: Option<String>,
         permitted_guilds: Vec<u64>,
         media_bundle: Option<MediaBundle<C>>,
@@ -1003,7 +997,6 @@ pub mod auto_torrent_shutoff_job {
 
         pub fn assign_config(&mut self, config: &Config) {
             self.permitted_guilds = config.permitted_guilds.clone();
-            self.webhook_port = config.webhook_port;
             self.token = config.discord_token.as_ref().map(|t| t.to_string());
             self.guild_config = config.guild_config.clone();
         }
@@ -1040,10 +1033,9 @@ pub mod auto_torrent_shutoff_job {
             assert!(media_bundle.is_some()); // for now we would assume that this is a must
             let media_bundle = media_bundle.unwrap();
 
+            tokio::spawn(media_bundle.clone().run_deletion_poller());
+
             let mut dh_builder = DiscordHandlerBuilder::<M>::default();
-            dh_builder.set_webhook_port(this.webhook_port.take().unwrap()); // for now this is
-                                                                            // restricted to
-                                                                            // localhost
             dh_builder.set_permitted_guilds(this.permitted_guilds.clone());
             dh_builder.set_guild_config(this.guild_config.take().expect("No guild config found"));
             dh_builder.set_media_bundle(media_bundle);
@@ -1205,7 +1197,6 @@ mod tests {
             sonarr_port: 8989,
             prowlarr_port: 8888,
             plex_port: 32400,
-            webhook_port: Some(1025),
             qbit_torrent_port: 9090,
             qbit_torrent_username: Cow::from(""),
             qbit_torrent_password: Cow::from(""),

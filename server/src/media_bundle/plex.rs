@@ -41,6 +41,13 @@ pub(in crate::media_bundle) struct Metadata {
     pub account_id: Option<i32>,
     #[serde(rename = "grandparentTitle")]
     pub grandparent_title: Option<String>,
+    #[serde(rename = "Guid", default)]
+    pub external_ids: Vec<PlexGuid>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub(in crate::media_bundle) struct PlexGuid {
+    pub id: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
@@ -190,14 +197,16 @@ where
                 Ok(PlexOutput::SessionHistory(vec![]))
             }
             PlexInput::GetAllShows => {
-                static url: &'static str = "/library/sections/1/all";
-
-                Ok(PlexOutput::ShowList(vec![]))
+                let container: OuterMediaContainer =
+                    crate::media_bundle::arr_util::get_json(&self.client, "/library/sections/2/all")
+                        .await?;
+                Ok(PlexOutput::ShowList(container.media_container.metadata))
             }
             PlexInput::GetAllMovies => {
-                static url: &'static str = "/library/sections/2/all";
-
-                Ok(PlexOutput::MovieList(vec![]))
+                let container: OuterMediaContainer =
+                    crate::media_bundle::arr_util::get_json(&self.client, "/library/sections/1/all")
+                        .await?;
+                Ok(PlexOutput::MovieList(container.media_container.metadata))
             }
             PlexInput::RefreshLibrary(id) => {
                 let url = format!("/library/sections/{}/refresh", id);
