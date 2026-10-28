@@ -52,6 +52,9 @@ and service-manager setup are not included. To run the server with an existing c
 ./dookie/dookie_server --config_path /absolute/path/to/config.yaml
 ```
 
+The server daemonizes by default and writes runtime logs to the configured log
+directory. Use `--foreground` when running it interactively for debugging.
+
 ## Making a release
 
 1. Set the same version in `server/Cargo.toml` and `cli_client/Cargo.toml`, update

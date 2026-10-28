@@ -12,10 +12,15 @@ use std::{
 use structopt::StructOpt;
 use tracing::Instrument;
 
+const DAEMONIZED_ENV: &str = "DOOKIE_DAEMONIZED";
+
 #[derive(StructOpt)]
 struct Opt {
     #[structopt(short = "c", long = "config_path", default_value = ".")]
     config_path: String,
+    /// Keep this process attached to the terminal instead of daemonizing it.
+    #[structopt(long)]
+    foreground: bool,
     /// Parse the configuration and exit without starting jobs or claiming the socket.
     #[structopt(long)]
     check_config: bool,
@@ -24,18 +29,42 @@ struct Opt {
     no_auto_update: bool,
 }
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>> {
+fn daemonize() -> Result<(), Box<dyn Error>> {
+    // Keep the working directory for relative paths in the configuration, while closing
+    // stdin/stdout/stderr and detaching from the controlling terminal.
+    if unsafe { libc::daemon(1, 0) } == -1 {
+        return Err(std::io::Error::last_os_error().into());
+    }
+    Ok(())
+}
+
+fn main() -> Result<(), Box<dyn Error>> {
     let Opt {
         config_path,
+        foreground,
         check_config,
         no_auto_update,
     } = Opt::from_args();
-    let config_file = std::fs::read(config_path)?;
-    let config = Config::from_buffer(&config_file)?;
+    let config_file = std::fs::read(&config_path)?;
+    Config::from_buffer(&config_file)?;
     if check_config {
         return Ok(());
     }
+    if !foreground
+        && std::env::var_os(DAEMONIZED_ENV).as_deref()
+            != Some(std::ffi::OsStr::new("1"))
+    {
+        daemonize()?;
+        // The updater replaces this process with exec. Preserve the daemon state so the
+        // replacement keeps the same PID instead of forking a second time.
+        std::env::set_var(DAEMONIZED_ENV, "1");
+    }
+    run(config_file, no_auto_update)
+}
+
+#[tokio::main]
+async fn run(config_file: Vec<u8>, no_auto_update: bool) -> Result<(), Box<dyn Error>> {
+    let config = Config::from_buffer(&config_file)?;
     // Claim the singleton before spawning jobs. Both descriptors close automatically on exec.
     let (socket, _socket_lock) = bind_cli_socket(Path::new(CLI_SOCKET_PATH))?;
     let args: Vec<_> = std::env::args_os().skip(1).collect();
