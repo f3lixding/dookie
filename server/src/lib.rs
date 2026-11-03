@@ -355,8 +355,10 @@ pub mod move_job {
                                     // Start command
                                     (IncomingMessage::Start, Some(sender)) => {
                                         is_moving.store(true, std::sync::atomic::Ordering::Relaxed);
+                                        // Acknowledge acceptance, not completion, so the front desk
+                                        // can answer status requests while this batch runs.
+                                        _ = sender.send(OutgoingMessage::Ok);
 
-                                        let mut has_failed = false;
                                         for (src_dir, dst_dir) in &move_map {
                                             match move_dir(true, true, src_dir, dst_dir).await {
                                                 Ok(_) => {
@@ -373,15 +375,8 @@ pub mod move_job {
                                                         dst_dir.display(),
                                                         e
                                                     );
-                                                    has_failed = true;
                                                 }
                                             }
-                                        }
-
-                                        if has_failed {
-                                            _ = sender.send(OutgoingMessage::Failed);
-                                        } else {
-                                            _ = sender.send(OutgoingMessage::Ok);
                                         }
 
                                         is_moving.store(false, std::sync::atomic::Ordering::Relaxed);

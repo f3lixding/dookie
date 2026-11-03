@@ -16,10 +16,13 @@ In the future, I want it to also do the following:
 ## Manual file moves
 
 Run `dookiec move` to move local media immediately, without waiting for the
-scheduled job or the configured age threshold. It waits for the batch to finish,
-prints the result, and exits nonzero if any path fails (see the server logs for
-details). If a batch is already running, it reports that instead of starting another.
-Moves are not transactional: other paths can complete even if one fails.
+scheduled job or the configured age threshold. It returns as soon as the server
+starts the batch, printing `Move job started`, while the move continues in the
+background. A successful exit means the job was accepted, not that every file
+was moved; check the server logs for completion and copy failures. If a batch is
+already running, it reports that instead of starting another. `dookiec status`
+remains available during the move. Closing the client does not cancel an
+accepted job. Moves are not transactional: other paths can complete even if one fails.
 
 The running server uses its existing `move_map` source/destination pairs; the
 client does not choose destinations. To move `~/.plex/movies` and `~/.plex/shows`,

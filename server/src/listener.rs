@@ -15,7 +15,6 @@ use std::path::Path;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 use tokio::io::AsyncWriteExt;
-use tokio::io::Interest;
 use tokio::net::UnixListener;
 use tokio::sync::mpsc::{Receiver, Sender};
 use tokio::sync::oneshot;
@@ -281,9 +280,10 @@ impl<C: IBundleClient> MainListener<C, Assigned> {
                 };
 
                 // Send the response back via UDS
-                stream.ready(Interest::WRITABLE).await?;
                 let buf = resp.unwrap_or_default().encode_to_vec();
-                stream.write_all(buf.as_slice()).await?;
+                if let Err(error) = stream.write_all(buf.as_slice()).await {
+                    tracing::warn!("Failed to reply to CLI client: {error}");
+                }
             }
 
             #[allow(unreachable_code)]

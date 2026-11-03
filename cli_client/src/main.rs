@@ -25,7 +25,7 @@ struct Cli {
 enum Command {
     /// Show whether the move job is running or when it will run next (the default).
     Status,
-    /// Move actual files in the server's move_map now, ignoring their age.
+    /// Start moving actual files in the server's move_map in the background, ignoring their age.
     /// Existing symlinks are skipped; moved items are replaced with symlinks.
     Move,
 }
@@ -74,9 +74,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Some(MoveJobStatus::Running) => {
             println!("Move job is already running; no new move started.")
         }
-        Some(MoveJobStatus::Ok) => println!("Move completed successfully."),
+        Some(MoveJobStatus::Ok) => println!("Move job started. Check server logs for the outcome."),
         Some(MoveJobStatus::Error) => {
-            return Err("Move failed for one or more paths; check the server logs".into());
+            return Err("Failed to start move job; check the server logs".into());
         }
         None => return Err("Missing or unknown move job status".into()),
     }
