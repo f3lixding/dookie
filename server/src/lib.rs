@@ -963,6 +963,7 @@ pub mod auto_torrent_shutoff_job {
             >,
         ) -> Result<Self::SpawnedJob, Box<dyn Error>> {
             let mut spawned_job = Self::SpawnedJob {
+                webhook_port: None,
                 token: None,
                 permitted_guilds: Vec::new(),
                 media_bundle: None,
@@ -975,6 +976,7 @@ pub mod auto_torrent_shutoff_job {
     }
 
     pub struct SpawnedJob<C: IBundleClient> {
+        webhook_port: Option<u16>,
         token: Option<String>,
         permitted_guilds: Vec<u64>,
         media_bundle: Option<MediaBundle<C>>,
@@ -991,6 +993,7 @@ pub mod auto_torrent_shutoff_job {
         }
 
         pub fn assign_config(&mut self, config: &Config) {
+            self.webhook_port = Some(config.webhook_port);
             self.permitted_guilds = config.permitted_guilds.clone();
             self.token = config.discord_token.as_ref().map(|t| t.to_string());
             self.guild_config = config.guild_config.clone();
@@ -1028,11 +1031,13 @@ pub mod auto_torrent_shutoff_job {
             assert!(media_bundle.is_some()); // for now we would assume that this is a must
             let media_bundle = media_bundle.unwrap();
 
+            let webhook_port = this.webhook_port.take().unwrap();
+            let guild_config = this.guild_config.take().expect("No guild config found");
+            let guild_id = guild_config.guild_id();
             let mut dh_builder = DiscordHandlerBuilder::<M>::default();
             dh_builder.set_permitted_guilds(this.permitted_guilds.clone());
-            dh_builder.set_guild_config(this.guild_config.take().expect("No guild config found"));
+            dh_builder.set_guild_config(guild_config);
             dh_builder.set_media_bundle(media_bundle);
-            // dh_builder.set_guild_config(this.guild)
             let discord_handler = dh_builder.build();
 
             let token = this.token.clone().expect("Token not found");
@@ -1043,6 +1048,18 @@ pub mod auto_torrent_shutoff_job {
             // We spawn a task here because we don't want this future to be interleaved with the
             // main future in main()
             let handle = tokio::spawn(async move {
+                let webhook_http = std::sync::Arc::new(serenity::http::Http::new(&token));
+                let _webhook_handle =
+                    match discord_bot::start_webhook_listener(webhook_port, guild_id, webhook_http)
+                        .await
+                    {
+                        Ok(handle) => Some(handle),
+                        Err(err) => {
+                            tracing::error!("Failed to start Plex webhook listener: {}", err);
+                            None
+                        }
+                    };
+
                 let mut client = serenity::Client::builder(token, intents)
                     .event_handler(discord_handler)
                     .await
@@ -1190,6 +1207,7 @@ mod tests {
             sonarr_port: 8989,
             prowlarr_port: 8888,
             plex_port: 32400,
+            webhook_port: 1025,
             qbit_torrent_port: 9090,
             qbit_torrent_username: Cow::from(""),
             qbit_torrent_password: Cow::from(""),
