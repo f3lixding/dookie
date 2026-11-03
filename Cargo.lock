@@ -463,8 +463,12 @@ version = "0.3.2"
 dependencies = [
  "cargo_metadata 0.18.1",
  "confy",
+ "dookie_server",
  "prost",
  "prost-build",
+ "structopt",
+ "tempfile",
+ "tokio",
 ]
 
 [[package]]

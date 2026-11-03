@@ -13,6 +13,27 @@ In the future, I want it to also do the following:
 - Deletes them when it's time (with the way I had set things up this means a bit more than just rm file).
 - Resumes any ongoing items in the torrent client when no remote sessions are detected.
 
+## Manual file moves
+
+Run `dookiec move` to move local media immediately, without waiting for the
+scheduled job or the configured age threshold. It waits for the batch to finish,
+prints the result, and exits nonzero if any path fails (see the server logs for
+details). If a batch is already running, it reports that instead of starting another.
+Moves are not transactional: other paths can complete even if one fails.
+
+The running server uses its existing `move_map` source/destination pairs; the
+client does not choose destinations. To move `~/.plex/movies` and `~/.plex/shows`,
+ensure both are configured there, using **absolute paths** (`~` is not expanded
+in YAML). All configured pairs are included. Actual files and directories are
+moved and replaced by symlinks at their original locations; existing symlinks,
+including broken ones, are skipped.
+
+`dookiec status` shows whether the move job is running or the time until its next
+scheduled run. Running `dookiec` without a command also shows status. Use
+`dookiec --help` for usage; `--socket PATH` overrides `/tmp/dookie.sock`.
+The release archive names the client binary `dookie_cli_client`; the updater
+installs it as `dookiec`.
+
 ## Discord operations
 
 - `/docker_ps` lists running containers, like `docker container ls`. Long listings are attached as a text file.
@@ -37,8 +58,8 @@ Homebrew. It does not use the Linux-only Nix flake.
 
 The current deployment target is **macOS 15.0 on Intel (`x86_64`)**. Older macOS
 versions are not validated. Builds check the architecture and reject dependencies
-on non-system dynamic libraries. The server's `--help` is smoke-tested; the demo
-CLI requires a running server at `/tmp/dookie.sock`, so it is not launched in CI.
+on non-system dynamic libraries. The server's `--help` is smoke-tested; CLI
+integration tests run against an isolated local server socket and temporary media.
 
 After a successful run, open **Actions → macOS build and release → the run →
 Artifacts** and download `dookie-x86_64-apple-darwin`. GitHub wraps the artifact in

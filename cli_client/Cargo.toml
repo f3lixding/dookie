@@ -10,6 +10,12 @@ path = "src/main.rs"
 [dependencies]
 confy = { workspace = true }
 prost = { workspace = true }
+structopt = { workspace = true }
+
+[dev-dependencies]
+dookie_server = { path = "../server" }
+tempfile = { workspace = true }
+tokio = { workspace = true }
 
 [build-dependencies]
 prost-build = { workspace = true }

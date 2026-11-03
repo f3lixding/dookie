@@ -379,9 +379,9 @@ pub mod move_job {
                                         }
 
                                         if has_failed {
-                                            _ = sender.send(OutgoingMessage::Ok);
-                                        } else {
                                             _ = sender.send(OutgoingMessage::Failed);
+                                        } else {
+                                            _ = sender.send(OutgoingMessage::Ok);
                                         }
 
                                         is_moving.store(false, std::sync::atomic::Ordering::Relaxed);
