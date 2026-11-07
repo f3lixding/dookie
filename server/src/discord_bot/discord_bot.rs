@@ -1,4 +1,10 @@
-use super::commands::{self, media, media::MediaKind, qbit, system};
+use super::commands::{
+    self, media,
+    media::MediaKind,
+    qbit,
+    recommendations::{Recommendations, WeeklySchedule},
+    system,
+};
 use super::CommandError;
 use crate::{IBundleClient, MediaBundle};
 /// This is the discord bot that we will use for various purposes.
@@ -13,9 +19,9 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use serenity::{
     all::{
-        ChannelType, CreateChannel, CreateInteractionResponse, CreateInteractionResponseMessage,
-        EditInteractionResponse, GuildId, Http, Interaction, PermissionOverwrite,
-        PermissionOverwriteType, Permissions, RoleId,
+        ChannelId, ChannelType, CreateChannel, CreateInteractionResponse,
+        CreateInteractionResponseMessage, EditInteractionResponse, GuildId, Http, Interaction,
+        PermissionOverwrite, PermissionOverwriteType, Permissions, RoleId,
     },
     model::{channel::Message, gateway::Ready},
     prelude::*,
@@ -29,10 +35,19 @@ use tokio::task::JoinHandle;
 
 static ADMIN_CHANNEL_NAME: &str = "admin-notifications";
 
+fn default_recommendation_schedule() -> Option<WeeklySchedule> {
+    Some(WeeklySchedule::default())
+}
+
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct GuildConfig {
     guild_id: GuildId,
     channels: Vec<ChannelConfig>,
+    /// Set to the existing general text channel's ID; never create or guess a destination.
+    #[serde(default)]
+    recommendation_channel_id: Option<ChannelId>,
+    #[serde(default = "default_recommendation_schedule")]
+    recommendation_schedule: Option<WeeklySchedule>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -55,6 +70,21 @@ pub struct ChannelPermission {
 impl GuildConfig {
     pub(crate) fn guild_id(&self) -> GuildId {
         self.guild_id
+    }
+
+    fn recommendation_channel_error(
+        &self,
+        guild: Option<GuildId>,
+        channel: ChannelId,
+    ) -> Option<String> {
+        if guild != Some(self.guild_id) {
+            return Some("Recommendations are only available in the configured server.".into());
+        }
+        match self.recommendation_channel_id {
+            Some(id) if id == channel => None,
+            Some(id) => Some(format!("Use /recommendations in <#{id}> so everyone can see the picks.")),
+            None => Some("Recommendations need guild_config.recommendation_channel_id set to the general text channel's ID.".into()),
+        }
     }
 }
 
@@ -183,14 +213,34 @@ pub struct DiscordHandler<C: IBundleClient> {
     permitted_guilds: HashSet<u64>,
     media_bundle: MediaBundle<C>,
     guild_config: GuildConfig,
+    recommendations: Arc<Recommendations>,
     has_ready_been_called: AtomicBool,
 }
 
-impl<C> DiscordHandler<C> where C: IBundleClient {}
+impl<C: IBundleClient> DiscordHandler<C> {
+    pub fn weekly_recommendations(
+        &self,
+        http: Arc<Http>,
+    ) -> impl std::future::Future<Output = ()> + Send + 'static {
+        let recommendations = Arc::clone(&self.recommendations);
+        let config = self.guild_config.clone();
+        async move {
+            recommendations
+                .post_weekly(
+                    http,
+                    config.guild_id,
+                    config.recommendation_channel_id,
+                    config.recommendation_schedule,
+                )
+                .await;
+        }
+    }
+}
 
 pub struct DiscordHandlerBuilder<C: IBundleClient> {
     permitted_guilds: Vec<u64>,
     media_bundle: Option<MediaBundle<C>>,
+    tmdb_api_key: String,
     guild_config: Option<GuildConfig>, // not really sure if there is such a day but if we want to
     // add support to multi guilds, we can do so by changing
     // this to a Vec<GuildConfig>
@@ -205,6 +255,7 @@ where
         Self {
             permitted_guilds: vec![],
             media_bundle: None,
+            tmdb_api_key: String::new(),
             guild_config: None,
             has_ready_been_called: AtomicBool::new(false),
         }
@@ -227,6 +278,10 @@ where
         self.guild_config.replace(config);
     }
 
+    pub fn set_tmdb_api_key(&mut self, api_key: String) {
+        self.tmdb_api_key = api_key;
+    }
+
     pub fn build(self) -> DiscordHandler<C> {
         DiscordHandler {
             permitted_guilds: {
@@ -238,6 +293,7 @@ where
             },
             media_bundle: self.media_bundle.unwrap(),
             guild_config: self.guild_config.unwrap(),
+            recommendations: Arc::new(Recommendations::new(self.tmdb_api_key)),
             has_ready_been_called: self.has_ready_been_called,
         }
     }
@@ -454,6 +510,23 @@ where
             return;
         };
 
+        if command.data.name == "recommendations" {
+            if let Some(error) = self
+                .guild_config
+                .recommendation_channel_error(command.guild_id, command.channel_id)
+            {
+                let response = CreateInteractionResponse::Message(
+                    CreateInteractionResponseMessage::new()
+                        .content(error)
+                        .ephemeral(true),
+                );
+                if let Err(why) = command.create_response(&ctx.http, response).await {
+                    tracing::error!("Cannot respond to slash command: {why}");
+                }
+                return;
+            }
+        }
+
         let is_admin = command.guild_id == Some(self.guild_config.guild_id)
             && command
                 .member
@@ -501,6 +574,11 @@ where
                     .await
                     .map_err(CommandError::from),
                 "help" => Ok(EditInteractionResponse::new().content(commands::help(is_admin))),
+                "recommendations" => self
+                    .recommendations
+                    .run()
+                    .await
+                    .map_err(CommandError::RecommendationError),
                 "version" => Ok(EditInteractionResponse::new()
                     .content(format!("Dookie version {}", env!("CARGO_PKG_VERSION")))),
                 "grant_access" => commands::grant_access::run(&options, media_bundle)
@@ -555,6 +633,41 @@ where
 mod tests {
     #[allow(unused_imports)]
     use super::*;
+
+    #[test]
+    fn recommendations_require_the_explicit_general_channel_and_guild() {
+        let mut config: GuildConfig = serde_json::from_value(serde_json::json!({
+            "guild_id": 1, "channels": []
+        }))
+        .unwrap();
+        assert_eq!(
+            serde_json::to_value(&config).unwrap()["recommendation_schedule"],
+            serde_json::json!({"day": "Sun", "time": "10:00:00"})
+        );
+        let disabled: GuildConfig = serde_json::from_value(serde_json::json!({
+            "guild_id": 1, "channels": [], "recommendation_schedule": null
+        }))
+        .unwrap();
+        assert!(disabled.recommendation_schedule.is_none());
+        assert!(config
+            .recommendation_channel_error(Some(GuildId::new(1)), ChannelId::new(2))
+            .unwrap()
+            .contains("recommendation_channel_id"));
+        config.recommendation_channel_id = Some(ChannelId::new(2));
+        assert!(config
+            .recommendation_channel_error(Some(GuildId::new(1)), ChannelId::new(2))
+            .is_none());
+        assert!(config
+            .recommendation_channel_error(Some(GuildId::new(1)), ChannelId::new(3))
+            .unwrap()
+            .contains("<#2>"));
+        assert!(config
+            .recommendation_channel_error(None, ChannelId::new(2))
+            .is_some());
+        assert!(config
+            .recommendation_channel_error(Some(GuildId::new(9)), ChannelId::new(2))
+            .is_some());
+    }
 
     static BODY: &str = r#"
         {"event":"media.resume","user":true,"owner":true,"Account":{"id":304665517,"thumb":"redacted","title":"user_redacted"},"Server":{"title":"felix_macbook_pro_13","uuid":"uuidredacted"},"Player":{"local":true,"publicAddress":"publicaddressredacted","title":"Felixs-MacBook-Pro.local","uuid":"uuidredacted"},"Metadata":{"librarySectionType":"show","ratingKey":"17946","key":"/library/metadata/17946","parentRatingKey":"17943","grandparentRatingKey":"17933","guid":"plex://episode/5e8339c4ec007c00412fee31","parentGuid":"plex://season/602e75c7fdd281002ce0b667","grandparentGuid":"plex://show/5d9c09152192ba001f31b6c8","grandparentSlug":"solar-opposites","type":"episode","title":"The Quantum Ring","titleSort":"Quantum Ring","grandparentKey":"/library/metadata/17933","parentKey":"/library/metadata/17943","librarySectionTitle":"TV Shows","librarySectionID":2,"librarySectionKey":"/library/sections/2","grandparentTitle":"Solar Opposites","parentTitle":"Season 1","contentRating":"TV-MA","summary":"TaDAH! Korvo becomes a magician!","index":3,"parentIndex":1,"audienceRating":8.1,"viewOffset":372000,"lastViewedAt":1724018723,"year":2020,"thumb":"/library/metadata/17946/thumb/1711856426","art":"/library/metadata/17933/art/1711856419","parentThumb":"/library/metadata/17943/thumb/1711856426","grandparentThumb":"/library/metadata/17933/thumb/1711856419","grandparentArt":"/library/metadata/17933/art/1711856419","grandparentTheme":"/library/metadata/17933/theme/1711856419","duration":1260000,"originallyAvailableAt":"2020-05-08","addedAt":1711856407,"updatedAt":1711856426,"audienceRatingImage":"themoviedb://image.rating","UltraBlurColors":{"topLeft":"16236c","topRight":"201439","bottomRight":"443adc","bottomLeft":"1b2075"},"Guid":[{"id":"imdb://tt8910944"},{"id":"tmdb://2061894"},{"id":"tvdb://7547572"}],"Rating":[{"image":"themoviedb://image.rating","value":8.1,"type":"audience"}],"Director":[{"id":2688,"filter":"director=2688","tag":"Lucas Gray","tagKey":"5f3ff40fbf3e560040b4151b"}],"Writer":[{"id":9763,"filter":"writer=9763","tag":"Matt McKenna","tagKey":"5d9f3513d74e670020020a6b"}],"Role":[{"id":2517,"filter":"actor=2517","tag":"Justin Roiland","tagKey":"5d776a3447dd6e001f6cfd4d","role":"Korvo (voice)","thumb":"https://metadata-static.plex.tv/a/people/af4c83335d57bcf3266a1e585833a3d4.jpg"},{"id":7538,"filter":"actor=7538","tag":"Sean Giambrone","tagKey":"5d776959fb0d55001f523663","role":"Yumyulack (voice)","thumb":"https://metadata-static.plex.tv/3/people/39bf19592edf0c6d2f0a955238470b12.jpg"},{"id":2588,"filter":"actor=2588","tag":"Thomas Middleditch","tagKey":"5d77684f61141d001fb184c6","role":"Terry (voice)","thumb":"https://metadata-static.plex.tv/e/people/e00806e61932c2b0129cc04542807b9d.jpg"},{"id":8151,"filter":"actor=8151","tag":"Mary Mack","tagKey":"5d7770706afb3d002061a406","role":"Jesse (voice)","thumb":"https://metadata-static.plex.tv/6/people/66b7a88d7779d53a1f45c86833a3e37c.jpg"}]}}

@@ -38,6 +38,8 @@ pub struct Config<'a> {
     pub move_job_period: u64,
     pub age_threshold: u64,
     pub discord_token: Option<Cow<'a, str>>,
+    #[serde(default)]
+    pub tmdb_api_key: Cow<'a, str>,
     pub permitted_guilds: Vec<u64>,
     pub move_map: HashMap<Cow<'a, str>, Cow<'a, str>>,
     pub guild_config: Option<GuildConfig>,
@@ -72,6 +74,7 @@ impl<'a> Default for Config<'a> {
             move_job_period: 100,
             age_threshold: 100,
             discord_token: Some("".into()),
+            tmdb_api_key: "".into(),
             permitted_guilds: Vec::new(),
             move_map: HashMap::new(),
             guild_config: None,
@@ -134,7 +137,11 @@ mod tests {
 
     #[test]
     fn test_read_config() {
-        let config = Config::from_buffer(TEST_YML.as_bytes());
-        assert!(config.is_ok());
+        let config = Config::from_buffer(TEST_YML.as_bytes()).unwrap();
+        assert!(config.tmdb_api_key.is_empty());
+
+        let yaml = format!("{TEST_YML}\n            tmdb_api_key: test-api-key\n");
+        let config = Config::from_buffer(yaml.as_bytes()).unwrap();
+        assert_eq!(config.tmdb_api_key, "test-api-key");
     }
 }

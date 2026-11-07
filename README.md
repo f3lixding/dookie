@@ -52,6 +52,80 @@ The operational commands require Discord Administrator permission in the configu
 
 qBittorrent commands authenticate through its Web API login. Configure `qbit_torrent_username` and `qbit_torrent_password` alongside `qbit_torrent_port`; the older `qbit_torrent_api_key` setting is ignored.
 
+### Weekly trending recommendations
+
+`/recommendations` returns up to five movies and five shows from TMDB's weekly
+trending feeds. It preserves the provider's trend order (not the separate
+`popularity` score), excludes adult-flagged entries, skips duplicates within each
+category and empty titles, and links each pick to TMDB. Each card includes a
+cover-art thumbnail when TMDB provides a poster; missing artwork leaves the
+text card intact. There are no runtime LLM
+calls, personalized rankings, downloads, or Plex-availability checks.
+
+The command is available to members in the configured guild's general channel.
+Results are public there; requests elsewhere get a private redirect. Configure
+the **existing general text channel's ID** explicitly so renaming a channel does
+not redirect recommendations. It does not create a channel or change permissions.
+Merge these settings into the existing YAML (do not replace your guild/channel
+configuration):
+
+```yaml
+tmdb_api_key: "YOUR_TMDB_API_KEY"
+guild_config:
+  guild_id: 123456789012345678
+  recommendation_channel_id: 234567890123456789
+  channels: [] # retain your existing channel definitions here
+```
+
+Use TMDB's **API Key (v3 auth)**, not the API Read Access Token, from
+[TMDB API settings](https://www.themoviedb.org/settings/api). The bot sends it as
+the `api_key` query parameter over HTTPS. Keep the YAML private and out of Git;
+do not log request URLs containing the key.
+Old configs still load; without these settings the command explains what is
+missing. The bot needs View Channel, Send Messages, and Embed Links in general.
+Successful results are cached in memory for one hour; simultaneous requests
+share a refresh. Requests time out after 15 seconds. Provider errors are reported
+without credentials or response bodies; failed refreshes do not return expired
+results or partial movie/show lists.
+
+Movies show TMDB IDs usable with `/add_movie`. Shows also link to TMDB, but
+`/add_show` requires a **TVDB** ID: use `/search_show query:<title>` first. No
+TMDB show ID is passed off as a TVDB ID.
+
+Sources: TMDB documents both
+[`/3/trending/movie/week`](https://developer.themoviedb.org/reference/trending-movies)
+and [`/3/trending/tv/week`](https://developer.themoviedb.org/reference/trending-tv).
+[TVDB's published v4 API](https://thetvdb.github.io/v4-api/) has no weekly trending
+endpoint; its `score` only hints at relative popularity, with no specified weekly
+window. This feature therefore uses TMDB for both categories and needs no TVDB
+credential. Attribution is included in the response.
+
+The command remains available alongside automatic weekly posting to #general
+every **Sunday at 10 AM Pacific**. This is the default schedule once the existing
+general channel's ID is configured. It can also be stated explicitly:
+
+```yaml
+guild_config:
+  recommendation_channel_id: 234567890123456789 # existing #general channel ID
+  recommendation_schedule:
+    day: Sun
+    time: "10:00:00"
+  # retain guild_id and channels from your existing configuration
+```
+
+Times use **America/Los_Angeles**, adjusting for daylight saving automatically.
+Set `recommendation_schedule: null` explicitly for command-only behavior.
+Without a channel ID, automatic posting stays disabled. Both delivery paths share the
+same one-hour cache, ranking, and cover art. Run only one bot instance per guild.
+The scheduler lives with the bot client, not its reconnect/Ready events. It waits
+for the next future slot; startup does not send a post or catch up missed weeks.
+It checks that the destination is a text channel in the configured guild before
+sending. Provider/delivery failures are logged and skipped, with no application
+retry of ambiguous Discord sends. A nonexistent spring-forward time skips that
+week; a repeated fall-back time uses only its first occurrence. The bot must be
+running at the scheduled time. No live configuration or messages are changed by
+installing the source changes alone.
+
 ## Intel macOS builds
 
 GitHub Actions builds and tests both `dookie_server` and `dookie_cli_client` on

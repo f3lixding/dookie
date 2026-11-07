@@ -965,6 +965,7 @@ pub mod auto_torrent_shutoff_job {
             let mut spawned_job = Self::SpawnedJob {
                 webhook_port: None,
                 token: None,
+                tmdb_api_key: String::new(),
                 permitted_guilds: Vec::new(),
                 media_bundle: None,
                 guild_config: None,
@@ -978,6 +979,7 @@ pub mod auto_torrent_shutoff_job {
     pub struct SpawnedJob<C: IBundleClient> {
         webhook_port: Option<u16>,
         token: Option<String>,
+        tmdb_api_key: String,
         permitted_guilds: Vec<u64>,
         media_bundle: Option<MediaBundle<C>>,
         guild_config: Option<discord_bot::GuildConfig>,
@@ -996,6 +998,7 @@ pub mod auto_torrent_shutoff_job {
             self.webhook_port = Some(config.webhook_port);
             self.permitted_guilds = config.permitted_guilds.clone();
             self.token = config.discord_token.as_ref().map(|t| t.to_string());
+            self.tmdb_api_key = config.tmdb_api_key.to_string();
             self.guild_config = config.guild_config.clone();
         }
     }
@@ -1038,6 +1041,7 @@ pub mod auto_torrent_shutoff_job {
             dh_builder.set_permitted_guilds(this.permitted_guilds.clone());
             dh_builder.set_guild_config(guild_config);
             dh_builder.set_media_bundle(media_bundle);
+            dh_builder.set_tmdb_api_key(std::mem::take(&mut this.tmdb_api_key));
             let discord_handler = dh_builder.build();
 
             let token = this.token.clone().expect("Token not found");
@@ -1049,6 +1053,8 @@ pub mod auto_torrent_shutoff_job {
             // main future in main()
             let handle = tokio::spawn(async move {
                 let webhook_http = std::sync::Arc::new(serenity::http::Http::new(&token));
+                let weekly_recommendations =
+                    discord_handler.weekly_recommendations(webhook_http.clone());
                 let _webhook_handle =
                     match discord_bot::start_webhook_listener(webhook_port, guild_id, webhook_http)
                         .await
@@ -1065,7 +1071,13 @@ pub mod auto_torrent_shutoff_job {
                     .await
                     .expect("Err creating client");
 
-                if let Err(e) = client.start().await {
+                // One scheduler per client lifetime, not per Ready/reconnect. Dropping this
+                // scope cancels it, so a stopped bot cannot leave a detached posting task.
+                let result = tokio::select! {
+                    result = client.start() => result,
+                    _ = weekly_recommendations => unreachable!("weekly scheduler never completes"),
+                };
+                if let Err(e) = result {
                     tracing::error!("Client error: {:?}", e);
                     return Err(e.into());
                 }
@@ -1221,6 +1233,7 @@ mod tests {
             move_job_period: 10,
             age_threshold: 10,
             discord_token: Some(Cow::from("")),
+            tmdb_api_key: Cow::from(""),
             permitted_guilds: Vec::new(),
             move_map: {
                 let mut map = HashMap::new();

@@ -36,6 +36,8 @@ semver = { workspace = true }
 tempfile = { workspace = true }
 libc = { workspace = true }
 socket2 = { workspace = true }
+chrono = { version = "0.4", features = ["serde"] }
+chrono-tz = "0.10"
 
 [build-dependencies]
 prost-build = { workspace = true }

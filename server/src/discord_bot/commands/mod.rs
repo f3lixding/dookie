@@ -3,6 +3,7 @@ use serenity::all::CreateCommand;
 pub(crate) mod grant_access;
 pub(crate) mod media;
 pub(crate) mod qbit;
+pub(crate) mod recommendations;
 pub(crate) mod system;
 
 pub fn get_create_commands() -> Vec<CreateCommand> {
@@ -10,6 +11,7 @@ pub fn get_create_commands() -> Vec<CreateCommand> {
     commands.extend(media::register());
     commands.extend(qbit::register());
     commands.extend(system::register());
+    commands.push(recommendations::register());
     commands.push(CreateCommand::new("help").description("Show available bot commands"));
     commands.push(CreateCommand::new("version").description("Show the current Dookie version"));
     commands
@@ -52,6 +54,12 @@ mod tests {
         let member = help(false);
         let admin = help(true);
         assert!(member.contains("/search_movie query:<value>"));
+        assert!(member.contains("/recommendations"));
+        assert!(
+            admin.encode_utf16().count() <= 2000,
+            "help exceeds Discord's message limit: {}",
+            admin.encode_utf16().count()
+        );
         assert!(member.contains("/help"));
         assert!(!member.contains("/restart_services"));
         for command in get_create_commands() {

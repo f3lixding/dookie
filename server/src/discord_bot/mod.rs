@@ -12,6 +12,7 @@ pub enum CommandError {
     MediaCommandError(MediaCommandError),
     QbitCommandError(QbitCommandError),
     SystemCommandError(String),
+    RecommendationError(String),
 }
 
 impl std::fmt::Display for CommandError {
@@ -21,6 +22,7 @@ impl std::fmt::Display for CommandError {
             CommandError::MediaCommandError(err) => err.fmt(f),
             CommandError::QbitCommandError(err) => err.fmt(f),
             CommandError::SystemCommandError(err) => err.fmt(f),
+            CommandError::RecommendationError(err) => err.fmt(f),
         }
     }
 }
