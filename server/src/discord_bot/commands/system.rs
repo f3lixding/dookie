@@ -14,6 +14,9 @@ pub fn is_admin_command(name: &str) -> bool {
             | "restart_services"
             | "torrent_list"
             | "torrent_delete"
+            | "grant_access"
+            | "remove_movie"
+            | "remove_show"
     )
 }
 

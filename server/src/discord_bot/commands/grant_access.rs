@@ -1,5 +1,6 @@
 use serenity::builder::{CreateCommand, CreateCommandOption};
 use serenity::model::application::{CommandOptionType, ResolvedOption, ResolvedValue};
+use serenity::model::permissions::Permissions;
 
 use crate::discord_bot::CommandError;
 use crate::{IBundleClient, MediaBundle};
@@ -44,6 +45,8 @@ pub async fn run<C: IBundleClient>(
 
 pub fn register() -> CreateCommand {
     CreateCommand::new("grant_access")
+        .default_member_permissions(Permissions::ADMINISTRATOR)
+        .dm_permission(false)
         .description(
             "Grant user access to libraries access.\nThis command grants access to both libraries.",
         )

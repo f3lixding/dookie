@@ -62,6 +62,13 @@ mod tests {
         );
         assert!(member.contains("/help"));
         assert!(!member.contains("/restart_services"));
+        for name in ["grant_access", "remove_movie", "remove_show"] {
+            assert!(system::is_admin_command(name), "{name} must be admin-only");
+            assert!(!member.contains(&format!("/{name}")));
+        }
+        for name in ["add_movie", "add_show"] {
+            assert!(member.contains(&format!("/{name}")));
+        }
         for command in get_create_commands() {
             let command = serde_json::to_value(command).unwrap();
             let name = command["name"].as_str().unwrap();

@@ -6,6 +6,7 @@ use serenity::builder::{
     CreateCommand, CreateCommandOption, CreateEmbed, CreateEmbedFooter, EditInteractionResponse,
 };
 use serenity::model::application::{CommandOptionType, ResolvedOption, ResolvedValue};
+use serenity::model::permissions::Permissions;
 
 use crate::discord_bot::CommandError;
 use crate::{AddOutcome, IBundleClient, MediaBundle, MediaLookup, Quality, RemoveOutcome};
@@ -301,6 +302,8 @@ pub fn register() -> Vec<CreateCommand> {
                         .required(true),
                     ),
                 CreateCommand::new(format!("remove_{noun}"))
+                    .default_member_permissions(Permissions::ADMINISTRATOR)
+                    .dm_permission(false)
                     .description(format!(
                         "Remove a {noun} from {} and clean up its files",
                         kind.app()
