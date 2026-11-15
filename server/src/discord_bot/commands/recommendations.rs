@@ -67,6 +67,11 @@ struct TrendingItem {
     poster_path: Option<String>,
 }
 
+#[derive(Deserialize)]
+struct ExternalIds {
+    tvdb_id: Option<u64>,
+}
+
 pub struct Recommendations {
     client: reqwest::Client,
     api_key: String,
@@ -105,17 +110,34 @@ impl Recommendations {
             .as_ref()
             .is_none_or(|(at, _)| at.elapsed() >= CACHE_TTL)
         {
-            let (movies, shows) =
-                tokio::try_join!(self.fetch(base_url, "movie"), self.fetch(base_url, "tv"))?;
-            let mut embeds = picks(movies, "movie");
-            embeds.extend(picks(shows, "tv"));
+            let (movies, shows) = tokio::try_join!(
+                self.get::<TrendingPage>(base_url, "/trending/movie/week", "movie trending"),
+                self.get::<TrendingPage>(base_url, "/trending/tv/week", "tv trending")
+            )?;
+            let mut embeds: Vec<_> = picks(movies, "movie")
+                .into_iter()
+                .map(|item| {
+                    let id = format!("TMDB ID: {}", item.id);
+                    embed(item, "movie", id)
+                })
+                .collect();
+            // /add_show takes a TVDB id, so show that instead of the TMDB id it cannot use.
+            for item in picks(shows, "tv") {
+                let path = format!("/tv/{}/external_ids", item.id);
+                let ids: ExternalIds = self.get(base_url, &path, "tv external ids").await?;
+                let id = match ids.tvdb_id.filter(|id| *id != 0) {
+                    Some(id) => format!("TVDB ID: {id}"),
+                    None => "No TVDB ID yet".to_string(),
+                };
+                embeds.push(embed(item, "tv", id));
+            }
             *cache = Some((Instant::now(), embeds));
         }
         let embeds = cache.as_ref().unwrap().1.clone();
         let content = if embeds.is_empty() {
             "TMDB returned no eligible weekly movie or show recommendations."
         } else {
-            "Weekly trending picks — up to 5 movies and 5 shows, in TMDB trend order. Adult-flagged titles excluded. Not personalized; Plex availability is not checked.\nMovies: use /add_movie with the TMDB ID. Shows: use /search_show to get the TVDB ID before /add_show.\nThis product uses the TMDB API but is not endorsed or certified by TMDB."
+            "Weekly trending picks — up to 5 movies and 5 shows, in TMDB trend order. Adult-flagged titles excluded. Not personalized; Plex availability is not checked.\nMovies: use /add_movie with the TMDB ID. Shows: use /add_show with the TVDB ID.\nThis product uses the TMDB API but is not endorsed or certified by TMDB."
         };
         Ok((content, embeds))
     }
@@ -163,76 +185,84 @@ impl Recommendations {
         }
     }
 
-    async fn fetch(&self, base_url: &str, kind: &str) -> Result<TrendingPage, String> {
+    async fn get<T: serde::de::DeserializeOwned>(
+        &self,
+        base_url: &str,
+        path: &str,
+        kind: &str,
+    ) -> Result<T, String> {
         let response = self
             .client
-            .get(format!("{base_url}/trending/{kind}/week"))
+            .get(format!("{base_url}{path}"))
             .query(&[("language", "en-US"), ("api_key", self.api_key.as_str())])
             .timeout(Duration::from_secs(15))
             .send()
             .await
-            .map_err(|_| format!("TMDB {kind} trending request failed. Please try again later."))?;
+            .map_err(|_| format!("TMDB {kind} request failed. Please try again later."))?;
         if !response.status().is_success() {
             // Do not surface provider bodies or request URLs (which contain credentials).
             return Err(format!(
-                "TMDB {kind} trending returned HTTP {}. Check the API key or try again later.",
+                "TMDB {kind} returned HTTP {}. Check the API key or try again later.",
                 response.status().as_u16()
             ));
         }
         let body = response
             .bytes()
             .await
-            .map_err(|_| format!("TMDB {kind} trending response could not be read."))?;
+            .map_err(|_| format!("TMDB {kind} response could not be read."))?;
         serde_json::from_slice(&body)
-            .map_err(|_| format!("TMDB returned an invalid {kind} trending response."))
+            .map_err(|_| format!("TMDB returned an invalid {kind} response."))
     }
 }
 
-fn picks(page: TrendingPage, kind: &str) -> Vec<CreateEmbed> {
+fn picks(page: TrendingPage, kind: &str) -> Vec<TrendingItem> {
     let mut seen = HashSet::new();
     page.results
         .into_iter()
-        .filter_map(|item| {
-            let (label, title, date) = if kind == "movie" {
-                ("Movie", item.title?, item.release_date)
-            } else {
-                ("Show", item.name?, item.first_air_date)
-            };
-            if item.adult || item.id == 0 || title.trim().is_empty() || !seen.insert(item.id) {
-                return None;
-            }
-            let year = date
-                .as_deref()
-                .and_then(|s| s.split('-').next())
-                .filter(|s| s.len() == 4 && s.bytes().all(|b| b.is_ascii_digit()));
-            // Keep all ten embeds below Discord's combined 6,000-character limit, including
-            // supplementary Unicode characters counted as two UTF-16 units by Discord.
-            let title: String = title.chars().take(80).collect();
-            let title = match year {
-                Some(year) => format!("{label}: {title} ({year})"),
-                None => format!("{label}: {title}"),
-            };
-            let mut embed = CreateEmbed::new()
-                .title(title)
-                .url(format!("https://www.themoviedb.org/{kind}/{}", item.id))
-                .description(
-                    item.overview
-                        .unwrap_or_default()
-                        .chars()
-                        .take(150)
-                        .collect::<String>(),
-                )
-                .footer(CreateEmbedFooter::new(format!(
-                    "TMDB weekly trends · TMDB ID: {}",
-                    item.id
-                )));
-            if let Some(path) = item.poster_path.filter(|path| !path.trim().is_empty()) {
-                embed = embed.thumbnail(format!("https://image.tmdb.org/t/p/w185{path}"));
-            }
-            Some(embed)
+        .filter(|item| {
+            let title = if kind == "movie" { &item.title } else { &item.name };
+            !item.adult
+                && item.id != 0
+                && title.as_ref().is_some_and(|title| !title.trim().is_empty())
+                && seen.insert(item.id)
         })
         .take(MAX_RESULTS)
         .collect()
+}
+
+/// `id` is the footer's id line: the id the matching add command takes.
+fn embed(item: TrendingItem, kind: &str, id: String) -> CreateEmbed {
+    let (label, title, date) = if kind == "movie" {
+        ("Movie", item.title.unwrap_or_default(), item.release_date)
+    } else {
+        ("Show", item.name.unwrap_or_default(), item.first_air_date)
+    };
+    let year = date
+        .as_deref()
+        .and_then(|s| s.split('-').next())
+        .filter(|s| s.len() == 4 && s.bytes().all(|b| b.is_ascii_digit()));
+    // Keep all ten embeds below Discord's combined 6,000-character limit, including
+    // supplementary Unicode characters counted as two UTF-16 units by Discord.
+    let title: String = title.chars().take(80).collect();
+    let title = match year {
+        Some(year) => format!("{label}: {title} ({year})"),
+        None => format!("{label}: {title}"),
+    };
+    let mut embed = CreateEmbed::new()
+        .title(title)
+        .url(format!("https://www.themoviedb.org/{kind}/{}", item.id))
+        .description(
+            item.overview
+                .unwrap_or_default()
+                .chars()
+                .take(150)
+                .collect::<String>(),
+        )
+        .footer(CreateEmbedFooter::new(format!("TMDB weekly trends · {id}")));
+    if let Some(path) = item.poster_path.filter(|path| !path.trim().is_empty()) {
+        embed = embed.thumbnail(format!("https://image.tmdb.org/t/p/w185{path}"));
+    }
+    embed
 }
 
 pub fn register() -> CreateCommand {
@@ -283,6 +313,11 @@ mod tests {
                 request.uri().query(),
                 Some("language=en-US&api_key=test-api-key")
             );
+            match request.uri().path() {
+                "/tv/8/external_ids" => return Json(json!({"id": 8, "tvdb_id": 81189})),
+                "/tv/9/external_ids" => return Json(json!({"id": 9, "tvdb_id": null})),
+                _ => {}
+            }
             let is_movie = request.uri().path() == "/trending/movie/week";
             let rows = if is_movie {
                 json!([
@@ -298,7 +333,10 @@ mod tests {
                     {"id": 7, "adult": false, "title": "Over limit"}
                 ])
             } else {
-                json!([{"id": 8, "adult": false, "name": "A show", "first_air_date": "2024-03-02", "overview": "é".repeat(1000), "poster_path": "/show-cover.jpg"}])
+                json!([
+                    {"id": 8, "adult": false, "name": "A show", "first_air_date": "2024-03-02", "overview": "é".repeat(1000), "poster_path": "/show-cover.jpg"},
+                    {"id": 9, "adult": false, "name": "Brand new show"}
+                ])
             };
             Json(json!({"results": rows}))
         }
@@ -309,7 +347,9 @@ mod tests {
                 listener,
                 Router::new()
                     .route("/trending/movie/week", get(feed))
-                    .route("/trending/tv/week", get(feed)),
+                    .route("/trending/tv/week", get(feed))
+                    .route("/tv/8/external_ids", get(feed))
+                    .route("/tv/9/external_ids", get(feed)),
             )
             .into_future(),
         );
@@ -321,7 +361,11 @@ mod tests {
                 .unwrap();
         assert_eq!(first, cached);
         let embeds = first["embeds"].as_array().unwrap();
-        assert_eq!(embeds.len(), 6);
+        assert_eq!(embeds.len(), 7);
+        // Movies keep the TMDB id /add_movie takes; shows carry the TVDB id /add_show takes.
+        assert_eq!(embeds[0]["footer"]["text"], "TMDB weekly trends · TMDB ID: 8");
+        assert_eq!(embeds[5]["footer"]["text"], "TMDB weekly trends · TVDB ID: 81189");
+        assert_eq!(embeds[6]["footer"]["text"], "TMDB weekly trends · No TVDB ID yet");
         assert_eq!(embeds[0]["title"], "Movie: Weekly first (2025)");
         assert_eq!(embeds[1]["title"], "Movie: Weekly second");
         assert_eq!(embeds[4]["url"], "https://www.themoviedb.org/movie/6");
@@ -345,7 +389,7 @@ mod tests {
             embeds[5]["description"].as_str().unwrap().chars().count(),
             150
         );
-        assert!(first["content"].as_str().unwrap().contains("/search_show"));
+        assert!(first["content"].as_str().unwrap().contains("/add_show with the TVDB ID"));
         assert_eq!(first["allowed_mentions"]["parse"], json!([]));
 
         // Expired results must fail rather than silently claiming stale data is current.
@@ -381,6 +425,12 @@ mod tests {
             ("{\"results\": []}", "{\"results\": []}", None),
             ("not json", "{\"results\": []}", Some("invalid movie")),
             ("{\"results\": []}", "{}", Some("invalid tv")),
+            // A show whose TVDB id cannot be looked up fails the refresh too.
+            (
+                "{\"results\": []}",
+                "{\"results\": [{\"id\": 1, \"adult\": false, \"name\": \"Show\"}]}",
+                Some("tv external ids returned HTTP 404"),
+            ),
         ] {
             let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
             let url = format!("http://{}", listener.local_addr().unwrap());
@@ -417,14 +467,16 @@ mod tests {
                 })
             })
             .collect();
-        let mut embeds = picks(
-            serde_json::from_value(json!({"results": rows})).unwrap(),
-            "movie",
-        );
-        embeds.extend(picks(
-            serde_json::from_value(json!({"results": rows})).unwrap(),
-            "tv",
-        ));
+        let longest_id = format!("TVDB ID: {}", u64::MAX);
+        let embeds: Vec<_> = ["movie", "tv"]
+            .into_iter()
+            .flat_map(|kind| {
+                picks(serde_json::from_value(json!({"results": rows})).unwrap(), kind)
+                    .into_iter()
+                    .map(|item| embed(item, kind, longest_id.clone()))
+            })
+            .collect();
+        assert_eq!(embeds.len(), 10);
         let embeds = serde_json::to_value(embeds).unwrap();
         let total: usize = embeds
             .as_array()
